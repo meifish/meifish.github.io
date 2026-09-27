@@ -36,6 +36,9 @@ Nice-to-have: at the top of the post's `<head>` include
 `<meta charset="utf-8">` and `<meta name="viewport" content="width=device-width, initial-scale=1">`,
 and a link back home such as `<a href="../../">← AI Alchemy</a>`.
 
+Translate picker: to give a new post the language menu, put `<span data-translate></span>`
+in its top nav and `<script src="../../assets/translate.js"></script>` just before `</body>`.
+
 ## Turning on GitHub Pages
 
 1. On GitHub, create a new **public** repository named **`meifish.github.io`**.

@@ -14,13 +14,14 @@
 <body>
 <div class="wrap">
   <header class="topbar">
-    <a class="brand" href="{{ '/' | relative_url }}">⚗️ {{ site.title }}</a>
-    <nav><a href="{{ '/subscribe/' | relative_url }}">Subscribe</a><a href="{{ '/feed.xml' | relative_url }}">RSS</a></nav>
+    <a class="brand" translate="no" href="{{ '/' | relative_url }}">⚗️ {{ site.title }}</a>
+    <nav><a href="{{ '/subscribe/' | relative_url }}">Subscribe</a><a href="{{ '/feed.xml' | relative_url }}">RSS</a><span data-translate></span></nav>
   </header>
   {{ content }}
   <footer class="site">
     <p>{{ site.title }} by {{ site.author }}. Every skill is tested in a fresh, isolated sandbox so they can't mess with each other.</p>
   </footer>
 </div>
+<script src="{{ '/assets/translate.js' | relative_url }}"></script>
 </body>
 </html>

@@ -97,11 +97,12 @@ pre.term .c{color:#8FA39A} pre.term .e{color:#FF8C73} pre.term .o{color:#7EDBA5}
 .glitch{max-width:440px}
 footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-size:.9rem;color:var(--muted)}
 .sitenav{max-width:1080px;margin:0 auto;padding-top:18px;display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:.82rem}
-.sitenav a{text-decoration:none}
+.sitenav a{text-decoration:none;white-space:nowrap}
+.sitenav{align-items:center}.sitenav-r{display:flex;gap:16px;align-items:center}
 </style>
 </head>
 <body>
-<nav class="sitenav" aria-label="Site"><a href="../../">&larr; AI Alchemy</a><a href="../../subscribe/">Subscribe</a></nav>
+<nav class="sitenav" aria-label="Site"><a href="../../">&larr; <span translate="no">AI Alchemy</span></a><span class="sitenav-r"><a href="../../subscribe/">Subscribe</a><span data-translate></span></span></nav>
 
 <header class="wrap">
   <p class="eyebrow">AI Alchemy · Skill test #1 · archify</p>
@@ -364,5 +365,6 @@ footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-si
   </footer>
 </div>
 </main>
+<script src="../../assets/translate.js"></script>
 </body>
 </html>
