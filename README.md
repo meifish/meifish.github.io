@@ -1,7 +1,7 @@
 # AI Alchemy blog
 
 A plain static blog. GitHub Pages builds it automatically (it uses Jekyll behind
-the scenes, so there's nothing to install on your computer).
+the scenes).
 
 ## What's where
 
