@@ -41,10 +41,10 @@ and a link back home such as `<a href="../../">← AI Alchemy</a>`.
 1. On GitHub, create a new **public** repository named **`meifish.github.io`**.
    (Any other name works too, but then set `baseurl: "/that-name"` in `_config.yml`
    and the site lives at `meifish.github.io/that-name/`.)
-2. Upload everything in this folder to the repo root (drag and drop on the repo page
-   works: "Add file" → "Upload files"), then commit.
-3. Repo **Settings → Pages** → Source: **Deploy from a branch**, Branch: **main**, folder **/ (root)** → Save.
-4. Wait a minute or two, then open https://meifish.github.io.
+2. Upload everything to the repo root (drag and drop on the repo page works:
+   ("Add file" → "Upload files"), then commit.
+4. Repo **Settings → Pages** → Source: **Deploy from a branch**, Branch: **main**, folder **/ (root)** → Save.
+5. Wait a minute or two, then open https://meifish.github.io.
 
 ## Email subscriptions with follow.it (free)
 
