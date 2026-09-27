@@ -1,0 +1,11 @@
+# One entry per post, newest first.
+# To add a post: drop its folder into posts/, then copy an entry below and edit it.
+#   folder:  the folder name inside posts/
+#   date:    YYYY-MM-DD
+#   cover:   an image path inside that folder (optional)
+- title: "I asked an AI to explain my pizza order. It drew me three maps."
+  folder: archify-pizza
+  date: 2026-09-26
+  skill: archify
+  summary: "Archify turns a plain-language description into interactive, self-checking diagrams. I fed it a pizza delivery app and kept poking until it stopped yelling at me."
+  cover: img/arch-light.png

@@ -1,0 +1,11 @@
+# AI Alchemy blog settings.
+# If your repo is named "meifish.github.io", keep baseurl empty.
+# If it has another name (e.g. "ai-alchemy"), set baseurl: "/ai-alchemy".
+title: "AI Alchemy"
+description: "A hobbyist tries the newest AI agent skills in a clean sandbox, builds something silly with each one, and reports back."
+author: "Kathryn"
+url: "https://meifish.github.io"
+baseurl: ""
+exclude:
+  - README.md
+  - "*.zip"
