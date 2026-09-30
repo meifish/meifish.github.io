@@ -175,7 +175,7 @@
   // Cloudflare Worker that holds the OpenAI key (see /talkie-worker in the repo).
   // Base address with no trailing slash, e.g. https://talkie-stt.example.workers.dev
   // Leave empty to fall back to pasting a personal OpenAI key into the page.
-  var PROXY_URL = '';
+  var PROXY_URL = 'https://talkie-stt.meifish-kat.workers.dev';
   var ENGINE_NOTES = {
     browser: '免費，用手機自己的語音辨識，邊說邊出字。',
     rt: '手機用 WebRTC 直接把聲音串流到 OpenAI，邊說邊出字（Tech Spec 的架構）。',
