@@ -1,0 +1,21 @@
+sequenceDiagram
+    autonumber
+    actor U as 使用者
+    participant P as 手機網頁<br/>meifish.github.io/talkie<br/>(GitHub Pages)
+    participant W as Cloudflare Worker<br/>talkie-stt.meifish-kat.workers.dev
+    participant O as OpenAI API
+
+    U->>P: 按「開始說話」（OpenAI 即時）
+    P->>W: POST /token（通行碼、模型）
+    Note over W: 檢查來源網站與通行碼<br/>OpenAI key 只存在這裡（Secret）
+    W->>O: POST /v1/realtime/client_secrets<br/>（API key、轉錄設定、10 分鐘期限）
+    O-->>W: 短效憑證 ek_…
+    W-->>P: 只回傳 ek_…
+    P->>O: WebRTC 連線 /v1/realtime/calls（Bearer ek_…）
+    Note over P: 連上後按鈕變紅，開始錄音
+    P-)O: 麥克風聲音串流（WebRTC，不經過 Worker）
+    O--)P: 即時文字 delta（data channel）
+    U->>P: 按「停止」
+    P->>O: input_audio_buffer.commit
+    O-->>P: 定稿文字 completed
+    Note over P: 使用者修正錯字、存下紀錄<br/>紀錄只存在手機 localStorage
