@@ -165,6 +165,7 @@
   <p class="note">加到主畫面：iPhone 用 Safari 按「分享」→「加入主畫面」；Android 用 Chrome 按右上「⋮」→「加到主畫面」。紀錄只存在這支手機的瀏覽器裡。</p>
 </main>
 
+<script src="opencc-cn2t.js" defer></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -224,9 +225,19 @@
 
   function sec(ms) { return ms == null ? '–' : (ms / 1000).toFixed(2); }
   function status(t, isErr) { $('status').textContent = t; $('status').className = isErr ? 'err' : ''; }
+  // OpenAI and Android's built-in recognizer often answer Taiwan Mandarin in
+  // Simplified Chinese, so text goes through OpenCC (opencc-cn2t.js) to match
+  // the chosen language.
+  var conv = function (t) { return t; }, converters = {};
+  function converterFor(r) {
+    var to = !window.OpenCC ? null
+      : r.lang === 'zh-TW' ? 'twp' : r.lang === 'yue-Hant-HK' ? 'hk' : null;
+    if (!to) return function (t) { return t; };
+    return converters[to] || (converters[to] = OpenCC.Converter({ from: 'cn', to: to }));
+  }
   function showLive(fin, interim) {
-    var live = $('live'); live.textContent = fin;
-    if (interim) { var s = document.createElement('span'); s.className = 'interim'; s.textContent = interim; live.appendChild(s); }
+    var live = $('live'); live.textContent = conv(fin);
+    if (interim) { var s = document.createElement('span'); s.className = 'interim'; s.textContent = conv(interim); live.appendChild(s); }
   }
   function showMetrics(r) {
     $('m-first').textContent = sec(r.firstMs);
@@ -248,12 +259,14 @@
   }
 
   function newRun() {
-    return { at: new Date().toISOString(), engine: engine, model: engine === 'openai' ? $('model').value : engine === 'rt' ? $('rtmodel').value : 'browser',
+    var r = { at: new Date().toISOString(), engine: engine, model: engine === 'openai' ? $('model').value : engine === 'rt' ? $('rtmodel').value : 'browser',
       lang: $('lang').value, t0: performance.now(), firstMs: null, finalMs: null, speakMs: null, text: '' };
+    conv = converterFor(r);
+    return r;
   }
   function finish(r) {
     current = null;
-    r.text = r.text.trim();
+    r.text = conv(r.text.trim());
     showMetrics(r);
     $('edit').value = r.text;
     $('cer').textContent = '';
@@ -263,6 +276,19 @@
   }
 
   // ---- Engine 1: browser Web Speech API ----
+  // Android Chrome sometimes repeats earlier text in each new final result
+  // ("我", "我在測試", "我在測試手機…"), so a result that starts with what
+  // came before replaces it instead of being appended.
+  function joinFinals(list) {
+    var out = [];
+    list.forEach(function (t) {
+      var k = (t || '').trim(); if (!k) return;
+      if (out.length && k.indexOf(out.join('').trim()) === 0) out = [t];
+      else if (out.length && k.indexOf(out[out.length - 1].trim()) === 0) out[out.length - 1] = t;
+      else out.push(t);
+    });
+    return out.join('');
+  }
   function startBrowser() {
     var r = newRun(), rec = new SR();
     rec.lang = r.lang; rec.continuous = true; rec.interimResults = true;
@@ -274,7 +300,7 @@
         if (ev.results[i].isFinal) finals[i] = ev.results[i][0].transcript;
         else interim += ev.results[i][0].transcript;
       }
-      showLive(finals.join(''), interim);
+      showLive(joinFinals(finals), interim);
     };
     rec.onerror = function (ev) {
       var msg = { 'not-allowed': '麥克風權限被拒絕，請到瀏覽器設定允許麥克風。', 'no-speech': '沒有聽到聲音。',
@@ -286,7 +312,7 @@
       if (r.tStop == null) r.tStop = now;  // browser stopped on its own (silence)
       r.speakMs = r.tStop - r.t0;
       r.finalMs = now - r.tStop;
-      r.text = finals.join('');
+      r.text = joinFinals(finals);
       setRec(false);
       finish(r);
       if (errMsg && !r.text) status(errMsg, true);

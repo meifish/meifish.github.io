@@ -65,6 +65,7 @@ OpenAI 即時模式的預設模型是 `gpt-live-transcribe`，也可以切換成
 | 路徑 | 內容 |
 |---|---|
 | `talkie/index.html` | 測試頁（單一 HTML 檔，沒有外部相依）。`PROXY_URL` 設定 Worker 網址 |
+| `talkie/opencc-cn2t.js` | [OpenCC](https://github.com/nk2028/opencc-js) 簡轉繁字典。選「中文（台灣國語）」時，辨識結果一律轉成台灣繁體 |
 | `talkie/manifest.webmanifest`、`icon-*.png` | 加到主畫面用的設定與圖示 |
 | `talkie-worker/worker.js` | Cloudflare Worker 程式，要手動貼到 Cloudflare 並按 Deploy |
 | `talkie-worker/README.md` | Worker 的設定步驟 |
