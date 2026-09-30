@@ -51,12 +51,9 @@ OpenAI 即時模式的預設模型是 `gpt-live-transcribe`，也可以切換成
 
 ## 架構
 
-![元件互動圖：手機網頁向 Worker 要短效憑證，Worker 用 OpenAI key 向 OpenAI 申請，手機再用 WebRTC 直接把聲音串流給 OpenAI](docs/architecture.png)
-
 - **OpenAI API key** 只存在 Cloudflare Worker 的 Secret 裡，不會出現在網頁或手機上。
 - Worker 每次只發一張 10 分鐘有效的短效憑證（`ek_…`），並綁定這次的轉錄設定。
 - OpenAI 即時模式的聲音直接從手機串流到 OpenAI，**不經過 Worker**。OpenAI 上傳模式則由 Worker 把整段錄音轉給 OpenAI，不會保存。
-- 圖的原始檔是 [`docs/architecture.mmd`](docs/architecture.mmd)（Mermaid 格式）。
 
 ### 安全措施
 - Worker 只接受來自 `https://meifish.github.io` 的請求。
