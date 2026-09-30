@@ -46,6 +46,7 @@
   #rec { width: 100%; min-height: 84px; font-size: 22px; font-weight: 700; border: 0; border-radius: 14px;
     background: var(--accent); color: var(--accent-fg); }
   #rec.on { background: var(--rec); color: #fff; }
+  #rec.wait { background: var(--line); color: var(--fg); }
   #rec:disabled { opacity: .5; }
   .btn { border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 8px; padding: 8px 12px; }
   .btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
@@ -234,8 +235,16 @@
   }
   function setRec(on) {
     busy = on;
+    $('rec').classList.remove('wait');
     $('rec').classList.toggle('on', on);
     $('rec').textContent = on ? '⏹ 說完了，停止' : '🎤 開始說話';
+  }
+  // Realtime mode: nothing is heard until OpenAI is connected, so show a
+  // neutral "connecting" button and only turn red once the mic is live.
+  function setConnecting() {
+    busy = true;
+    $('rec').classList.remove('on'); $('rec').classList.add('wait');
+    $('rec').textContent = '⏳ 連線中，請稍候…';
   }
 
   function newRun() {
@@ -407,7 +416,7 @@
     var cred = credential(); if (!cred) return;
     var r = newRun(), pc = null, stream = null, stopping = false, done = false;
     var order = [], texts = {}, pending = {}, settleTimer = null, giveUpTimer = null;
-    setRec(true); showLive('', ''); status('連線中…');
+    setConnecting(); showLive('', ''); status('連線中，還沒開始錄音。按一下可以取消。');
     current = { stop: function () { stopping = true; status('連線取消。'); cleanup(); setRec(false); current = null; } };
 
     function joined() { return order.map(function (id) { return texts[id] || ''; }).join(''); }
@@ -465,7 +474,9 @@
         dc.onopen = function () {
           if (stopping) return;
           r.connectMs = performance.now() - tPress; r.t0 = performance.now();
-          status('已連線，請說話…（連線花了 ' + sec(r.connectMs) + ' 秒）');
+          setRec(true);
+          try { if (navigator.vibrate) navigator.vibrate(60); } catch (e) {}
+          status('🔴 錄音中，請說話…（連線花了 ' + sec(r.connectMs) + ' 秒）');
           current = { stop: function () {
             stopping = true; r.tStop = performance.now(); r.speakMs = r.tStop - r.t0;
             setRec(false); $('rec').disabled = true; status('正在完成辨識…');
