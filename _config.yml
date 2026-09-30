@@ -7,3 +7,4 @@ baseurl: ""
 exclude:
   - README.md
   - "*.zip"
+  - talkie-worker

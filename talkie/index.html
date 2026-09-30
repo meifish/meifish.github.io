@@ -96,6 +96,10 @@
         </select>
       </div>
     </div>
+    <div id="pass-box" hidden style="margin-top:10px">
+      <label for="pass">通行碼 Passcode</label>
+      <input id="pass" type="password" autocomplete="off" inputmode="text" placeholder="向 Kathryn 索取">
+    </div>
     <div id="key-box" hidden style="margin-top:10px">
       <label for="key">OpenAI API key（只存在這支手機）</label>
       <input id="key" type="password" autocomplete="off" placeholder="sk-...">
@@ -157,6 +161,10 @@
     set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   };
 
+  // Cloudflare Worker that holds the OpenAI key (see /talkie-worker in the repo).
+  // Leave empty to fall back to pasting a personal OpenAI key into the page.
+  var PROXY_URL = '';
+
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   var engine = store.get('engine', SR ? 'browser' : 'openai');
   var log = store.get('log', []);
@@ -165,6 +173,7 @@
   $('lang').value = store.get('lang', 'zh-TW');
   $('model').value = store.get('model', 'gpt-4o-mini-transcribe');
   $('key').value = store.get('key', '');
+  $('pass').value = store.get('pass', '');
 
   var supportMsg = [];
   if (!SR) supportMsg.push('這個瀏覽器沒有內建語音辨識，請用 OpenAI 或換 Chrome／Safari。');
@@ -177,7 +186,8 @@
     $('eng-browser').setAttribute('aria-pressed', e === 'browser');
     $('eng-openai').setAttribute('aria-pressed', e === 'openai');
     $('model-box').hidden = e !== 'openai';
-    $('key-box').hidden = e !== 'openai';
+    $('key-box').hidden = e !== 'openai' || !!PROXY_URL;
+    $('pass-box').hidden = e !== 'openai' || !PROXY_URL;
   }
   setEngine(engine);
   $('eng-browser').onclick = function () { if (!busy) setEngine('browser'); };
@@ -185,6 +195,7 @@
   $('lang').onchange = function () { store.set('lang', this.value); };
   $('model').onchange = function () { store.set('model', this.value); };
   $('key').onchange = function () { store.set('key', this.value.trim()); };
+  $('pass').onchange = function () { store.set('pass', this.value.trim()); };
 
   function sec(ms) { return ms == null ? '–' : (ms / 1000).toFixed(2); }
   function status(t, isErr) { $('status').textContent = t; $('status').className = isErr ? 'err' : ''; }
@@ -260,9 +271,16 @@
     return '';
   }
   function startOpenAI() {
-    var key = $('key').value.trim();
-    if (!key) { status('請先填 OpenAI API key。', true); $('key').focus(); return; }
-    store.set('key', key);
+    var key;
+    if (PROXY_URL) {
+      key = $('pass').value.trim();
+      if (!key) { status('請先填通行碼。', true); $('pass').focus(); return; }
+      store.set('pass', key);
+    } else {
+      key = $('key').value.trim();
+      if (!key) { status('請先填 OpenAI API key。', true); $('key').focus(); return; }
+      store.set('key', key);
+    }
     navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
       var r = newRun(), chunks = [], mime = pickMime();
       var mr = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
@@ -291,8 +309,8 @@
     fd.append('language', iso);
     var stream = r.model !== 'whisper-1';
     if (stream) fd.append('stream', 'true');
-    fetch('https://api.openai.com/v1/audio/transcriptions', {
-      method: 'POST', headers: { Authorization: 'Bearer ' + key }, body: fd
+    fetch(PROXY_URL || 'https://api.openai.com/v1/audio/transcriptions', {
+      method: 'POST', headers: PROXY_URL ? { 'X-Passcode': key } : { Authorization: 'Bearer ' + key }, body: fd
     }).then(function (res) {
       if (!res.ok) return res.text().then(function (t) {
         var m = t; try { m = JSON.parse(t).error.message; } catch (e) {}
