@@ -39,7 +39,7 @@
   textarea { min-height: 96px; resize: vertical; }
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .row > div { min-width: 0; }
-  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .seg { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
   .seg button { border: 0; border-radius: 0; background: var(--bg); color: var(--fg); padding: 10px; font: inherit; }
   .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); font-weight: 600; }
   button { font: inherit; cursor: pointer; }
@@ -74,8 +74,9 @@
     <h2>設定</h2>
     <label>辨識引擎</label>
     <div class="seg" role="group" aria-label="辨識引擎">
-      <button id="eng-browser" aria-pressed="true">手機內建（免費）</button>
-      <button id="eng-openai" aria-pressed="false">OpenAI</button>
+      <button id="eng-browser" aria-pressed="true">手機內建</button>
+      <button id="eng-rt" aria-pressed="false">OpenAI 即時</button>
+      <button id="eng-openai" aria-pressed="false">OpenAI 上傳</button>
     </div>
     <div class="row" style="margin-top:10px">
       <div>
@@ -85,6 +86,15 @@
           <option value="cmn-Hans-CN">中文（普通話）</option>
           <option value="yue-Hant-HK">廣東話</option>
           <option value="en-US">English (US)</option>
+        </select>
+      </div>
+      <div id="rtmodel-box" hidden>
+        <label for="rtmodel">OpenAI 模型</label>
+        <select id="rtmodel">
+          <option value="gpt-live-transcribe">gpt-live-transcribe</option>
+          <option value="gpt-transcribe">gpt-transcribe</option>
+          <option value="gpt-4o-transcribe">gpt-4o-transcribe</option>
+          <option value="gpt-4o-mini-transcribe">gpt-4o-mini-transcribe</option>
         </select>
       </div>
       <div id="model-box" hidden>
@@ -104,6 +114,7 @@
       <label for="key">OpenAI API key（只存在這支手機）</label>
       <input id="key" type="password" autocomplete="off" placeholder="sk-...">
     </div>
+    <p id="engine-note" class="note"></p>
     <p id="support" class="note"></p>
   </section>
 
@@ -162,8 +173,14 @@
   };
 
   // Cloudflare Worker that holds the OpenAI key (see /talkie-worker in the repo).
+  // Base address with no trailing slash, e.g. https://talkie-stt.example.workers.dev
   // Leave empty to fall back to pasting a personal OpenAI key into the page.
   var PROXY_URL = '';
+  var ENGINE_NOTES = {
+    browser: '免費，用手機自己的語音辨識，邊說邊出字。',
+    rt: '手機用 WebRTC 直接把聲音串流到 OpenAI，邊說邊出字（Tech Spec 的架構）。',
+    openai: '說完才把整段錄音上傳給 OpenAI，用來對照即時模式。'
+  };
 
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   var engine = store.get('engine', SR ? 'browser' : 'openai');
@@ -172,28 +189,35 @@
 
   $('lang').value = store.get('lang', 'zh-TW');
   $('model').value = store.get('model', 'gpt-4o-mini-transcribe');
+  $('rtmodel').value = store.get('rtmodel', 'gpt-live-transcribe');
   $('key').value = store.get('key', '');
   $('pass').value = store.get('pass', '');
 
   var supportMsg = [];
   if (!SR) supportMsg.push('這個瀏覽器沒有內建語音辨識，請用 OpenAI 或換 Chrome／Safari。');
-  if (!window.MediaRecorder) supportMsg.push('這個瀏覽器不能錄音，OpenAI 模式無法使用。');
+  if (!window.MediaRecorder) supportMsg.push('這個瀏覽器不能錄音，OpenAI 上傳模式無法使用。');
+  if (!window.RTCPeerConnection) supportMsg.push('這個瀏覽器不支援 WebRTC，OpenAI 即時模式無法使用。');
   if (!window.isSecureContext) supportMsg.push('需要 https 網址才能用麥克風。');
   $('support').textContent = supportMsg.join(' ');
 
   function setEngine(e) {
     engine = e; store.set('engine', e);
     $('eng-browser').setAttribute('aria-pressed', e === 'browser');
+    $('eng-rt').setAttribute('aria-pressed', e === 'rt');
     $('eng-openai').setAttribute('aria-pressed', e === 'openai');
     $('model-box').hidden = e !== 'openai';
-    $('key-box').hidden = e !== 'openai' || !!PROXY_URL;
-    $('pass-box').hidden = e !== 'openai' || !PROXY_URL;
+    $('rtmodel-box').hidden = e !== 'rt';
+    $('key-box').hidden = e === 'browser' || !!PROXY_URL;
+    $('pass-box').hidden = e === 'browser' || !PROXY_URL;
+    $('engine-note').textContent = ENGINE_NOTES[e] || '';
   }
   setEngine(engine);
   $('eng-browser').onclick = function () { if (!busy) setEngine('browser'); };
+  $('eng-rt').onclick = function () { if (!busy) setEngine('rt'); };
   $('eng-openai').onclick = function () { if (!busy) setEngine('openai'); };
   $('lang').onchange = function () { store.set('lang', this.value); };
   $('model').onchange = function () { store.set('model', this.value); };
+  $('rtmodel').onchange = function () { store.set('rtmodel', this.value); };
   $('key').onchange = function () { store.set('key', this.value.trim()); };
   $('pass').onchange = function () { store.set('pass', this.value.trim()); };
 
@@ -215,7 +239,7 @@
   }
 
   function newRun() {
-    return { at: new Date().toISOString(), engine: engine, model: engine === 'openai' ? $('model').value : 'browser',
+    return { at: new Date().toISOString(), engine: engine, model: engine === 'openai' ? $('model').value : engine === 'rt' ? $('rtmodel').value : 'browser',
       lang: $('lang').value, t0: performance.now(), firstMs: null, finalMs: null, speakMs: null, text: '' };
   }
   function finish(r) {
@@ -270,17 +294,21 @@
     for (var i = 0; i < types.length; i++) if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(types[i])) return types[i];
     return '';
   }
+  // Passcode when a proxy is set, otherwise the personal OpenAI key. Null if missing.
+  function credential() {
+    var id = PROXY_URL ? 'pass' : 'key', v = $(id).value.trim();
+    if (!v) { status(PROXY_URL ? '請先填通行碼。' : '請先填 OpenAI API key。', true); $(id).focus(); return null; }
+    store.set(id, v); return v;
+  }
+  function apiError(res) {
+    return res.text().then(function (t) {
+      var m = t; try { m = JSON.parse(t).error.message; } catch (e) {}
+      throw new Error('OpenAI ' + res.status + '：' + m);
+    });
+  }
+
   function startOpenAI() {
-    var key;
-    if (PROXY_URL) {
-      key = $('pass').value.trim();
-      if (!key) { status('請先填通行碼。', true); $('pass').focus(); return; }
-      store.set('pass', key);
-    } else {
-      key = $('key').value.trim();
-      if (!key) { status('請先填 OpenAI API key。', true); $('key').focus(); return; }
-      store.set('key', key);
-    }
+    var key = credential(); if (!key) return;
     navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
       var r = newRun(), chunks = [], mime = pickMime();
       var mr = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
@@ -309,7 +337,7 @@
     fd.append('language', iso);
     var stream = r.model !== 'whisper-1';
     if (stream) fd.append('stream', 'true');
-    fetch(PROXY_URL || 'https://api.openai.com/v1/audio/transcriptions', {
+    fetch(PROXY_URL ? PROXY_URL + '/transcribe' : 'https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST', headers: PROXY_URL ? { 'X-Passcode': key } : { Authorization: 'Bearer ' + key }, body: fd
     }).then(function (res) {
       if (!res.ok) return res.text().then(function (t) {
@@ -350,9 +378,126 @@
     });
   }
 
+
+  // ---- Engine 3: stream the mic to OpenAI Realtime over WebRTC ----
+  // The long-lived key never reaches the phone: the worker (or, without one,
+  // the pasted key) mints a short-lived client secret for this session only.
+  // No language hint: builders mix Chinese and English, so let the model detect it.
+  function clientSecret(model, cred) {
+    if (PROXY_URL) {
+      return fetch(PROXY_URL + '/token', { method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Passcode': cred },
+        body: JSON.stringify({ model: model }) });
+    }
+    return fetch('https://api.openai.com/v1/realtime/client_secrets', { method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + cred },
+      body: JSON.stringify(realtimeSession(model)) });
+  }
+  function realtimeSession(model) {
+    return { expires_after: { anchor: 'created_at', seconds: 600 },
+      session: { type: 'transcription', audio: { input: {
+        transcription: { model: model },
+        turn_detection: { type: 'server_vad', silence_duration_ms: 500 } } } } };
+  }
+
+  function startRealtime() {
+    var cred = credential(); if (!cred) return;
+    var r = newRun(), pc = null, stream = null, stopping = false, done = false;
+    var order = [], texts = {}, pending = {}, settleTimer = null, giveUpTimer = null;
+    setRec(true); showLive('', ''); status('連線中…');
+    current = { stop: function () { stopping = true; status('連線取消。'); cleanup(); setRec(false); current = null; } };
+
+    function joined() { return order.map(function (id) { return texts[id] || ''; }).join(''); }
+    function cleanup() {
+      clearTimeout(settleTimer); clearTimeout(giveUpTimer);
+      if (stream) stream.getTracks().forEach(function (t) { t.stop(); });
+      if (pc) try { pc.close(); } catch (e) {}
+    }
+    function end() {
+      if (done) return; done = true; cleanup();
+      r.finalMs = performance.now() - r.tStop; r.text = joined(); showLive(r.text, '');
+      finish(r);
+    }
+    function maybeEnd() {
+      if (!stopping || Object.keys(pending).length) return;
+      clearTimeout(settleTimer); settleTimer = setTimeout(end, 400);
+    }
+    function onEvent(ev) {
+      if (ev.type === 'input_audio_buffer.committed') {
+        if (order.indexOf(ev.item_id) < 0) order.push(ev.item_id);
+        pending[ev.item_id] = true;
+      } else if (ev.type === 'conversation.item.input_audio_transcription.delta') {
+        if (r.firstMs == null) r.firstMs = performance.now() - r.t0;
+        if (order.indexOf(ev.item_id) < 0) order.push(ev.item_id);
+        texts[ev.item_id] = (texts[ev.item_id] || '') + (ev.delta || '');
+        showLive('', joined());
+      } else if (ev.type === 'conversation.item.input_audio_transcription.completed') {
+        if (r.firstMs == null) r.firstMs = performance.now() - r.t0;
+        if (order.indexOf(ev.item_id) < 0) order.push(ev.item_id);
+        texts[ev.item_id] = ev.transcript || '';
+        delete pending[ev.item_id];
+        showLive(joined(), ''); maybeEnd();
+      } else if (ev.type === 'conversation.item.input_audio_transcription.failed') {
+        delete pending[ev.item_id]; maybeEnd();
+      } else if (ev.type === 'error') {
+        var msg = (ev.error && ev.error.message) || '未知錯誤';
+        if (stopping && /empty|buffer too small/i.test(msg)) { maybeEnd(); return; }
+        status('OpenAI 錯誤：' + msg, true);
+      }
+    }
+
+    var tPress = performance.now();
+    clientSecret(r.model, cred).then(function (res) {
+      if (!res.ok) return apiError(res);
+      return res.json();
+    }).then(function (j) {
+      var ek = j.value || (j.client_secret && j.client_secret.value);
+      if (!ek) throw new Error('沒有拿到連線憑證。');
+      return navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(function (s) {
+        if (stopping) { s.getTracks().forEach(function (t) { t.stop(); }); throw new Error('已取消'); }
+        stream = s; pc = new RTCPeerConnection();
+        s.getTracks().forEach(function (t) { pc.addTrack(t, s); });
+        var dc = pc.createDataChannel('oai-events');
+        dc.onmessage = function (m) { try { onEvent(JSON.parse(m.data)); } catch (e) {} };
+        dc.onopen = function () {
+          if (stopping) return;
+          r.connectMs = performance.now() - tPress; r.t0 = performance.now();
+          status('已連線，請說話…（連線花了 ' + sec(r.connectMs) + ' 秒）');
+          current = { stop: function () {
+            stopping = true; r.tStop = performance.now(); r.speakMs = r.tStop - r.t0;
+            setRec(false); $('rec').disabled = true; status('正在完成辨識…');
+            // Let trailing audio arrive, then close the turn and stop the mic.
+            setTimeout(function () {
+              try { dc.send(JSON.stringify({ type: 'input_audio_buffer.commit' })); } catch (e) {}
+              stream.getTracks().forEach(function (t) { t.stop(); });
+              maybeEnd();
+            }, 300);
+            giveUpTimer = setTimeout(end, 8000);
+          } };
+        };
+        return pc.createOffer().then(function (offer) {
+          return pc.setLocalDescription(offer).then(function () {
+            return fetch('https://api.openai.com/v1/realtime/calls', { method: 'POST', body: offer.sdp,
+              headers: { Authorization: 'Bearer ' + ek, 'Content-Type': 'application/sdp' } });
+          });
+        }).then(function (res) {
+          if (!res.ok) return apiError(res);
+          return res.text().then(function (sdp) { return pc.setRemoteDescription({ type: 'answer', sdp: sdp }); });
+        });
+      });
+    }).catch(function (e) {
+      if (stopping && e.message === '已取消') return;
+      cleanup(); setRec(false); current = null; $('rec').disabled = false;
+      var msg = e.name === 'NotAllowedError' ? '麥克風權限被拒絕，請到瀏覽器設定允許麥克風。'
+        : e instanceof TypeError ? '連不到服務，請檢查網路後再試。（' + e.message + '）' : e.message;
+      status(msg, true);
+    });
+  }
+
   $('rec').onclick = function () {
     if (busy && current) { current.stop(); return; }
     if (engine === 'browser') { if (!SR) { status('這個瀏覽器沒有內建語音辨識，請改用 OpenAI。', true); return; } startBrowser(); }
+    else if (engine === 'rt') startRealtime();
     else startOpenAI();
   };
 
@@ -380,7 +525,7 @@
     renderLog();
   };
 
-  function engineName(r) { return r.engine === 'openai' ? r.model : '手機內建'; }
+  function engineName(r) { return r.engine === 'openai' ? r.model + '（上傳）' : r.engine === 'rt' ? r.model + '（即時）' : '手機內建'; }
   function renderLog() {
     var ul = $('log'); ul.textContent = '';
     if (!log.length) { var li = document.createElement('li'); li.className = 'note'; li.textContent = '還沒有紀錄。錄一段、核對後按「存下這一筆」。'; ul.appendChild(li); return; }
@@ -388,7 +533,8 @@
       var li = document.createElement('li');
       var m = document.createElement('div'); m.className = 'm';
       m.textContent = new Date(r.at).toLocaleString() + ' · ' + engineName(r) + ' · ' + r.lang +
-        ' · 首字 ' + sec(r.firstMs) + 's · 定稿 ' + sec(r.finalMs) + 's · 長度 ' + sec(r.speakMs) + 's · 錯字率 ' + (r.cer * 100).toFixed(0) + '%';
+        ' · 首字 ' + sec(r.firstMs) + 's · 定稿 ' + sec(r.finalMs) + 's · 長度 ' + sec(r.speakMs) + 's' +
+        (r.connectMs != null ? ' · 連線 ' + sec(r.connectMs) + 's' : '') + ' · 錯字率 ' + (r.cer * 100).toFixed(0) + '%';
       var t = document.createElement('div'); t.textContent = '辨識：' + r.text;
       li.appendChild(m); li.appendChild(t);
       if (r.corrected !== r.text) { var c = document.createElement('div'); c.textContent = '修正：' + r.corrected; li.appendChild(c); }
@@ -398,9 +544,9 @@
   renderLog();
 
   $('copy').onclick = function () {
-    var head = ['時間', '引擎', '語言', '第一批文字秒', '停止到定稿秒', '說話長度秒', '錯字率', '辨識結果', '修正後'].join('\t');
+    var head = ['時間', '引擎', '語言', '第一批文字秒', '停止到定稿秒', '說話長度秒', '連線秒', '錯字率', '辨識結果', '修正後'].join('\t');
     var rows = log.map(function (r) {
-      return [r.at, engineName(r), r.lang, sec(r.firstMs), sec(r.finalMs), sec(r.speakMs), (r.cer * 100).toFixed(1) + '%', r.text, r.corrected].join('\t');
+      return [r.at, engineName(r), r.lang, sec(r.firstMs), sec(r.finalMs), sec(r.speakMs), sec(r.connectMs), (r.cer * 100).toFixed(1) + '%', r.text, r.corrected].join('\t');
     });
     var txt = [head].concat(rows).join('\n');
     var done = function () { $('copy-msg').textContent = '已複製 ' + log.length + ' 筆，可以貼到 Google 試算表。'; };

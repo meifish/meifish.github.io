@@ -1,9 +1,15 @@
 # Talkie speech-to-text proxy
 
 This small Cloudflare Worker keeps the OpenAI key off the public test page at
-https://meifish.github.io/talkie/. The page sends the recording here along with
-a passcode. The worker checks the passcode and adds the OpenAI key, then passes
-OpenAI's answer back to the page.
+https://meifish.github.io/talkie/. Each request must carry a passcode. It has
+two jobs:
+
+- **`/token` (OpenAI 即時, the Tech Spec design):** returns a short-lived
+  OpenAI client secret that expires after 10 minutes. The phone uses it to
+  stream the microphone straight to OpenAI over WebRTC, so no audio passes
+  through the worker.
+- **`/transcribe` (OpenAI 上傳, for comparison):** relays one finished
+  recording to OpenAI and passes the text back.
 
 ## One-time setup (about 5 minutes, all in the browser)
 
@@ -20,8 +26,8 @@ OpenAI's answer back to the page.
    - `PASSCODE`: type **Secret**, value is any code you'll give testers
    - `ALLOWED_ORIGIN`: type **Text**, value is `https://meifish.github.io`
 5. **Connect the page.** Copy the worker's address (it looks like
-   `https://talkie-stt.<your-name>.workers.dev`). Put it in `PROXY_URL` near
-   the top of the script in `talkie/index.html`.
+   `https://talkie-stt.<your-name>.workers.dev`, no trailing slash). Put it in
+   `PROXY_URL` near the top of the script in `talkie/index.html`.
 
 ## What protects your credit
 
@@ -29,8 +35,8 @@ OpenAI's answer back to the page.
   using the worker.
 - Every request must carry the passcode. Change `PASSCODE` in Cloudflare at any
   time to shut out everyone who has the old one.
-- Only the three transcription models are allowed, and each recording is capped
-  at 10 MB.
+- Only the listed transcription models are allowed, streaming tokens expire
+  after 10 minutes, and each uploaded recording is capped at 10 MB.
 - The OpenAI monthly budget is the final backstop.
 
 The origin check can be faked by a script, so the passcode and the budget do the
