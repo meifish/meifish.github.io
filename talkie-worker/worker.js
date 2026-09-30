@@ -79,7 +79,9 @@ async function token(request, env, cors, fail) {
         type: 'transcription',
         audio: { input: {
           transcription: { model: body.model },
-          turn_detection: { type: 'server_vad', silence_duration_ms: 500 },
+          // The page decides: streaming models such as gpt-live-transcribe
+          // reject pause detection, so the page closes the turn itself.
+          turn_detection: body.vad === true ? { type: 'server_vad', silence_duration_ms: 500 } : null,
         } },
       },
     }),

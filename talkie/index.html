@@ -387,17 +387,20 @@
     if (PROXY_URL) {
       return fetch(PROXY_URL + '/token', { method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Passcode': cred },
-        body: JSON.stringify({ model: model }) });
+        body: JSON.stringify({ model: model, vad: usesVad(model) }) });
     }
     return fetch('https://api.openai.com/v1/realtime/client_secrets', { method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + cred },
       body: JSON.stringify(realtimeSession(model)) });
   }
+  // gpt-live-transcribe streams text as you speak and rejects pause detection;
+  // the other models only transcribe once a pause (or Stop) closes a turn.
+  function usesVad(model) { return model !== 'gpt-live-transcribe'; }
   function realtimeSession(model) {
     return { expires_after: { anchor: 'created_at', seconds: 600 },
       session: { type: 'transcription', audio: { input: {
         transcription: { model: model },
-        turn_detection: { type: 'server_vad', silence_duration_ms: 500 } } } } };
+        turn_detection: usesVad(model) ? { type: 'server_vad', silence_duration_ms: 500 } : null } } } };
   }
 
   function startRealtime() {
