@@ -83,10 +83,39 @@
       <div>
         <label for="lang">說的語言</label>
         <select id="lang">
-          <option value="zh-TW">中文（台灣國語）</option>
-          <option value="cmn-Hans-CN">中文（普通話）</option>
-          <option value="yue-Hant-HK">廣東話</option>
-          <option value="en-US">English (US)</option>
+          <optgroup label="中文">
+            <option value="zh-TW">中文（台灣國語）</option>
+            <option value="cmn-Hans-CN">中文（普通話）</option>
+            <option value="yue-Hant-HK">廣東話</option>
+          </optgroup>
+          <optgroup label="英文、法文">
+            <option value="en-CA">English（加拿大英文）</option>
+            <option value="en-US">English（美國英文）</option>
+            <option value="fr-CA">Français（加拿大法文）</option>
+          </optgroup>
+          <optgroup label="南亞">
+            <option value="pa-IN">ਪੰਜਾਬੀ（旁遮普語）</option>
+            <option value="hi-IN">हिन्दी（印地語）</option>
+            <option value="ur-PK">اردو（烏爾都語）</option>
+            <option value="ta-IN">தமிழ்（泰米爾語）</option>
+            <option value="gu-IN">ગુજરાતી（古吉拉特語）</option>
+          </optgroup>
+          <optgroup label="葡萄牙文、西班牙文">
+            <option value="pt-BR">Português（巴西葡萄牙文）</option>
+            <option value="pt-PT">Português（葡萄牙葡萄牙文）</option>
+            <option value="es-MX">Español（拉丁美洲西班牙文）</option>
+          </optgroup>
+          <optgroup label="其他">
+            <option value="fil-PH">Tagalog（菲律賓語）</option>
+            <option value="ar-SA">العربية（阿拉伯語）</option>
+            <option value="fa-IR">فارسی（波斯語）</option>
+            <option value="vi-VN">Tiếng Việt（越南語）</option>
+            <option value="ko-KR">한국어（韓語）</option>
+            <option value="ru-RU">Русский（俄語）</option>
+            <option value="uk-UA">Українська（烏克蘭語）</option>
+            <option value="it-IT">Italiano（義大利語）</option>
+            <option value="pl-PL">Polski（波蘭語）</option>
+          </optgroup>
         </select>
       </div>
       <div id="rtmodel-box" hidden>
@@ -122,7 +151,7 @@
   <section>
     <button id="rec">🎤 開始說話</button>
     <p id="status">按一下開始，說完再按一下停止。</p>
-    <div id="live" aria-live="polite"></div>
+    <div id="live" aria-live="polite" dir="auto"></div>
     <div class="metrics">
       <div><b id="m-first">–</b><span>第一批文字 (秒)</span></div>
       <div><b id="m-final">–</b><span>停止→定稿 (秒)</span></div>
@@ -133,7 +162,7 @@
   <section>
     <h2>核對與修正</h2>
     <label for="edit">把辨識錯的字改對，再按「存下這一筆」，就能算出錯字率。</label>
-    <textarea id="edit" placeholder="辨識結果會出現在這裡"></textarea>
+    <textarea id="edit" dir="auto" placeholder="辨識結果會出現在這裡"></textarea>
     <div class="btns">
       <button class="btn" id="save">存下這一筆</button>
       <span id="cer" class="note"></span>
@@ -142,14 +171,7 @@
 
   <section>
     <h2>可以唸的測試句</h2>
-    <ol class="samples">
-      <li>這個櫃子寬三十英吋，報價不包含檯面。</li>
-      <li>浴室磁磚每平方呎四塊半，工錢另外算。</li>
-      <li>明天早上八點半開工，水電師傅下午才會到。</li>
-      <li>這面牆要打掉，但是 load bearing 的話就不能動。</li>
-      <li>The quote doesn't include the countertop, right?</li>
-      <li>Can you make the backsplash eighteen inches high?</li>
-    </ol>
+    <ol class="samples" id="samples"></ol>
   </section>
 
   <section>
@@ -184,6 +206,42 @@
     openai: '說完才把整段錄音上傳給 OpenAI，用來對照即時模式。'
   };
 
+  // Test sentences per language (keyed by the language code's first part),
+  // all about the same kind of job-site talk.
+  var SAMPLES = {
+    zh: ['這個櫃子寬三十英吋，報價不包含檯面。', '浴室磁磚每平方呎四塊半，工錢另外算。', '明天早上八點半開工，水電師傅下午才會到。',
+      '這面牆要打掉，但是 load bearing 的話就不能動。', 'The quote doesn\'t include the countertop, right?'],
+    cmn: ['这个柜子宽三十英寸，报价不包含台面。', '浴室瓷砖每平方尺四块半，人工另外算。', '明天早上八点半开工，水电师傅下午才到。'],
+    yue: ['呢個櫃寬三十吋，報價唔包檯面。', '浴室階磚每平方呎四蚊半，人工另計。', '聽日朝早八點半開工，水電師傅下晝先到。'],
+    en: ['The quote doesn\'t include the countertop, right?', 'Can you make the backsplash eighteen inches high?', 'The electrician will be here at eight thirty tomorrow.'],
+    fr: ['La soumission n\'inclut pas le comptoir.', 'Peux-tu faire le dosseret de dix-huit pouces de haut?', 'On commence demain matin à huit heures et demie.'],
+    pa: ['ਕੱਲ੍ਹ ਸਵੇਰੇ ਅੱਠ ਵਜੇ ਕੰਮ ਸ਼ੁਰੂ ਹੋਵੇਗਾ।', 'ਟਾਈਲਾਂ ਦਾ ਖਰਚਾ ਵੱਖਰਾ ਹੈ।'],
+    hi: ['कल सुबह आठ बजे काम शुरू होगा।', 'टाइल का खर्चा अलग से लगेगा।'],
+    ur: ['کل صبح آٹھ بجے کام شروع ہوگا۔', 'ٹائلوں کا خرچہ الگ ہے۔'],
+    ta: ['நாளை காலை எட்டு மணிக்கு வேலை தொடங்கும்.', 'டைல்ஸ் செலவு தனியாக.'],
+    gu: ['કાલે સવારે આઠ વાગ્યે કામ શરૂ થશે.', 'ટાઇલ્સનો ખર્ચ અલગ છે.'],
+    pt: ['O orçamento não inclui a bancada.', 'Amanhã a obra começa às oito e meia.'],
+    es: ['La cotización no incluye la cubierta.', 'Mañana empezamos a las ocho y media.'],
+    fil: ['Bukas ng alas-otso ng umaga magsisimula ang trabaho.', 'Hiwalay ang bayad sa tiles.'],
+    ar: ['سيبدأ العمل غدًا في الساعة الثامنة صباحًا.', 'تكلفة البلاط منفصلة.'],
+    fa: ['کار فردا ساعت هشت صبح شروع می‌شود.', 'هزینه کاشی جداست.'],
+    vi: ['Ngày mai bắt đầu làm lúc tám giờ rưỡi sáng.', 'Báo giá không bao gồm mặt bàn bếp.'],
+    ko: ['내일 아침 여덟 시 반에 공사를 시작합니다.', '견적에 상판은 포함되어 있지 않습니다.'],
+    ru: ['Завтра начинаем работу в половине девятого.', 'Смета не включает столешницу.'],
+    uk: ['Завтра починаємо роботу о пів на дев\'яту.', 'Кошторис не включає стільницю.'],
+    it: ['Il preventivo non include il piano di lavoro.', 'Domani si comincia alle otto e mezza.'],
+    pl: ['Wycena nie obejmuje blatu.', 'Jutro zaczynamy o wpół do dziewiątej.']
+  };
+  function showSamples() {
+    var ol = $('samples'); ol.textContent = '';
+    (SAMPLES[$('lang').value.split('-')[0]] || SAMPLES.en).forEach(function (t) {
+      var li = document.createElement('li'); li.dir = 'auto'; li.textContent = t; ol.appendChild(li);
+    });
+  }
+  // OpenAI wants an ISO-639-1 code; Mandarin and Cantonese both go as "zh",
+  // and Whisper calls Tagalog "tl".
+  function isoFor(lang) { var p = lang.split('-')[0]; return { cmn: 'zh', yue: 'zh', fil: 'tl' }[p] || p; }
+
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   var engine = store.get('engine', SR ? 'browser' : 'openai');
   var log = store.get('log', []);
@@ -217,7 +275,8 @@
   $('eng-browser').onclick = function () { if (!busy) setEngine('browser'); };
   $('eng-rt').onclick = function () { if (!busy) setEngine('rt'); };
   $('eng-openai').onclick = function () { if (!busy) setEngine('openai'); };
-  $('lang').onchange = function () { store.set('lang', this.value); };
+  $('lang').onchange = function () { store.set('lang', this.value); showSamples(); };
+  showSamples();
   $('model').onchange = function () { store.set('model', this.value); };
   $('rtmodel').onchange = function () { store.set('rtmodel', this.value); };
   $('key').onchange = function () { store.set('key', this.value.trim()); };
@@ -368,8 +427,7 @@
     var fd = new FormData();
     fd.append('file', blob, 'speech.' + ext);
     fd.append('model', r.model);
-    var iso = r.lang.slice(0, 2) === 'en' ? 'en' : 'zh';
-    fd.append('language', iso);
+    fd.append('language', isoFor(r.lang));
     var stream = r.model !== 'whisper-1';
     if (stream) fd.append('stream', 'true');
     fetch(PROXY_URL ? PROXY_URL + '/transcribe' : 'https://api.openai.com/v1/audio/transcriptions', {
