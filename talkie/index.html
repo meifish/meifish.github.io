@@ -83,14 +83,15 @@
       <div>
         <label for="lang">說的語言</label>
         <select id="lang">
-          <optgroup label="中文">
-            <option value="zh-TW">中文（台灣國語）</option>
-            <option value="cmn-Hans-CN">中文（普通話）</option>
-            <option value="yue-Hant-HK">廣東話</option>
-          </optgroup>
+          <option value="zh-TW">中文（台灣國語）</option>
+          <option value="cmn-Hans-CN">中文（普通話）</option>
+          <option value="yue-Hant-HK">廣東話</option>
+          <option value="en-US">English (US)</option>
+          <option value="other">其他語言…</option>
+        </select>
+        <select id="lang-other" aria-label="其他語言" hidden style="margin-top:8px">
           <optgroup label="英文、法文">
             <option value="en-CA">English（加拿大英文）</option>
-            <option value="en-US">English（美國英文）</option>
             <option value="fr-CA">Français（加拿大法文）</option>
           </optgroup>
           <optgroup label="南亞">
@@ -105,7 +106,7 @@
             <option value="pt-PT">Português（葡萄牙葡萄牙文）</option>
             <option value="es-MX">Español（拉丁美洲西班牙文）</option>
           </optgroup>
-          <optgroup label="其他">
+          <optgroup label="更多">
             <option value="fil-PH">Tagalog（菲律賓語）</option>
             <option value="ar-SA">العربية（阿拉伯語）</option>
             <option value="fa-IR">فارسی（波斯語）</option>
@@ -234,7 +235,7 @@
   };
   function showSamples() {
     var ol = $('samples'); ol.textContent = '';
-    (SAMPLES[$('lang').value.split('-')[0]] || SAMPLES.en).forEach(function (t) {
+    (SAMPLES[lang().split('-')[0]] || SAMPLES.en).forEach(function (t) {
       var li = document.createElement('li'); li.dir = 'auto'; li.textContent = t; ol.appendChild(li);
     });
   }
@@ -247,7 +248,14 @@
   var log = store.get('log', []);
   var busy = false, current = null;
 
-  $('lang').value = store.get('lang', 'zh-TW');
+  // The common languages sit in the first menu; "其他語言…" opens a second one.
+  function lang() { return $('lang').value === 'other' ? $('lang-other').value : $('lang').value; }
+  (function (saved) {
+    var inMain = !!document.querySelector('#lang option[value="' + saved + '"]');
+    $('lang').value = inMain ? saved : 'other';
+    if (!inMain) $('lang-other').value = saved;
+    $('lang-other').hidden = inMain;
+  })(store.get('lang', 'zh-TW'));
   $('model').value = store.get('model', 'gpt-4o-mini-transcribe');
   $('rtmodel').value = store.get('rtmodel', 'gpt-live-transcribe');
   $('key').value = store.get('key', '');
@@ -275,7 +283,10 @@
   $('eng-browser').onclick = function () { if (!busy) setEngine('browser'); };
   $('eng-rt').onclick = function () { if (!busy) setEngine('rt'); };
   $('eng-openai').onclick = function () { if (!busy) setEngine('openai'); };
-  $('lang').onchange = function () { store.set('lang', this.value); showSamples(); };
+  $('lang').onchange = $('lang-other').onchange = function () {
+    $('lang-other').hidden = $('lang').value !== 'other';
+    store.set('lang', lang()); showSamples();
+  };
   showSamples();
   $('model').onchange = function () { store.set('model', this.value); };
   $('rtmodel').onchange = function () { store.set('rtmodel', this.value); };
@@ -319,7 +330,7 @@
 
   function newRun() {
     var r = { at: new Date().toISOString(), engine: engine, model: engine === 'openai' ? $('model').value : engine === 'rt' ? $('rtmodel').value : 'browser',
-      lang: $('lang').value, t0: performance.now(), firstMs: null, finalMs: null, speakMs: null, text: '' };
+      lang: lang(), t0: performance.now(), firstMs: null, finalMs: null, speakMs: null, text: '' };
     conv = converterFor(r);
     return r;
   }
