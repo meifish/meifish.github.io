@@ -1,8 +1,8 @@
 # Talkie speech-to-text proxy
 
-This small Cloudflare Worker keeps the OpenAI key off the public test page at
-https://meifish.github.io/talkie/. Each request must carry a passcode. It has
-two jobs:
+This small Cloudflare Worker keeps the OpenAI key off the public test pages at
+https://meifish.github.io/talkie/ and https://meifish.github.io/talkie/translate/.
+Each request must carry a passcode. It has three jobs:
 
 - **`/token` (OpenAI 即時, the Tech Spec design):** returns a short-lived
   OpenAI client secret that expires after 10 minutes. The phone uses it to
@@ -10,6 +10,10 @@ two jobs:
   through the worker.
 - **`/transcribe` (OpenAI 上傳, for comparison):** relays one finished
   recording to OpenAI and passes the text back.
+- **`/translate` (翻譯測試):** sends the text to an OpenAI chat model and
+  streams the translation back as it is written (server-sent events: `delta`,
+  `done`, `error`). Only the listed translation models are allowed, and each
+  field is capped at 4,000 characters.
 
 ## One-time setup (about 5 minutes, all in the browser)
 
@@ -35,7 +39,7 @@ two jobs:
   using the worker.
 - Every request must carry the passcode. Change `PASSCODE` in Cloudflare at any
   time to shut out everyone who has the old one.
-- Only the listed transcription models are allowed, streaming tokens expire
+- Only the listed transcription and translation models are allowed, streaming tokens expire
   after 10 minutes, and each uploaded recording is capped at 10 MB.
 - The OpenAI monthly budget is the final backstop.
 
