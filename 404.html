@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Page not found</title>
+<script>
+  var p = location.pathname;
+  if (p.indexOf("/ai_alchemy/") !== 0 && p.indexOf("/talkie/") !== 0) {
+    location.replace("/ai_alchemy" + p + location.search + location.hash);
+  }
+</script></head>
+<body><p>Page not found. <a href="/ai_alchemy/">Go to AI Alchemy</a>.</p></body></html>

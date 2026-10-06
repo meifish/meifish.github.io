@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>AI Alchemy</title>
+  <link>https://meifish.github.io/ai_alchemy/</link>
+  <atom:link href="https://meifish.github.io/ai_alchemy/feed.xml" rel="self" type="application/rss+xml" />
+  <description>A hobbyist tries the newest AI agent skills in a clean sandbox, builds something silly with each one, and reports back.</description>
+  <language>en</language>
+  <lastBuildDate>Tue, 06 Oct 2026 03:24:28 +0000</lastBuildDate>
+  
+  
+  
+  
+  <item>
+    <title>I asked an AI to design a meteor shower party. It rolled dice and handed me a blanket.</title>
+    <link>https://meifish.github.io/ai_alchemy/posts/impeccable-meteors/</link>
+    <guid isPermaLink="true">https://meifish.github.io/posts/impeccable-meteors/</guid>
+    <pubDate>Sun, 04 Oct 2026 00:00:00 +0000</pubDate>
+    <description>&lt;p&gt;&lt;img src="https://meifish.github.io/ai_alchemy/posts/impeccable-meteors/img/hero-desk.jpg" alt="" /&gt;&lt;/p&gt;&lt;p&gt;Impeccable is a design skill that fights the &apos;AI made this&apos; look. I gave it and plain Claude the same meteor shower brief, then let a robot critic tear both apart.&lt;/p&gt;&lt;p&gt;&lt;a href="https://meifish.github.io/ai_alchemy/posts/impeccable-meteors/"&gt;Read the interactive post&lt;/a&gt;&lt;/p&gt;</description>
+  </item>
+  
+  
+  
+  
+  <item>
+    <title>I asked an AI to explain my pizza order. It drew me three maps.</title>
+    <link>https://meifish.github.io/ai_alchemy/posts/archify-pizza/</link>
+    <guid isPermaLink="true">https://meifish.github.io/posts/archify-pizza/</guid>
+    <pubDate>Sat, 26 Sep 2026 00:00:00 +0000</pubDate>
+    <description>&lt;p&gt;&lt;img src="https://meifish.github.io/ai_alchemy/posts/archify-pizza/img/arch-light.png" alt="" /&gt;&lt;/p&gt;&lt;p&gt;Archify turns a plain-language description into interactive, self-checking diagrams. I fed it a pizza delivery app and kept poking until it stopped yelling at me.&lt;/p&gt;&lt;p&gt;&lt;a href="https://meifish.github.io/ai_alchemy/posts/archify-pizza/"&gt;Read the interactive post&lt;/a&gt;&lt;/p&gt;</description>
+  </item>
+  
+</channel>
+</rss>

@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Alchemy</title>
+<meta name="description" content="A hobbyist tries the newest AI agent skills in a clean sandbox, builds something silly with each one, and reports back.">
+<link rel="alternate" type="application/rss+xml" title="AI Alchemy" href="/ai_alchemy/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="/ai_alchemy/assets/site.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar">
+    <a class="brand" translate="no" href="/ai_alchemy/">⚗️ AI Alchemy</a>
+    <nav><a href="/ai_alchemy/subscribe/">Subscribe</a><a href="/ai_alchemy/feed.xml">RSS</a><span data-translate></span></nav>
+  </header>
+  <blockquote>
+  <p>Note: this audit was run before I fixed its three P1 issues (red light mode, the small text under “Gates 8 pm”, and faint input borders). The live page includes those fixes.</p>
+</blockquote>
+
+<h1 id="audit-orionids-night-at-cedar-hollow-siteindexhtml">Audit: Orionids Night at Cedar Hollow (<code class="language-plaintext highlighter-rouge">site/index.html</code>)</h1>
+
+<p>Audited 2026-10-04 against <code class="language-plaintext highlighter-rouge">reference/audit.md</code>. Evidence comes from the bundled detector (<code class="language-plaintext highlighter-rouge">impeccable detect --json site/index.html</code>, run from <code class="language-plaintext highlighter-rouge">the project folder</code> with DESIGN.md present), a full read of the source, and Playwright renders in Chromium at 1440x900, 820x1180, 390x844 and 320x700. The 390 render ran in an emulated mobile context with touch. Contrast numbers are WCAG ratios worked out from token hex values. Red-light-mode numbers are sampled from rendered pixels.</p>
+
+<p>Screenshots are in <code class="language-plaintext highlighter-rouge">audit/</code>: <code class="language-plaintext highlighter-rouge">desk.png</code>, <code class="language-plaintext highlighter-rouge">tab.png</code>, <code class="language-plaintext highlighter-rouge">mob.png</code> (full page), <code class="language-plaintext highlighter-rouge">mob-hero.png</code>, <code class="language-plaintext highlighter-rouge">mob-scrub.png</code>, <code class="language-plaintext highlighter-rouge">mob-scrub-after.png</code>, <code class="language-plaintext highlighter-rouge">mob-red.png</code>, <code class="language-plaintext highlighter-rouge">mob-red-label.png</code>, <code class="language-plaintext highlighter-rouge">mob-done.png</code>, <code class="language-plaintext highlighter-rouge">desk-reduced.png</code>. <code class="language-plaintext highlighter-rouge">mob-night.png</code> was taken while a smooth scroll was still running, so its dark strip at the top is a capture artifact and not a page bug.</p>
+
+<h2 id="audit-health-score">Audit Health Score</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Dimension</th>
+      <th>Score</th>
+      <th>Key Finding</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Accessibility</td>
+      <td>3</td>
+      <td>Solid semantics, form and focus handling. In red-light mode, text on madder drops to 2.4-2.9:1. Signboard gloss text is 4.21:1. Input borders are 2.27:1.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Performance</td>
+      <td>3</td>
+      <td>Lean, with no images and self-hosted woff2. Both canvas animation loops keep running forever, even off-screen.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Responsive Design</td>
+      <td>3</td>
+      <td>No overflow at 320/390/820/1440, and the scrubber drags under touch. The red-light toggle is 35px tall, and orbit labels shrink to about 10px on phones.</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Theming</td>
+      <td>2</td>
+      <td>The core dye tokens are used well. The label’s sub-palette is hard-coded and about 12 tints are undocumented. The red-light “theme” is amber and breaks contrast.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Implementation Integrity</td>
+      <td>3</td>
+      <td>A coherent, product-specific system. The drift is type-ramp sprawl, and the red-light mode does not produce red light.</td>
+    </tr>
+    <tr>
+      <td><strong>Total</strong></td>
+      <td> </td>
+      <td><strong>14/20</strong></td>
+      <td><strong>Good (address weak dimensions)</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="implementation-integrity-verdict">Implementation Integrity Verdict</h2>
+
+<p><strong>PASS.</strong> The page expresses its DESIGN.md system specifically and consistently:</p>
+<ul>
+  <li>Full-bleed single-dye bands separated by pinstripes (<code class="language-plaintext highlighter-rouge">.pin</code>, lines 50-53).</li>
+  <li>Blanket-stitch and fringe line work as data-URI SVGs (lines 27-29).</li>
+  <li>One light surface, the woven label (lines 92-103).</li>
+  <li>Big Shoulders uppercase over Atkinson Hyperlegible Next.</li>
+  <li>Bark-tinted sewn-on shadows on the label and patches only.</li>
+  <li>A live canvas sky that freezes under reduced motion.</li>
+</ul>
+
+<p>None of it could be swapped onto an unrelated product. The deterministic warnings are mostly false positives against intentional display type (see below).</p>
+
+<p>The verified integrity problems:</p>
+<ol>
+  <li><strong>Red-light mode is not red.</strong> The filter <code class="language-plaintext highlighter-rouge">grayscale(1) sepia(1) saturate(7) hue-rotate(-38deg) brightness(.62)</code> (line 207) renders the woven label as <code class="language-plaintext highlighter-rouge">rgb(160,128,34)</code>, an amber/olive with a strong green channel, so the promise to protect night vision is only half kept. It also pushes several text pairs below AA.</li>
+  <li><strong>Type-ramp drift.</strong> There are about 12 off-ramp font sizes, and 10 literal uses of four colors that DESIGN.md names but CSS never tokenizes.</li>
+</ol>
+
+<h3 id="detector-results-verified">Detector results, verified</h3>
+
+<p>The detector returned 32 findings: 12 warnings and 20 advisories.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Detector finding</th>
+      <th>Count</th>
+      <th>Verdict</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">all-caps-body</code> (47 and 51 chars)</td>
+      <td>2</td>
+      <td><strong>False positive.</strong> These are the hero H1 and the <code class="language-plaintext highlighter-rouge">.close</code> line, both display headlines sanctioned by DESIGN.md’s Park Sign Rule. No paragraph is set in caps.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">cramped-padding</code> on <code class="language-plaintext highlighter-rouge">&lt;section class="band"&gt;</code></td>
+      <td>4</td>
+      <td><strong>False positive.</strong> Bands pad <code class="language-plaintext highlighter-rouge">clamp(64px,9vw,128px) clamp(20px,5vw,72px)</code> (line 45), and every band renders with generous inset in screenshots.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">tight-leading</code> 1.12x / 0.95x</td>
+      <td>3</td>
+      <td><strong>False positive.</strong> These are <code class="language-plaintext highlighter-rouge">.big-line</code> (the Lead style, documented at 1.12) and <code class="language-plaintext highlighter-rouge">.close</code> (0.95), both display-size condensed type of 1.7rem and up. All body text is 1.6.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">dark-glow</code> (#2b1a0d)</td>
+      <td>1</td>
+      <td><strong>False positive as a glow.</strong> The flagged shadow is the bark-tinted, offset shadow on <code class="language-plaintext highlighter-rouge">.scrub</code> (line 182), which sits on the mustard band, not a dark page. It is a minor drift, though: the Sewn-On Rule lists only the label and patches as casting shadows (P3).</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">repeating-stripes-gradient</code></td>
+      <td>1</td>
+      <td><strong>False positive.</strong> These are the woven-label grain (documented) and the stitched range track. Both are deliberate textile vocabulary.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">design-system-font-size</code></td>
+      <td>15</td>
+      <td><strong>Partly valid.</strong> 2.55rem, 1.5rem, 0.95rem and 1.7rem are documented in DESIGN.md prose, though not in the frontmatter ramp. 0.72rem, 0.82rem, 0.85rem, 0.98rem, 1rem, 1.35rem, 15px and four clamp() scales are true drift (P2).</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">design-system-color</code></td>
+      <td>6</td>
+      <td><strong>Valid.</strong> These are #7a6649, #fff1ec, #efe1bf, rgb(205,187,146) (#cdbb92), rgba(255,255,255,.18) and rgba(0,0,0,.45). The last is a neutral gray shadow, which DESIGN.md forbids (P3).</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">design-system-radius</code> 999px</td>
+      <td>1</td>
+      <td><strong>Valid.</strong> The red-light toggle is a pill (line 68), outside the 2/4/6px scale (P3).</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="executive-summary">Executive Summary</h2>
+
+<ul>
+  <li><strong>Audit Health Score: 14/20 (Good)</strong></li>
+  <li><strong>Issues found: 12.</strong> P0: 0, P1: 3, P2: 5, P3: 4.</li>
+  <li><strong>Top issues:</strong>
+    <ol>
+      <li><strong>[P1]</strong> Red-light mode breaks contrast and renders amber rather than red. On madder surfaces, text drops to about 2.4-2.9:1 (line 207).</li>
+      <li><strong>[P1]</strong> The gloss line under “Gates 8 pm” and “Best after 1 am” is 4.21:1 because of <code class="language-plaintext highlighter-rouge">opacity:.92</code> (line 90).</li>
+      <li><strong>[P1]</strong> Input and stepper borders are 2.27:1 against the field (#b9a77f on #fffaf0), below the 3:1 non-text minimum (lines 110, 116).</li>
+      <li><strong>[P2]</strong> Both canvas <code class="language-plaintext highlighter-rouge">requestAnimationFrame</code> loops run forever, including off-screen. That costs battery on the phones people use in the car park.</li>
+      <li><strong>[P2]</strong> Timeline copy fades to 3.0:1 while the scrubber is in use (line 201).</li>
+    </ol>
+  </li>
+  <li><strong>Next steps:</strong> fix the red-light filter and the three contrast pairs first (all small CSS changes). Then pause the animations off-screen. Then fold the stray sizes and colors into tokens.</li>
+</ul>
+
+<h2 id="detailed-findings-by-severity">Detailed Findings by Severity</h2>
+
+<h3 id="p1-major">P1 Major</h3>
+
+<p><strong>[P1] Red-light mode drops text below AA contrast and does not produce red light</strong></p>
+<ul>
+  <li><strong>Location:</strong> <code class="language-plaintext highlighter-rouge">site/index.html</code> line 207 (<code class="language-plaintext highlighter-rouge">html.redlight body{filter:grayscale(1) sepia(1) saturate(7) hue-rotate(-38deg) brightness(.62) contrast(1.05)}</code>)</li>
+  <li><strong>Category:</strong> Accessibility / Theming / Implementation Integrity</li>
+  <li><strong>Impact:</strong> This is the mode visitors are told to use on the night (PRODUCT.md: “white screens ruin night vision”). Measured from the 390px render (<code class="language-plaintext highlighter-rouge">mob-red-label.png</code>):
+    <ul>
+      <li>Wool gloss text on madder: 2.87:1.</li>
+      <li>“Save my spot” button label: 2.37:1.</li>
+      <li>Input placeholder: 2.16:1.</li>
+      <li>Meteor tally: 3.62:1.</li>
+    </ul>
+
+    <p>The label renders as a large amber field, <code class="language-plaintext highlighter-rouge">rgb(160,128,34)</code>, whose green channel is about half its red. That is the light most likely to disturb dark adaptation. The mode is least readable in exactly the place it is meant to be used.</p>
+  </li>
+  <li><strong>WCAG/Standard:</strong> 1.4.3 Contrast (Minimum); DESIGN.md “Respect the dark”.</li>
+  <li><strong>Recommendation:</strong>
+    <ul>
+      <li>Build red mode from tokens, not a hue-rotate filter. Redefine <code class="language-plaintext highlighter-rouge">--wool</code>, <code class="language-plaintext highlighter-rouge">--madder</code>, <code class="language-plaintext highlighter-rouge">--mustard</code> and the other color tokens under <code class="language-plaintext highlighter-rouge">html.redlight</code> as values in a red-only ramp, where text is something like <code class="language-plaintext highlighter-rouge">#ff3b2f</code> on near-black and dyes become dark reds.</li>
+      <li>Repaint the canvases from those tokens.</li>
+      <li>If the filter stays, keep the luminance mapping and add a red-channel-only <code class="language-plaintext highlighter-rouge">feColorMatrix</code> (<code class="language-plaintext highlighter-rouge">values="0.3 0.6 0.1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"</code>) so green and blue go to zero. Re-check contrast afterwards.</li>
+      <li>Mirror <code class="language-plaintext highlighter-rouge">aria-pressed</code> onto the inline <code class="language-plaintext highlighter-rouge">[data-red]</code> button too (line 438 only updates <code class="language-plaintext highlighter-rouge">btns[0]</code>).</li>
+    </ul>
+  </li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable colorize</code></li>
+</ul>
+
+<p><strong>[P1] Signboard gloss text under-contrast</strong></p>
+<ul>
+  <li><strong>Location:</strong> line 90, <code class="language-plaintext highlighter-rouge">.label-facts span{... opacity:.92 ...}</code> (the “North Meadow, …” and “The waxing moon sets …” lines on the madder blanket edge)</li>
+  <li><strong>Category:</strong> Accessibility</li>
+  <li><strong>Impact:</strong> Wool on madder is 4.71:1. The 0.92 opacity lowers it to 4.21:1 at 16.8px regular weight. This is the key logistics copy (where to go, when to look).</li>
+  <li><strong>WCAG/Standard:</strong> 1.4.3 Contrast (Minimum)</li>
+  <li><strong>Recommendation:</strong> Remove the <code class="language-plaintext highlighter-rouge">opacity:.92</code>. Wool on madder at full strength passes, and hierarchy already comes from the size and face change.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable polish</code></li>
+</ul>
+
+<p><strong>[P1] Form field and stepper boundaries below 3:1</strong></p>
+<ul>
+  <li><strong>Location:</strong> lines 110 and 116 (<code class="language-plaintext highlighter-rouge">border:2px solid #b9a77f</code> on <code class="language-plaintext highlighter-rouge">#fffaf0</code>, set on a <code class="language-plaintext highlighter-rouge">#f1e5c9</code> label)</li>
+  <li><strong>Category:</strong> Accessibility</li>
+  <li><strong>Impact:</strong> The input border is 2.27:1 against its fill, and the fill barely differs from the label cloth. Low-vision users and anyone outdoors at night will struggle to find the hit areas of the only conversion form on the page. Focus is fine: the border turns madder at 5.67:1.</li>
+  <li><strong>WCAG/Standard:</strong> 1.4.11 Non-text Contrast</li>
+  <li><strong>Recommendation:</strong> Darken <code class="language-plaintext highlighter-rouge">label-stroke</code> to at least 3:1 against <code class="language-plaintext highlighter-rouge">label-field</code>, for example a bark-soft-leaning tan around #8f7b52 (already used for hover, line 112). Update DESIGN.md’s <code class="language-plaintext highlighter-rouge">label-stroke</code> to match.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable harden</code></li>
+</ul>
+
+<h3 id="p2-minor">P2 Minor</h3>
+
+<p><strong>[P2] Canvas animation loops never pause</strong></p>
+<ul>
+  <li><strong>Location:</strong> hero sky <code class="language-plaintext highlighter-rouge">frame()</code> lines 503-512; scrubber <code class="language-plaintext highlighter-rouge">tick()</code> lines 613-626</li>
+  <li><strong>Category:</strong> Performance</li>
+  <li><strong>Impact:</strong> The hero loop starts at load and never checks visibility. The scrubber’s IntersectionObserver only starts its loop and never stops it, so after a visitor scrolls past the night section, both canvases repaint at 60fps for the rest of the visit. In red-light mode, every frame also re-filters the whole <code class="language-plaintext highlighter-rouge">body</code>. On a phone at 2 am with a cold battery, that matters.</li>
+  <li><strong>Recommendation:</strong> Track intersection for both canvases and cancel or resume rAF on visibility, stopping on exit as well as starting on entry. Consider dropping the frame rate for the twinkle. Debounce the <code class="language-plaintext highlighter-rouge">resize</code> handler (line 510), which re-seeds and re-projects on every event.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable optimize</code></li>
+</ul>
+
+<p><strong>[P2] Timeline text fades below AA during scrubbing</strong></p>
+<ul>
+  <li><strong>Location:</strong> line 201, <code class="language-plaintext highlighter-rouge">.timeline.scrubbing li{opacity:.62}</code></li>
+  <li><strong>Category:</strong> Accessibility</li>
+  <li><strong>Impact:</strong> Once the visitor touches the scrubber, every timeline entry except the current one drops to 3.0:1 (bark-mid body copy) or 3.41:1 (bark headings) on mustard, and stays there for the rest of the visit. The copy is still meant to be read.</li>
+  <li><strong>WCAG/Standard:</strong> 1.4.3 Contrast (Minimum)</li>
+  <li><strong>Recommendation:</strong> Mark the current step with something other than fading. For example, emphasize the <code class="language-plaintext highlighter-rouge">.now</code> row with the larger solid node, a madder-deep rule or a bolder time. Or keep inactive rows at an opacity of 0.85 or higher, which holds 4.5:1 on mustard.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable polish</code></li>
+</ul>
+
+<p><strong>[P2] Type-ramp drift: about 12 sizes off the DESIGN.md scale</strong></p>
+<ul>
+  <li><strong>Location:</strong>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">.brand small</code> 0.72rem (line 63, 11.5px)</li>
+      <li><code class="language-plaintext highlighter-rouge">.scrub-ticks</code> 0.82rem (line 198)</li>
+      <li><code class="language-plaintext highlighter-rouge">.err</code> and <code class="language-plaintext highlighter-rouge">.scrub-note</code> 0.85rem (lines 115, 199)</li>
+      <li><code class="language-plaintext highlighter-rouge">.woven .sub</code> 0.98rem (line 105)</li>
+      <li><code class="language-plaintext highlighter-rouge">.field input</code> 1rem (line 110)</li>
+      <li><code class="language-plaintext highlighter-rouge">.where dt</code> 1.35rem (line 172)</li>
+      <li><code class="language-plaintext highlighter-rouge">.orbit text</code> 15px (line 148)</li>
+      <li>Clamp scales: <code class="language-plaintext highlighter-rouge">.hero .lede</code> (line 75), <code class="language-plaintext highlighter-rouge">.timeline time</code> (line 155), <code class="language-plaintext highlighter-rouge">.close</code> (line 174), <code class="language-plaintext highlighter-rouge">.scrub-time</code> (line 187)</li>
+    </ul>
+  </li>
+  <li><strong>Category:</strong> Implementation Integrity</li>
+  <li><strong>Impact:</strong> DESIGN.md says running text is 1.05rem or larger, read at arm’s length on a phone. The brand subline (11.5px, carrying the “fictional park” disclosure), the scrubber ticks and the scrubber note all fall below that. Each new one-off size weakens the ramp.</li>
+  <li><strong>Recommendation:</strong> Map each to a documented step: Label 0.9rem for small UI, Body for notes, Title for <code class="language-plaintext highlighter-rouge">dt</code>. Add a documented “caption” step if one is really needed. Add the deliberate clamp scales (hero lede, scrub time, close line) to the frontmatter ramp.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable typeset</code></li>
+</ul>
+
+<p><strong>[P2] Label sub-palette and tints hard-coded instead of tokenized</strong></p>
+<ul>
+  <li><strong>Location:</strong> lines 105, 110-120, 126, 131, 157-158</li>
+  <li><strong>Category:</strong> Theming</li>
+  <li><strong>Impact:</strong>
+    <ul>
+      <li>DESIGN.md names <code class="language-plaintext highlighter-rouge">bark-soft</code> (#4a3320), <code class="language-plaintext highlighter-rouge">bark-mid</code> (#3d2614), <code class="language-plaintext highlighter-rouge">label-field</code> (#fffaf0) and <code class="language-plaintext highlighter-rouge">label-stroke</code> (#b9a77f), yet the CSS has no tokens for them and repeats the literals 10 times.</li>
+      <li>Six more tints appear nowhere in DESIGN.md: #7a6649, #8f7b52, #fff1ec, #efe1bf, #e2d4b0, #cdbb92.</li>
+      <li><code class="language-plaintext highlighter-rouge">--forest-deep</code> is defined but never used. The badge green #2c5537 nearly duplicates <code class="language-plaintext highlighter-rouge">forest</code> (#2f5a3c).</li>
+    </ul>
+
+    <p>A proper token-based red-light mode (see P1) would have to chase every one of these literals.</p>
+  </li>
+  <li><strong>Recommendation:</strong> Add <code class="language-plaintext highlighter-rouge">--bark-soft</code>, <code class="language-plaintext highlighter-rouge">--bark-mid</code>, <code class="language-plaintext highlighter-rouge">--label-field</code>, <code class="language-plaintext highlighter-rouge">--label-stroke</code>, <code class="language-plaintext highlighter-rouge">--label-hover</code> and <code class="language-plaintext highlighter-rouge">--field-error</code> to <code class="language-plaintext highlighter-rouge">:root</code> and use them everywhere. Either document the hover, error and divider tints or derive them with <code class="language-plaintext highlighter-rouge">color-mix()</code>. Remove <code class="language-plaintext highlighter-rouge">--forest-deep</code>, and use <code class="language-plaintext highlighter-rouge">--forest</code> in the badge.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable polish</code></li>
+</ul>
+
+<p><strong>[P2] Orbit diagram labels shrink to about 10px on phones</strong></p>
+<ul>
+  <li><strong>Location:</strong> lines 147-148 and 335-347 (<code class="language-plaintext highlighter-rouge">.orbit text{font-size:15px}</code> inside a 520-unit viewBox)</li>
+  <li><strong>Category:</strong> Responsive</li>
+  <li><strong>Impact:</strong> At 390px, the SVG renders about 350px wide, so the labels (“Earth, late October”, “Halley’s dust trail”) come out around 10px. That is the diagram’s whole explanation for first-timers. The dust-trail ellipse is also clipped at the left edge of the viewBox.</li>
+  <li><strong>Recommendation:</strong> Below 560px, raise the SVG text to about 22-24 user units, or move the labels into HTML around the figure. Widen the viewBox so the ellipse is not clipped.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable adapt</code></li>
+</ul>
+
+<h3 id="p3-polish">P3 Polish</h3>
+
+<p><strong>[P3] Meteor counting is pointer-only</strong></p>
+<ul>
+  <li><strong>Location:</strong> lines 526-531 (<code class="language-plaintext highlighter-rouge">pointerdown</code> on <code class="language-plaintext highlighter-rouge">#sky</code>, which is <code class="language-plaintext highlighter-rouge">aria-hidden</code>)</li>
+  <li><strong>Category:</strong> Accessibility</li>
+  <li><strong>Impact:</strong> The tally (“Tap meteors in the sky to count them: 0”) is announced through <code class="language-plaintext highlighter-rouge">aria-live</code>, but keyboard and screen-reader users have no way to add to it. It is a delight feature, not part of the task, which is why this is P3.</li>
+  <li><strong>Recommendation:</strong> Add a small “I saw one” button next to the tally, or make the tally a button that counts.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable harden</code></li>
+</ul>
+
+<p><strong>[P3] Red-light toggle: small target, pill shape, and an inline duplicate without state</strong></p>
+<ul>
+  <li><strong>Location:</strong> lines 68-70, 261, 402, 438</li>
+  <li><strong>Category:</strong> Responsive / Implementation Integrity</li>
+  <li><strong>Impact:</strong>
+    <ul>
+      <li>The nav toggle is 155x35 and the inline one is 125x35. Both are below the 44px target the design uses elsewhere, though they pass WCAG 2.5.8’s 24px minimum.</li>
+      <li><code class="language-plaintext highlighter-rouge">border-radius:999px</code> is outside the 2/4/6px rounded scale and is the pill shape DESIGN.md warns against.</li>
+      <li>The inline <code class="language-plaintext highlighter-rouge">[data-red]</code> button never receives <code class="language-plaintext highlighter-rouge">aria-pressed</code>.</li>
+      <li>Desktop nav links are 20px tall.</li>
+    </ul>
+  </li>
+  <li><strong>Recommendation:</strong> Give the toggle a minimum height of 44px and a 4px radius, and set <code class="language-plaintext highlighter-rouge">aria-pressed</code> on every <code class="language-plaintext highlighter-rouge">[data-red]</code> button in <code class="language-plaintext highlighter-rouge">setRed()</code>. Pad the nav links vertically.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable adapt</code></li>
+</ul>
+
+<p><strong>[P3] Shadows outside the shadow vocabulary</strong></p>
+<ul>
+  <li><strong>Location:</strong> line 195 (range thumb <code class="language-plaintext highlighter-rouge">rgba(0,0,0,.45)</code>), line 182 (<code class="language-plaintext highlighter-rouge">.scrub</code> frame shadow)</li>
+  <li><strong>Category:</strong> Implementation Integrity</li>
+  <li><strong>Impact:</strong> The thumb uses a neutral gray shadow (“never neutral gray”), and the scrubber frame casts a shadow although the Sewn-On Rule reserves shadows for the label and patches. Each is a small drift.</li>
+  <li><strong>Recommendation:</strong> Tint the thumb shadow with bark. Either document the scrubber as a sewn-on object or drop its shadow.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable polish</code></li>
+</ul>
+
+<p><strong>[P3] “2–5 am” wraps in the narrow timeline column</strong></p>
+<ul>
+  <li><strong>Location:</strong> line 221 (<code class="language-plaintext highlighter-rouge">grid-template-columns:4.6rem 1fr</code> under 560px)</li>
+  <li><strong>Category:</strong> Responsive</li>
+  <li><strong>Impact:</strong> At 390px the peak time breaks into “2–5” / “am” next to its node, which weakens the page’s most important time.</li>
+  <li><strong>Recommendation:</strong> Widen the column slightly, or add <code class="language-plaintext highlighter-rouge">white-space:nowrap</code> with a smaller time size for that row.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable layout</code></li>
+</ul>
+
+<h2 id="patterns--systemic-issues">Patterns &amp; Systemic Issues</h2>
+
+<ul>
+  <li><strong>Contrast is tuned for the default theme only.</strong> Each pair passes or nearly passes in the default dark theme. The failures all come from alpha or filter applied on top of tokens: opacity 0.92 on the gloss, 0.62 on the timeline, and the hue-rotate filter for red mode. Any time the page dims something, re-check the ratio.</li>
+  <li><strong>Two token systems.</strong> The four dyes and wool are tokenized and used about 100 times. Everything on the woven label, and every hover, error and divider state, uses literal hex. Canvas code and inline SVGs repeat the token hexes as literals, about 20 times for #f6ecd4 and #f1e5c9. That is why a themed red mode is harder than it should be.</li>
+  <li><strong>Ad-hoc small type.</strong> Wherever the page needed small print (brand subline, ticks, notes, errors), it got a new size between 0.72rem and 0.98rem instead of the documented Label step.</li>
+</ul>
+
+<h2 id="positive-findings">Positive Findings</h2>
+
+<ul>
+  <li><strong>Form flow is strong, verified in the browser:</strong>
+    <ul>
+      <li>Real <code class="language-plaintext highlighter-rouge">&lt;label for&gt;</code> labels.</li>
+      <li><code class="language-plaintext highlighter-rouge">aria-describedby</code> errors and <code class="language-plaintext highlighter-rouge">aria-invalid</code>.</li>
+      <li>Focus moves to the first invalid field.</li>
+      <li>Errors are plain-language (“That email looks off. Check for a missing @ or dot.”).</li>
+      <li><code class="language-plaintext highlighter-rouge">aria-busy</code> while submitting.</li>
+      <li>On success, focus moves to a <code class="language-plaintext highlighter-rouge">role="status"</code> panel that personalizes the count (“Thanks, Ada. 3 spots saved…”).</li>
+      <li>The stepper is a labelled <code class="language-plaintext highlighter-rouge">role="group"</code> with <code class="language-plaintext highlighter-rouge">aria-live</code> output and disabled limits.</li>
+    </ul>
+  </li>
+  <li><strong>Keyboard and semantics:</strong>
+    <ul>
+      <li>The skip link is the first tab stop.</li>
+      <li>Tab order runs nav, then form, then stepper.</li>
+      <li>The dashed mustard <code class="language-plaintext highlighter-rouge">:focus-visible</code> outline is clearly visible on dark grounds (8.7:1 on sky).</li>
+      <li>Landmarks are header, nav, main and footer.</li>
+      <li>The orbit diagram has <code class="language-plaintext highlighter-rouge">role="img"</code> with a real <code class="language-plaintext highlighter-rouge">&lt;title&gt;</code>.</li>
+      <li>Decorative SVGs and canvases are <code class="language-plaintext highlighter-rouge">aria-hidden</code>.</li>
+    </ul>
+  </li>
+  <li><strong>The scrubber is well built.</strong>
+    <ul>
+      <li>It is a native <code class="language-plaintext highlighter-rouge">&lt;input type=range&gt;</code> with <code class="language-plaintext highlighter-rouge">aria-valuetext</code> (“6:05 am, about 6 meteors an hour”).</li>
+      <li>Arrow keys work.</li>
+      <li>It is 44px tall.</li>
+      <li>Under synthesized touch (CDP touch events, Chromium, emulated 390px mobile), a horizontal drag moved it from 8:00 pm to 5:10 am without scrolling the page, and a tap on the track jumped to 5:40 am.</li>
+      <li>Physical-device touch is untested.</li>
+    </ul>
+  </li>
+  <li><strong>Reduced motion is intentional, not a kill switch.</strong> Twinkle stops, the meteors freeze mid-fall so the state is still visible (<code class="language-plaintext highlighter-rouge">desk-reduced.png</code>), smooth scroll turns off, and the scrubber redraws on input instead of animating.</li>
+  <li><strong>Responsive layout holds</strong> at 320, 390, 820 and 1440 with no horizontal scroll. The label correctly moves above the facts on narrow screens.</li>
+  <li><strong>Performance basics are good.</strong> There are no raster images, the fonts are seven self-hosted woff2 files (about 95KB) with <code class="language-plaintext highlighter-rouge">font-display:swap</code>, the display face is preloaded, and the DPR is capped at 2.</li>
+  <li><strong>Honesty is built in.</strong> The fictional park is disclosed in the nav, the “Where” section and the footer, and rates are labelled “typical-year estimates”, exactly as PRODUCT.md asks.</li>
+</ul>
+
+<h2 id="recommended-actions">Recommended Actions</h2>
+
+<ol>
+  <li><strong>[P1] <code class="language-plaintext highlighter-rouge">/impeccable colorize</code></strong>: Rebuild red-light mode as a token-based red-only theme, or use a red-channel color matrix. Bring wool on madder, the button label and the placeholder back above 4.5:1. Sync <code class="language-plaintext highlighter-rouge">aria-pressed</code> on both toggles.</li>
+  <li><strong>[P1] <code class="language-plaintext highlighter-rouge">/impeccable harden</code></strong>: Darken <code class="language-plaintext highlighter-rouge">label-stroke</code> to at least 3:1 against <code class="language-plaintext highlighter-rouge">label-field</code> for inputs and the stepper. Add a keyboard path for meteor counting.</li>
+  <li><strong>[P1] <code class="language-plaintext highlighter-rouge">/impeccable polish</code></strong>: Remove <code class="language-plaintext highlighter-rouge">opacity:.92</code> from the <code class="language-plaintext highlighter-rouge">.label-facts</code> gloss. Replace the timeline fade with emphasis on the current row. Tokenize the label sub-palette and the undocumented tints. Fix the gray thumb shadow.</li>
+  <li><strong>[P2] <code class="language-plaintext highlighter-rouge">/impeccable optimize</code></strong>: Pause both canvas rAF loops when off-screen, and debounce resize.</li>
+  <li><strong>[P2] <code class="language-plaintext highlighter-rouge">/impeccable typeset</code></strong>: Collapse the about 12 off-ramp sizes onto Label and Body, and document the deliberate clamp scales in DESIGN.md.</li>
+  <li><strong>[P2] <code class="language-plaintext highlighter-rouge">/impeccable adapt</code></strong>: Enlarge the orbit labels on phones and widen the viewBox. Give the red-light toggle a minimum height of 44px and a 4px radius.</li>
+  <li><strong>[P3] <code class="language-plaintext highlighter-rouge">/impeccable layout</code></strong>: Keep “2–5 am” on one line in the mobile timeline.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">/impeccable polish</code></strong>: Final pass after the fixes above.</li>
+</ol>
+
+<blockquote>
+  <p>You can ask me to run these one at a time, all at once, or in any order you prefer.</p>
+
+  <p>Re-run <code class="language-plaintext highlighter-rouge">/impeccable audit</code> after fixes to see your score improve.</p>
+</blockquote>
+
+  <footer class="site">
+    <p>AI Alchemy by Kathryn. Every skill is tested in a fresh, isolated sandbox so they can't mess with each other.</p>
+    <p class="visits">Visitors so far: <img src="https://hits.sh/meifish.github.io/ai_alchemy.svg?label=visits&amp;color=%232B7449&amp;labelColor=%2356615B" alt="Total visits to AI Alchemy" height="20" loading="lazy" style="vertical-align:middle"></p>
+  </footer>
+</div>
+<script src="/ai_alchemy/assets/translate.js"></script>
+</body>
+</html>

@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="I fed the archify agent skill a pizza delivery app and got three interactive, self-checking diagrams.">
+<meta property="og:title" content="I asked an AI to explain my pizza order. It drew me three maps.">
+<meta property="og:image" content="img/arch-light.png">
+<link rel="alternate" type="application/rss+xml" title="AI Alchemy" href="../../feed.xml">
+<title>Archify Ate My Pizza Order</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#F1F3EF; --panel:#FFFFFF; --ink:#1B2320; --muted:#56615B; --line:#D3DAD4;
+  --tomato:#C4402A; --basil:#2B7449; --cheese:#E7B53C; --ticket:#FFFDF6; --ticket-ink:#2A2A26;
+  --code:#E6EBE6; --shadow:0 1px 2px rgba(20,30,25,.06),0 8px 24px rgba(20,30,25,.08);
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Source Sans 3",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1412; --panel:#171E1B; --ink:#E6ECE8; --muted:#9BA7A0; --line:#2B3531;
+    --tomato:#F0735A; --basil:#5FC28C; --cheese:#F0C75A; --ticket:#1D2421; --ticket-ink:#E3E7E2;
+    --code:#1F2824; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1412; --panel:#171E1B; --ink:#E6ECE8; --muted:#9BA7A0; --line:#2B3531;
+  --tomato:#F0735A; --basil:#5FC28C; --cheese:#F0C75A; --ticket:#1D2421; --ticket-ink:#E3E7E2;
+  --code:#1F2824; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.62;padding-inline:20px;padding-block:0 80px}
+.wrap{max-width:720px;margin:0 auto}
+.wide{max-width:1080px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);line-height:1.12;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:clamp(2.3rem,6vw,3.9rem);font-weight:800;margin:0 0 18px}
+h2{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;margin:64px 0 12px}
+h3{font-size:1.2rem;font-weight:700;margin:28px 0 6px}
+p{margin:0 0 16px}
+a{color:var(--basil);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--tomato);outline-offset:3px}
+code{font-family:var(--mono);font-size:.84em;background:var(--code);padding:1px 6px;border-radius:4px}
+.eyebrow{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--tomato);margin:0 0 10px}
+header{padding-block:56px 12px}
+.dek{font-size:1.25rem;color:var(--muted);max-width:620px}
+.byline{font-family:var(--mono);font-size:.8rem;color:var(--muted);margin-top:20px;display:flex;flex-wrap:wrap;gap:6px 18px}
+figure{margin:28px auto 36px}
+figure img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--line);box-shadow:var(--shadow);background:var(--panel)}
+figcaption{font-size:.92rem;color:var(--muted);margin-top:10px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+.live{font-family:var(--mono);font-size:.8rem;font-weight:600;color:var(--bg);background:var(--basil);padding:4px 10px;border-radius:999px;text-decoration:none;white-space:nowrap}
+.live:hover{background:var(--tomato)}
+.tldr{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 24px;box-shadow:var(--shadow);margin:28px 0}
+.tldr h3{margin-top:0}
+.tldr ul{margin:0;padding-left:20px}
+.tldr li{margin:4px 0}
+/* kitchen ticket = my build log */
+.ticket{background:var(--ticket);color:var(--ticket-ink);font-family:var(--mono);font-size:.82rem;line-height:1.55;padding:22px 22px 18px;margin:22px 0 28px;position:relative;border-left:1px solid var(--line);border-right:1px solid var(--line);
+  -webkit-mask:radial-gradient(circle 6px at 50% 0,#0000 98%,#000) top/16px 51% repeat-x,radial-gradient(circle 6px at 50% 100%,#0000 98%,#000) bottom/16px 51% repeat-x;
+          mask:radial-gradient(circle 6px at 50% 0,#0000 98%,#000) top/16px 51% repeat-x,radial-gradient(circle 6px at 50% 100%,#0000 98%,#000) bottom/16px 51% repeat-x}
+.ticket .head{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--muted);padding-bottom:8px;margin-bottom:8px;font-weight:600;flex-wrap:wrap}
+.ticket ol{list-style:none;margin:0;padding:0}
+.ticket li{display:grid;grid-template-columns:3.2em 1fr;gap:8px;padding:5px 0;border-bottom:1px dotted var(--line)}
+.ticket li:last-child{border-bottom:0}
+.ticket .r{font-weight:600}
+.bad{color:var(--tomato)} .good{color:var(--basil)}
+.ticket .foot{border-top:1px dashed var(--muted);margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+pre.term{background:#161B19;color:#D8E2DC;font-family:var(--mono);font-size:.78rem;line-height:1.5;padding:16px 18px;border-radius:10px;overflow-x:auto;margin:18px 0 24px}
+pre.term .c{color:#8FA39A} pre.term .e{color:#FF8C73} pre.term .o{color:#7EDBA5}
+.pipe{overflow-x:auto;margin:24px 0 32px}
+.pipe svg{display:block;min-width:640px;width:100%;height:auto}
+.pipe text{font-family:var(--mono)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.grid2 figure{margin:0}
+.grid2 figcaption{font-size:.85rem}
+@media (max-width:700px){.grid2{grid-template-columns:1fr}}
+.rounds{display:grid;gap:10px;margin:18px 0 8px}
+.round-row{display:grid;grid-template-columns:8.5em 1fr;gap:12px;align-items:center;font-size:.95rem}
+.bar{display:flex;gap:4px}
+.bar span{height:22px;flex:0 0 22px;border-radius:4px;background:var(--tomato);opacity:.85}
+.bar span.ok{background:var(--basil);opacity:1}
+.legend{font-family:var(--mono);font-size:.75rem;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.score{width:100%;border-collapse:collapse;font-size:.95rem;margin:14px 0 24px}
+.score-wrap{overflow-x:auto}
+.score th,.score td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.score th{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.pips{font-family:var(--mono);color:var(--cheese);letter-spacing:2px;white-space:nowrap}
+.tips{counter-reset:tip;list-style:none;padding:0;margin:14px 0}
+.tips li{counter-increment:tip;position:relative;padding:12px 0 12px 48px;border-bottom:1px solid var(--line)}
+.tips li::before{content:counter(tip);position:absolute;left:0;top:12px;width:32px;height:32px;border-radius:50%;background:var(--cheese);color:#2A2A26;font-family:var(--display);font-weight:800;display:grid;place-items:center}
+.glitch{max-width:440px}
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-size:.9rem;color:var(--muted)}
+.sitenav{max-width:1080px;margin:0 auto;padding-top:18px;display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:.82rem}
+.sitenav a{text-decoration:none;white-space:nowrap}
+.sitenav{align-items:center}.sitenav-r{display:flex;gap:16px;align-items:center}
+</style>
+</head>
+<body>
+<nav class="sitenav" aria-label="Site"><a href="../../">&larr; <span translate="no">AI Alchemy</span></a><span class="sitenav-r"><a href="../../subscribe/">Subscribe</a><span data-translate></span></span></nav>
+
+<header class="wrap">
+  <p class="eyebrow">AI Alchemy · Skill test #1 · archify</p>
+  <h1>I asked an AI to explain my pizza order. It drew me three maps.</h1>
+  <p class="dek">Archify is an agent skill that turns a plain-language description into an interactive, self-checking diagram. I installed it in a clean sandbox, fed it a pizza delivery app, and kept poking until it stopped yelling at me.</p>
+  <div class="byline"><span>Order #42</span><span>3 diagrams · 15 validation rounds</span><span>archify v2.17.0-dev.1 @ 9e35d2b</span></div>
+</header>
+
+<main>
+<div class="wrap">
+  <div class="tldr">
+    <h3>The short version</h3>
+    <ul>
+      <li>Archify makes <strong>really good looking</strong> diagrams you can click around in: guided tours, "how do I get from A to B" routes, four visual styles, dark and light.</li>
+      <li>The magic isn't the drawing. It's the <strong>strict validator</strong> that refuses to ship overlapping labels or pages that don't fit the screen, and tells the agent exactly how to fix them.</li>
+      <li>It is a <strong>complicated</strong> skill. Expect your agent to go back and forth several times. That's the skill working, not failing.</li>
+    </ul>
+  </div>
+
+  <h2>Wait, what is Archify?</h2>
+  <p>Most "draw me a diagram" tools ask the AI to spit out Mermaid code or raw SVG and hope for the best. Archify takes a different route. Your agent writes a small <strong>JSON recipe</strong> (boxes, arrows, labels), and a bundled Node tool turns that recipe into one standalone HTML file with the diagram baked in.</p>
+  <p>It speaks five diagram types: <code>architecture</code> (what talks to what), <code>workflow</code> (steps and approvals), <code>sequence</code> (who calls whom, in order), <code>dataflow</code> (pipelines), and <code>lifecycle</code> (states, like an order status). It can also read Mermaid you paste in. The repo claims it hit #1 on GitHub's weekly trending list in September 2026, so plenty of people are curious.</p>
+  <p>Here's the loop the skill tells the agent to follow. The key part is the red arrow going backwards.</p>
+</div>
+
+<div class="wide pipe" role="img" aria-label="Archify pipeline: your idea becomes a JSON spec, validate checks it and loops back on failure, deliver writes the HTML, visual-check opens it in Chrome.">
+  <svg viewBox="0 0 1040 210" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker>
+      <marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--tomato)"/></marker>
+    </defs>
+    <g font-size="13">
+      <rect x="10" y="60" width="170" height="70" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+      <text x="95" y="90" text-anchor="middle" fill="var(--ink)" font-weight="600">Your words</text>
+      <text x="95" y="112" text-anchor="middle" fill="var(--muted)" font-size="11">"draw my pizza app"</text>
+
+      <rect x="230" y="60" width="170" height="70" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+      <text x="315" y="90" text-anchor="middle" fill="var(--ink)" font-weight="600">JSON spec</text>
+      <text x="315" y="112" text-anchor="middle" fill="var(--muted)" font-size="11">agent writes it</text>
+
+      <rect x="450" y="60" width="170" height="70" rx="10" fill="var(--panel)" stroke="var(--tomato)" stroke-width="2"/>
+      <text x="535" y="90" text-anchor="middle" fill="var(--ink)" font-weight="600">validate</text>
+      <text x="535" y="112" text-anchor="middle" fill="var(--muted)" font-size="11">9 layout checks</text>
+
+      <rect x="670" y="60" width="170" height="70" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+      <text x="755" y="90" text-anchor="middle" fill="var(--ink)" font-weight="600">deliver</text>
+      <text x="755" y="112" text-anchor="middle" fill="var(--muted)" font-size="11">one .html file</text>
+
+      <rect x="890" y="60" width="140" height="70" rx="10" fill="var(--panel)" stroke="var(--basil)" stroke-width="2"/>
+      <text x="960" y="90" text-anchor="middle" fill="var(--ink)" font-weight="600">visual-check</text>
+      <text x="960" y="112" text-anchor="middle" fill="var(--muted)" font-size="11">real Chrome</text>
+
+      <path d="M180 95H226" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#ah)"/>
+      <path d="M400 95H446" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#ah)"/>
+      <path d="M620 95H666" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#ah)"/>
+      <path d="M840 95H886" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#ah)"/>
+      <path d="M535 130V168H315V134" fill="none" stroke="var(--tomato)" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ahr)"/>
+      <text x="425" y="188" text-anchor="middle" fill="var(--tomato)" font-size="11">fail: "move label +24px" → edit, retry</text>
+      <path d="M960 60V30H315V56" fill="none" stroke="var(--tomato)" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ahr)"/>
+      <text x="640" y="22" text-anchor="middle" fill="var(--tomato)" font-size="11">fail: "page overflows 1440×900" → edit, retry</text>
+    </g>
+  </svg>
+</div>
+
+<div class="wrap">
+  <h2>Setting up the kitchen</h2>
+  <p>I cloned the repo into an empty sandbox and copied only the skill folder into a fresh directory, so nothing else on the machine could help or interfere. The good news: <strong>zero dependencies</strong>. No <code>npm install</code>. Just Node 18+.</p>
+<pre class="term"><span class="c">$ node bin/archify.mjs doctor</span>
+[ok] Node.js v22.22.2 (requires >=18)
+[ok] Core template
+[ok] Visual-check runtime
+[ok] architecture renderer, schema, and example
+<span class="c">  ... 11 more [ok] lines ...</span>
+<span class="o">Archify is ready.</span></pre>
+  <p>One gotcha. The browser check step quietly skips itself if it can't find Chrome. In my sandbox I had to point it at Chromium with <code>ARCHIFY_CHROME=/path/to/chrome</code>. If your agent says "visual check skipped", that's why.</p>
+  <p>For the demo I picked something everyone has used and nobody has seen the inside of: <strong>a pizza delivery app</strong>. I invented a small one called PizzaNow and drew it three ways.</p>
+
+  <h2>Diagram 1: the big map</h2>
+  <p>First, an <code>architecture</code> diagram. What boxes exist behind the "Order" button, and who talks to whom? Twelve components: your phone, a gateway, the order service (the brain), the database, payments, a card processor, the kitchen tablet, an event bus, dispatch, maps, the courier app, and push notifications.</p>
+</div>
+
+<figure class="wide">
+  <img src="img/arch-light.png" alt="PizzaNow architecture diagram: Your Phone to API Gateway to Order Service, which fans out to Orders DB, Payment Service, Kitchen Tablet and Event Bus. Dispatch, Maps API, Courier App and Push Notifications hang off the bus." width="1440" height="900" loading="lazy">
+  <figcaption><span>The final architecture map, light theme. The dashed orange box is the "PizzaNow cloud"; outside partners sit outside it.</span><a class="live" href="live/pizza.architecture.html">Open the live diagram ↗</a></figcaption>
+</figure>
+
+<div class="wrap">
+  <p>My first try failed validation in about 60 milliseconds. What surprised me was <em>how</em> it failed:</p>
+<pre class="term"><span class="e">Label "save" overlaps component "orders"</span>
+  label rect: [510, 340, 30, 14]
+  component "orders" rect: [460, 300, 130, 60]
+  <span class="o">Suggested fix: labelAt [525, 374] or labelDy +24 (below)</span></pre>
+  <p>It doesn't just say "something's off". It gives the exact rectangle, the exact thing it bumped into, and two ready-made fixes. That's the kind of error message an AI agent can act on without guessing. Here's my whole build log for this one:</p>
+
+  <div class="ticket" aria-label="Build log for the architecture diagram">
+    <div class="head"><span>TICKET · architecture</span><span>12 boxes · 11 arrows</span></div>
+    <ol>
+      <li><span class="r bad">R1</span><span>2 labels sitting on top of boxes. Applied the suggested <code>labelDy: 24</code>.</span></li>
+      <li><span class="r good">R2</span><span>Validator passed 9/9. Delivered. Then the Chrome check failed: the page was 1204px tall on a 900px laptop screen.</span></li>
+      <li><span class="r bad">R3</span><span>Looking at the screenshot, I also saw my "cloud" box had swallowed Stripe and Maps (boundaries are drawn around everything in their area). Moved the partners outside and packed rows tighter. Two label bumps.</span></li>
+      <li><span class="r good">R4</span><span>Passed 9/9 checks, 0 warnings, fits at 1440×900 and 2048×1320 in both themes.</span></li>
+    </ol>
+    <div class="foot"><span>4 rounds</span><span class="good">SERVED</span></div>
+  </div>
+  <p>Round 3 is the interesting one. The validator can't know that Stripe <em>shouldn't</em> live inside my cloud. Only a human (or an agent that actually looks at the screenshot) catches that. Archify's docs are refreshingly upfront about this: the automated checks prove layout, and "perceptual review requires an actual human or image-capable reviewer."</p>
+
+  <h2>Diagram 2: tap to doorbell</h2>
+  <p>Next, a <code>sequence</code> diagram. Same system, but now it's a story in time: you tap, the app posts the order, payment gets approved, the kitchen gets a ticket, dispatch finds a courier, and eventually, ding dong. I turned on <code>"animation": "trace"</code>, which adds a <strong>Live</strong> button that animates the messages flowing down the timeline.</p>
+</div>
+
+<figure class="wide">
+  <img src="img/seq-dark.png" alt="Sequence diagram with seven columns: You, PizzaNow App, Order Service, Payments, Kitchen, Dispatch, Courier. Thirteen messages grouped into Checkout, Cooking and Delivery." width="1440" height="900" loading="lazy">
+  <figcaption><span>Thirteen messages in three chapters. Security calls are pink, async updates are dashed purple, replies are grey.</span><a class="live" href="live/pizza.sequence.html">Open it and press Live ↗</a></figcaption>
+</figure>
+
+<div class="wrap">
+  <div class="ticket" aria-label="Build log for the sequence diagram">
+    <div class="head"><span>TICKET · sequence</span><span>7 lanes · 13 messages</span></div>
+    <ol>
+      <li><span class="r bad">R1</span><span>"push: on its way" and "ding dong" less than 28px apart. Spread every message out a bit.</span></li>
+      <li><span class="r bad">R2</span><span>Now "ding dong" fell off the bottom of the timeline. Made the canvas taller (660).</span></li>
+      <li><span class="r bad">R3</span><span>Validator happy, but Chrome says the page is 16px too tall on a laptop. Too tall now!</span></li>
+      <li><span class="r good">R4</span><span>Canvas 640. Goldilocks. Passed everything.</span></li>
+    </ol>
+    <div class="foot"><span>4 rounds</span><span class="good">SERVED</span></div>
+  </div>
+  <p>Here's the one thing the robots missed. Zoom in on the column headers and the little icons are sitting right on top of the first letter:</p>
+  <figure class="glitch">
+    <img src="img/seq-glitch.png" alt="Close-up: the PizzaNow App and Order Service header boxes, with their small icons overlapping the first letter of each label." width="500" height="124" loading="lazy">
+    <figcaption>Tiny, but real. All 9 checks passed anyway. Eyes still matter.</figcaption>
+  </figure>
+  <p>The sequence view also shrinks the text more than the other types. The subtitles ("very hungry", "on your phone") are hard to read at laptop size. You can zoom in, but it's worth knowing before you put one in a slide.</p>
+
+  <h2>Diagram 3: where's my pizza?</h2>
+  <p>For the last one I tried the Mermaid route. I wrote a quick <code>stateDiagram</code> of order statuses, the same way you might sketch one in a README, and asked for a <code>lifecycle</code> diagram from it:</p>
+<pre class="term">stateDiagram-v2
+    [*] --> Placed --> Paying --> Cooking --> OnTheRoad --> Delivered
+    Cooking --> OvenQueue : kitchen slammed
+    OnTheRoad --> WrongAddress : can't find door
+    WrongAddress --> OnTheRoad : customer calls back
+    OvenQueue --> Cancelled : waited 60 min
+    WrongAddress --> Refunded : gave up</pre>
+  <p>Archify doesn't auto-convert Mermaid. The skill tells the agent to read it for meaning and write a fresh spec, which lets it put things in "lanes": the happy path on top, detours in the middle, sad endings at the bottom.</p>
+</div>
+
+<figure class="wide">
+  <img src="img/life-light.png" alt="Lifecycle diagram: Placed, Paying, Cooking, On the Road, Delivered along the top. Oven Queue and Wrong Address in a middle lane. Cancelled and Refunded at the bottom." width="1440" height="900" loading="lazy">
+  <figcaption><span>Happy path across the top. The green arrow from Wrong Address back up is the "recoverable" loop.</span><a class="live" href="live/pizza.lifecycle.html">Open the live diagram ↗</a></figcaption>
+</figure>
+
+<div class="wrap">
+  <p>This small diagram took the <strong>most</strong> rounds, and it taught me two sneaky lessons:</p>
+  <div class="ticket" aria-label="Build log for the lifecycle diagram">
+    <div class="head"><span>TICKET · lifecycle</span><span>9 states · 5 detours</span></div>
+    <ol>
+      <li><span class="r bad">R1</span><span>20 errors at once. Turns out lane names are magic: my bottom lane was called <code>end</code>, but Archify only treats a lane named <code>terminal</code> as its own row.</span></li>
+      <li><span class="r bad">R2</span><span>Renamed lanes. Down to 5 errors: 4 labels on boxes, plus two labels stacked on each other.</span></li>
+      <li><span class="r bad">R3</span><span>The two arrows between "On the Road" and "Wrong Address" run side by side, 14px apart. Their labels collided.</span></li>
+      <li><span class="r good">R4</span><span>Nudged one label left, one right. Validator passed. Chrome: <span class="bad">1px too tall</span>. One pixel!</span></li>
+      <li><span class="r bad">R5</span><span>Shrank the canvas. The bottom row fell outside the drawing area.</span></li>
+      <li><span class="r bad">R6</span><span>Split the difference. Still off the bottom.</span></li>
+      <li><span class="r good">R7</span><span>Real culprit: my title "Where's My Pizza? Every Order Status" was wrapping onto two lines. Shortened it. Passed everything.</span></li>
+    </ol>
+    <div class="foot"><span>7 rounds</span><span class="good">SERVED</span></div>
+  </div>
+  <p>A one-pixel overflow sounds petty, but that strictness is the point. Archify's rule is that the diagram plus its summary cards should fit on one laptop screen with no scrolling, and it will not fake a pass by hiding overflow.</p>
+
+  <h2>The fun part: clicking around</h2>
+  <p>Every diagram comes with a reader toolkit built in. I didn't write any of this; it's in every file Archify produces.</p>
+</div>
+
+<div class="wide grid2">
+  <figure>
+    <img src="img/arch-money.png" alt="Guided view 'Follow the money': the diagram zooms into API Gateway, Order Service, Payment Service and Card Processor while the rest fades." width="1440" height="900" loading="lazy">
+    <figcaption><strong>Guided views.</strong> I wrote three one-line "chapters". Clicking one zooms the camera and dims everything else. There's a Play story button too.</figcaption>
+  </figure>
+  <figure>
+    <img src="img/arch-route.png" alt="Route probe panel listing Your Phone, API Gateway, Order Service, Event Bus, Dispatch, Courier App with the path highlighted." width="1440" height="900" loading="lazy">
+    <figcaption><strong>Route probe.</strong> "How does my tap reach the courier?" Six stops, five hops, highlighted. It only follows arrows you actually drew, never guesses.</figcaption>
+  </figure>
+  <figure>
+    <img src="img/arch-reach.png" alt="Semantic passport card for Order Service listing 4 outgoing and 1 incoming connection, with 9 downstream nodes." width="1440" height="900" loading="lazy">
+    <figcaption><strong>Passport.</strong> Click a box and get its fact sheet: what it calls, what calls it, and everything downstream. Order Service touches 9 of 12 boxes. Yep, the brain.</figcaption>
+  </figure>
+  <figure>
+    <img src="img/life-lost.png" alt="Lifecycle guided view 'Lost courier' highlighting On the Road, Wrong Address and Refunded." width="1440" height="900" loading="lazy">
+    <figcaption><strong>Works on every type.</strong> The "Lost courier" chapter on the lifecycle. Small nit: the zoom crops the lane titles on the left edge.</figcaption>
+  </figure>
+</div>
+
+<div class="wrap">
+  <h3>Four outfits, one diagram</h3>
+  <p>A dropdown swaps the visual preset. Same boxes and arrows, different mood. Classic is the default; the others are for when you want to show off.</p>
+</div>
+
+<div class="wide grid2">
+  <figure>
+    <img src="img/arch-classic-dark.png" alt="Architecture diagram in the Classic preset, dark theme." width="1440" height="900" loading="lazy">
+    <figcaption><strong>Classic.</strong> Clean and safe for docs.</figcaption>
+  </figure>
+  <figure>
+    <img src="img/arch-preset-blueprint.png" alt="Architecture diagram in the Blueprint preset, with grid paper and corner crop marks." width="1440" height="900" loading="lazy">
+    <figcaption><strong>Blueprint.</strong> Grid paper and crop marks. My favorite.</figcaption>
+  </figure>
+  <figure>
+    <img src="img/arch-preset-editorial.png" alt="Architecture diagram in the Editorial preset, with warm brown tones and a serif title." width="1440" height="900" loading="lazy">
+    <figcaption><strong>Editorial.</strong> Serif title, warm tones, "Plate 04" stamp. Magazine vibes.</figcaption>
+  </figure>
+  <figure>
+    <img src="img/arch-preset-signal-flow.png" alt="Architecture diagram in the Signal Flow preset, similar to Classic with a subtle glow." width="1440" height="900" loading="lazy">
+    <figcaption><strong>Signal Flow.</strong> Honestly hard to tell apart from Classic in a still shot. It's meant for motion.</figcaption>
+  </figure>
+</div>
+
+<div class="wrap">
+  <p>The Export menu also saves PNG, SVG, WebP, JPEG, a social "share card", or even a WebM video of the trace animation. Each HTML file is about 800 KB because the fonts ride along inside it. That's why it works offline, and why you can email it to a friend who has never heard of Archify.</p>
+
+  <h2>How hard did it make me work?</h2>
+  <p>Every square is one round of "agent edits the spec, Archify checks it". Red means sent back to the kitchen, green means it passed that stage.</p>
+  <div class="rounds" role="img" aria-label="Rounds per diagram: architecture 4 (2 failed, 2 passed a stage), sequence 4 (3 failed, 1 passed), lifecycle 7 (5 failed, 2 passed a stage).">
+    <div class="round-row"><span>Architecture</span><div class="bar"><span></span><span class="ok"></span><span></span><span class="ok"></span></div></div>
+    <div class="round-row"><span>Sequence</span><div class="bar"><span></span><span></span><span></span><span class="ok"></span></div></div>
+    <div class="round-row"><span>Lifecycle</span><div class="bar"><span></span><span></span><span></span><span class="ok"></span><span></span><span></span><span class="ok"></span></div></div>
+  </div>
+  <div class="legend"><span><i style="background:var(--tomato)"></i>failed a check</span><span><i style="background:var(--basil)"></i>passed a stage</span></div>
+  <p style="margin-top:16px">Fifteen rounds for three diagrams. Each check runs in well under a second and the browser check in about five, so it's fast. You just need an agent patient enough to keep going. The skill actually tells the agent when to give up: if two rounds in a row don't lower the error count, stop and report honestly.</p>
+
+  <h2>My scorecard</h2>
+  <div class="score-wrap">
+  <table class="score">
+    <thead><tr><th>What</th><th>Score</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Looks</td><td class="pips" aria-label="5 out of 5">●●●●●</td><td>Best-looking AI diagrams I've seen. Four presets, both themes, crisp type.</td></tr>
+      <tr><td>Interactivity</td><td class="pips" aria-label="5 out of 5">●●●●●</td><td>Guided views, routes, passports, search, presentation mode, exports. All free.</td></tr>
+      <tr><td>Error messages</td><td class="pips" aria-label="5 out of 5">●●●●●</td><td>Exact coordinates and a suggested fix. Built for an agent to read.</td></tr>
+      <tr><td>Setup</td><td class="pips" aria-label="4 out of 5">●●●●○</td><td>Zero dependencies. Lost a point because Chrome must be findable for the browser check.</td></tr>
+      <tr><td>Beginner friendliness</td><td class="pips" aria-label="3 out of 5">●●●○○</td><td>You still place boxes with x/y numbers, and there are hidden rules (magic lane names, 28px message spacing).</td></tr>
+      <tr><td>Scenario picker</td><td class="pips" aria-label="2 out of 5">●●○○○</td><td>The built-in <code>guide</code> command sent "what states can a pizza order be in" to architecture. Using the word "transitions" fixed it.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>Tips if you try it</h2>
+  <ol class="tips">
+    <li><strong>Let the agent drive.</strong> Say "use Archify to diagram X" and let it loop. Don't panic at red rounds; that's the recipe.</li>
+    <li><strong>Pick the type by your question.</strong> "What exists?" is architecture. "What happens in order?" is sequence. "What status can it be in?" is lifecycle.</li>
+    <li><strong>Keep titles short.</strong> A title that wraps to two lines can push the page over the fit-on-one-screen rule.</li>
+    <li><strong>Add 2 to 4 guided views.</strong> One line each. It's the cheapest way to turn a diagram into a story someone can click through.</li>
+    <li><strong>Look at the screenshot yourself.</strong> The checks catch overlaps, not nonsense. Only you know if Stripe belongs inside your cloud.</li>
+    <li><strong>Have Chrome available</strong> (or set <code>ARCHIFY_CHROME</code>) so the fit-on-screen check actually runs.</li>
+  </ol>
+
+  <h2>Verdict</h2>
+  <p>Archify is less "draw me a picture" and more "a picky art director with a ruler". That makes it slower than a quick Mermaid sketch, but what comes out the other end is a diagram you'd happily drop into a design doc, a pitch deck, or a blog post like this one. If you explain systems to people for a living, or just like pretty maps of how things work, it's worth an afternoon.</p>
+  <p>Now if you'll excuse me, I just spent a whole session diagramming a pizza order and now I am starving.</p>
+
+  <footer>
+    <p>Tested with <a href="https://github.com/tt-a1i/archify">tt-a1i/archify</a> at commit 9e35d2b (v2.17.0-dev.1), Node 22, headless Chromium, in an isolated sandbox. PizzaNow is made up. All three diagrams above are real Archify output; the "Open" links load the exact delivered files.</p>
+    <p>Want the next skill test? <a href="../../subscribe/">Subscribe by email or RSS</a>, or <a href="../../">browse all posts</a>.</p>
+    <p class="visits">Visitors so far: <img src="https://hits.sh/meifish.github.io/ai_alchemy.svg?label=visits&amp;color=%232B7449&amp;labelColor=%2356615B" alt="Total visits to AI Alchemy" height="20" loading="lazy" style="vertical-align:middle"></p>
+  </footer>
+</div>
+</main>
+<script src="../../assets/translate.js"></script>
+</body>
+</html>

@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audit: Orionids Night at Cedar Hollow (live/plain-claude/index.html) · AI Alchemy</title>
+<meta name="description" content="A hobbyist tries the newest AI agent skills in a clean sandbox, builds something silly with each one, and reports back.">
+<link rel="alternate" type="application/rss+xml" title="AI Alchemy" href="/ai_alchemy/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="/ai_alchemy/assets/site.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar">
+    <a class="brand" translate="no" href="/ai_alchemy/">⚗️ AI Alchemy</a>
+    <nav><a href="/ai_alchemy/subscribe/">Subscribe</a><a href="/ai_alchemy/feed.xml">RSS</a><span data-translate></span></nav>
+  </header>
+  <h1 id="audit-orionids-night-at-cedar-hollow-liveplain-claudeindexhtml">Audit: Orionids Night at Cedar Hollow (<code class="language-plaintext highlighter-rouge">live/plain-claude/index.html</code>)</h1>
+
+<p>Audited 2026-10-04. This is a technical, code-level audit. The page itself was not changed.</p>
+
+<p><strong>Evidence used</strong></p>
+<ul>
+  <li>Source review of <code class="language-plaintext highlighter-rouge">index.html</code> (629 lines, one file, inline CSS and JS, fonts loaded from <code class="language-plaintext highlighter-rouge">fonts/</code>).</li>
+  <li>Detector: <code class="language-plaintext highlighter-rouge">impeccable detect --json index.html</code>, run from <code class="language-plaintext highlighter-rouge">live/plain-claude</code>. It exited with code 2 and returned 24 findings. Each one was checked against the source and the rendered page (see the Implementation Integrity section).</li>
+  <li>Renders: Playwright Chromium (chromium-1194) at 1440x900, 375x812 and 320x640. The mobile contexts emulated touch (<code class="language-plaintext highlighter-rouge">hasTouch</code>, <code class="language-plaintext highlighter-rouge">isMobile</code>). Screenshots are in <code class="language-plaintext highlighter-rouge">audit/</code>: <code class="language-plaintext highlighter-rouge">hero-1440.png</code>, <code class="language-plaintext highlighter-rouge">desktop-full.png</code>, <code class="language-plaintext highlighter-rouge">mobile-full.png</code>, <code class="language-plaintext highlighter-rouge">m320-full.png</code>, <code class="language-plaintext highlighter-rouge">map-1440.png</code> and <code class="language-plaintext highlighter-rouge">map-375.png</code>. <code class="language-plaintext highlighter-rouge">desktop-1440.png</code> and <code class="language-plaintext highlighter-rouge">mobile-375.png</code> were captured without scrolling, so they show the <code class="language-plaintext highlighter-rouge">.reveal</code> sections blank.</li>
+  <li>Scripted checks: document scroll width, interactive targets smaller than 44px, keyboard tab order and focus outlines, empty-form submit, <code class="language-plaintext highlighter-rouge">prefers-reduced-motion: reduce</code> emulation, and WCAG contrast calculated from the hex values.</li>
+  <li>Not tested: real devices, VoiceOver and NVDA output, and Safari or Firefox rendering. No touch gestures were synthesized. The page has no drag or swipe surfaces, and its only custom control (the party-size stepper) uses <code class="language-plaintext highlighter-rouge">click</code>.</li>
+</ul>
+
+<hr />
+
+<h2 id="audit-health-score">Audit Health Score</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Dimension</th>
+      <th>Score</th>
+      <th>Key Finding</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Accessibility</td>
+      <td>3</td>
+      <td>Text contrast is strong (8 to 9.7:1). The gaps: the input focus outline is removed by <code class="language-plaintext highlighter-rouge">input:focus{outline:none}</code>, form errors are not linked to their fields, and placeholders are 3.3:1</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Performance</td>
+      <td>3</td>
+      <td>Lean (about 40 KB HTML plus about 100 KB of woff2, no images). The starfield <code class="language-plaintext highlighter-rouge">requestAnimationFrame</code> loop never stops and repaints under two <code class="language-plaintext highlighter-rouge">backdrop-filter</code> layers</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Responsive Design</td>
+      <td>2</td>
+      <td>The park map uses <code class="language-plaintext highlighter-rouge">preserveAspectRatio="xMidYMid slice"</code>, which crops the Lower Lot, the parking marker and the legend at every width. Mobile hides the nav and offers no replacement</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Theming</td>
+      <td>3</td>
+      <td>The <code class="language-plaintext highlighter-rouge">:root</code> tokens cover the core palette. The secondary text color <code class="language-plaintext highlighter-rouge">#c9cee6</code> (6 uses) and about 20 rgba variants are hard-coded, and <code class="language-plaintext highlighter-rouge">color-scheme: dark</code> is missing</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Implementation Integrity</td>
+      <td>2</td>
+      <td>The content and illustrations are specific to this event, but they sit in generic scaffolding: numbered eyebrow kickers, five headings built on the same italic-<code class="language-plaintext highlighter-rouge">&lt;em&gt;</code> pattern, and icon-tile cards</td>
+    </tr>
+    <tr>
+      <td><strong>Total</strong></td>
+      <td> </td>
+      <td><strong>13/20</strong></td>
+      <td><strong>Acceptable (significant work needed)</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="implementation-integrity-verdict">Implementation Integrity Verdict</h2>
+
+<p><strong>FAIL (narrowly).</strong> The content is specific to this event. It covers Halley’s Comet and the 66 km/s speed, moonset at about 1 am, the red-flashlight and dark-adaptation etiquette, the 5 pm go/no-go weather call, and the lantern trail from the lower lot. The radiant diagram, the meteor canvas (whose meteors fan out from an upper-left radiant) and the park map were drawn for this page. That work is real and specific.</p>
+
+<p>The visual structure around that content is template-shaped. You could put an unrelated product into the same skeleton and it would look the same:</p>
+
+<ul>
+  <li><strong>The same section header four times.</strong> Every <code class="language-plaintext highlighter-rouge">.sec-head</code> has a tracked-caps eyebrow (<code class="language-plaintext highlighter-rouge">01 — The shower</code>, <code class="language-plaintext highlighter-rouge">02 — When &amp; where</code>, <code class="language-plaintext highlighter-rouge">03 — Pack list</code>, <code class="language-plaintext highlighter-rouge">04 — RSVP</code>). The heading follows the pattern “Roman serif + <em>italic ember em</em>”, with a muted lede in the right column. Verified at lines 258-264, 332-338, 412-418 and 453-456.</li>
+  <li><strong>More eyebrows elsewhere.</strong> There is one on the hero (line 228), one labelled “Getting there” (line 396) and one labelled “You’re on the list” (line 486). That makes 7 <code class="language-plaintext highlighter-rouge">.eyebrow</code> labels in total.</li>
+  <li><strong>Icon-tile feature cards.</strong> Four 56x56 rounded tiles sit above the h3 headings in the pack list (lines 420-439). This is the stock feature-card layout.</li>
+  <li><strong>Glow accents.</strong> The peak timeline dot has <code class="language-plaintext highlighter-rouge">0 0 40px</code> ember glow plus an 8px halo (line 116). The red-flashlight tile has a red glow (line 140).</li>
+</ul>
+
+<h3 id="detector-findings-verified">Detector findings, verified</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Detector rule</th>
+      <th>Count</th>
+      <th>Verdict</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">low-contrast</code> (placeholders)</td>
+      <td>2</td>
+      <td><strong>True</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">#5e6688</code> on the field background measures 3.32:1</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">dark-glow</code></td>
+      <td>3</td>
+      <td><strong>True</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">.tl.peak .dot</code> (ember, two findings) and <code class="language-plaintext highlighter-rouge">.item.red .ic</code> (red). The peak glow can be defended on theme. The flashlight glow is decoration</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">icon-tile-stack</code></td>
+      <td>4</td>
+      <td><strong>True</strong></td>
+      <td>Pack-list cards</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">italic-serif-display</code></td>
+      <td>5</td>
+      <td><strong>True, in context</strong></td>
+      <td>Only the <code class="language-plaintext highlighter-rouge">&lt;em&gt;</code> fragments are italic, but the same treatment is repeated on the h1 and all four h2s, so it reads as a formula rather than a choice</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">hero-eyebrow-chip</code></td>
+      <td>1</td>
+      <td><strong>True</strong></td>
+      <td>“Free public watch party · Oct 21–22, 2026” above the h1</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">all-caps-body</code></td>
+      <td>1</td>
+      <td><strong>False positive / duplicate</strong></td>
+      <td>The 41 characters are that same hero eyebrow. It is a short label, not body copy</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">cramped-padding</code></td>
+      <td>1</td>
+      <td><strong>False positive</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">.card.map</code> has <code class="language-plaintext highlighter-rouge">padding:0</code> on purpose so the SVG runs edge to edge. The real defect in this card is the crop (P1 below)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">gpt-thin-border-wide-shadow</code> (advisory)</td>
+      <td>1</td>
+      <td><strong>True</strong></td>
+      <td>The peak dot has a 1px border and a 40px glow. Same element as the <code class="language-plaintext highlighter-rouge">dark-glow</code> finding</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">overused-font</code></td>
+      <td>1</td>
+      <td><strong>True (judgment)</strong></td>
+      <td>Instrument Serif is a currently fashionable display face. It fits the tone, but it is not distinctive</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">kicker-above-heading</code></td>
+      <td>1</td>
+      <td><strong>True</strong></td>
+      <td>“Getting there” above the h3 “Cedar Hollow Dark-Sky Park”</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">numbered-section-labels</code> (advisory)</td>
+      <td>4</td>
+      <td><strong>True</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">01</code> to <code class="language-plaintext highlighter-rouge">04</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>That is 22 of 24 findings confirmed and 2 false positives.</p>
+
+<p>Checks the detector does not cover (found by review or rendering):</p>
+<ul>
+  <li>The brand icon’s meteor trail does not render. The gradient <code class="language-plaintext highlighter-rouge">#g0</code> uses user-space coordinates (<code class="language-plaintext highlighter-rouge">x1="3" … x2="14"</code>) but keeps the default <code class="language-plaintext highlighter-rouge">gradientUnits="objectBoundingBox"</code>. As a result the whole stroke gets the first stop, which has <code class="language-plaintext highlighter-rouge">stop-opacity="0"</code>, and only the dot shows.</li>
+  <li>A <code class="language-plaintext highlighter-rouge">#tr</code> gradient is defined in the radiant diagram but never used.</li>
+  <li>The map card cropping is confirmed in the renders.</li>
+</ul>
+
+<hr />
+
+<h2 id="executive-summary">Executive Summary</h2>
+
+<ul>
+  <li><strong>Audit Health Score: 13/20 (Acceptable)</strong></li>
+  <li><strong>Issues: P0 0 · P1 1 · P2 13 · P3 6 (20 total)</strong></li>
+  <li><strong>Top issues</strong>
+    <ol>
+      <li><strong>[P1]</strong> The park map is cropped at every viewport. “LOWER LOT” is cut to “OWER LOT”, the parking box is half off-canvas, the “Illustrative · not to scale” legend overlaps the lot label, and at 375px the right side of Meadow Field is cut off. This is the page’s only wayfinding visual.</li>
+      <li><strong>[P2]</strong> Form-field focus is weaker than everywhere else. <code class="language-plaintext highlighter-rouge">input:focus{outline:none}</code> (line 157) cancels the <code class="language-plaintext highlighter-rouge">input:focus-visible</code> outline (line 63) because it has the same specificity and comes later. Only a 1px border color change is left.</li>
+      <li><strong>[P2]</strong> Form errors are announced through <code class="language-plaintext highlighter-rouge">aria-live</code> but are not linked to their inputs (<code class="language-plaintext highlighter-rouge">aria-describedby</code> is null). Placeholder text is 3.3:1.</li>
+      <li><strong>[P2]</strong> Below 960px the nav links are removed (<code class="language-plaintext highlighter-rouge">display:none</code>) and nothing replaces them. The header RSVP button is 34px tall.</li>
+      <li><strong>[P2]</strong> Generic scaffolding: the numbered eyebrows, the repeated italic-em heading pattern and the icon-tile cards.</li>
+    </ol>
+  </li>
+  <li><strong>Next steps:</strong> fix the map crop first (<code class="language-plaintext highlighter-rouge">/impeccable adapt</code>), then the form accessibility gaps (<code class="language-plaintext highlighter-rouge">/impeccable harden</code>), then remove the template scaffolding (<code class="language-plaintext highlighter-rouge">/impeccable distill</code>, then <code class="language-plaintext highlighter-rouge">/impeccable typeset</code>).</li>
+</ul>
+
+<hr />
+
+<h2 id="detailed-findings-by-severity">Detailed Findings by Severity</h2>
+
+<h3 id="p1-major">P1 Major</h3>
+
+<p><strong>[P1] Park map is cropped and its labels collide</strong></p>
+<ul>
+  <li><strong>Location:</strong> <code class="language-plaintext highlighter-rouge">.card.map</code> &gt; <code class="language-plaintext highlighter-rouge">svg</code> (lines 364-393). CSS <code class="language-plaintext highlighter-rouge">.map{min-height:340px}</code> and <code class="language-plaintext highlighter-rouge">.map svg{height:100%}</code> (lines 124-125).</li>
+  <li><strong>Category:</strong> Responsive / Implementation Integrity</li>
+  <li><strong>Impact:</strong> At 1440px the card renders at 547x492. That is taller than the 560:360 viewBox, and <code class="language-plaintext highlighter-rouge">slice</code> crops the left and right edges. The parking “P” box is cut in half, “LOWER LOT” reads “OWER LOT”, and the “ILLUSTRATIVE · NOT TO SCALE” legend overlaps the lot label. At 375px (343x340) the crop is worse: the east side of Meadow Field and its dashed boundary are lost. The map exists to show the walk from the lot to the field, and the starting point is the part that gets cropped. See <code class="language-plaintext highlighter-rouge">audit/map-1440.png</code> and <code class="language-plaintext highlighter-rouge">audit/map-375.png</code>.</li>
+  <li><strong>Recommendation:</strong> Use <code class="language-plaintext highlighter-rouge">preserveAspectRatio="xMidYMid meet"</code> with a matching background, or give the card <code class="language-plaintext highlighter-rouge">aspect-ratio:560/360</code> and stop it stretching in the grid row (<code class="language-plaintext highlighter-rouge">align-self:start</code>). Keep labels at least 24 units inside the viewBox edge. If you want the slice look, redraw the composition so that key features sit in the central safe area.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable adapt</code></li>
+</ul>
+
+<h3 id="p2-minor">P2 Minor</h3>
+
+<p><strong>[P2] Input focus outline removed</strong></p>
+<ul>
+  <li><strong>Location:</strong> line 157, <code class="language-plaintext highlighter-rouge">input:focus,select:focus{…outline:none}</code>. This overrides line 63.</li>
+  <li><strong>Category:</strong> Accessibility</li>
+  <li><strong>Impact:</strong> Keyboard users get a bold 2px blue <code class="language-plaintext highlighter-rouge">--trail</code> outline on every link and button, but on the two text fields they only see a 1px border change to ember. Measured: the inputs report <code class="language-plaintext highlighter-rouge">outlineStyle:none</code> during Tab navigation. The focus style is inconsistent and much weaker exactly where users type.</li>
+  <li><strong>WCAG/Standard:</strong> 2.4.7 Focus Visible (borderline pass), 2.4.13 Focus Appearance (AAA, fails)</li>
+  <li><strong>Recommendation:</strong> Remove <code class="language-plaintext highlighter-rouge">outline:none</code> from the <code class="language-plaintext highlighter-rouge">:focus</code> rule, or move the border change to <code class="language-plaintext highlighter-rouge">:focus-visible</code> and keep the shared outline.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable harden</code></li>
+</ul>
+
+<p><strong>[P2] Form errors not linked to their fields</strong></p>
+<ul>
+  <li><strong>Location:</strong> lines 462-471 and the <code class="language-plaintext highlighter-rouge">setErr()</code> function at lines 603-607.</li>
+  <li><strong>Category:</strong> Accessibility</li>
+  <li><strong>Impact:</strong> <code class="language-plaintext highlighter-rouge">aria-invalid</code> is set and the <code class="language-plaintext highlighter-rouge">.err</code> spans are live regions, so the message is announced once. When focus returns to the field, the error is not read again because the input has no <code class="language-plaintext highlighter-rouge">aria-describedby</code>. The form also has <code class="language-plaintext highlighter-rouge">novalidate</code> and does not mark required fields visually.</li>
+  <li><strong>WCAG/Standard:</strong> 1.3.1 Info and Relationships, 3.3.1 Error Identification, 3.3.2 Labels or Instructions</li>
+  <li><strong>Recommendation:</strong> Give each <code class="language-plaintext highlighter-rouge">.err</code> an id and reference it from <code class="language-plaintext highlighter-rouge">aria-describedby</code> on the input. Add a “required” cue to both labels. Point the party-size hint at its group with <code class="language-plaintext highlighter-rouge">aria-describedby</code> as well.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable harden</code></li>
+</ul>
+
+<p><strong>[P2] Placeholder contrast 3.3:1</strong></p>
+<ul>
+  <li><strong>Location:</strong> line 155, <code class="language-plaintext highlighter-rouge">input::placeholder{color:#5e6688}</code></li>
+  <li><strong>Category:</strong> Accessibility</li>
+  <li><strong>Impact:</strong> “Ada Lovelace” and “you@example.com” are hard to read, especially for people who are already dark-adapting outdoors with screens dimmed. Confirmed by the detector and by calculation.</li>
+  <li><strong>WCAG/Standard:</strong> 1.4.3 Contrast (Minimum)</li>
+  <li><strong>Recommendation:</strong> Raise the placeholder to about <code class="language-plaintext highlighter-rouge">#8a91b3</code> (at least 4.5:1), or drop the placeholders since the labels are already explicit.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable harden</code></li>
+</ul>
+
+<p><strong>[P2] Brand link’s accessible name does not contain its visible text</strong></p>
+<ul>
+  <li><strong>Location:</strong> line 205, <code class="language-plaintext highlighter-rouge">aria-label="Orionids Night home"</code> on a link that displays “Cedar Hollow”</li>
+  <li><strong>Category:</strong> Accessibility</li>
+  <li><strong>Impact:</strong> A voice-control user who says “click Cedar Hollow” will not reach the link.</li>
+  <li><strong>WCAG/Standard:</strong> 2.5.3 Label in Name (Level A)</li>
+  <li><strong>Recommendation:</strong> Remove the <code class="language-plaintext highlighter-rouge">aria-label</code>, or make it start with the visible text, for example “Cedar Hollow, home”.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable harden</code></li>
+</ul>
+
+<p><strong>[P2] Content hidden when JavaScript doesn’t run</strong></p>
+<ul>
+  <li><strong>Location:</strong> <code class="language-plaintext highlighter-rouge">.reveal{opacity:0}</code> (line 173) is applied from the HTML, and the <code class="language-plaintext highlighter-rouge">.in</code> class is added only by script (lines 590-594).</li>
+  <li><strong>Category:</strong> Accessibility / Implementation Integrity</li>
+  <li><strong>Impact:</strong> If the script fails, is blocked or throws before line 590 (for example if <code class="language-plaintext highlighter-rouge">getContext</code> fails), every section below the hero stays invisible: the facts, the schedule, the map, the pack list and the RSVP form. Full-page captures taken without scrolling show the same blank page, so link previews and some crawlers see it too.</li>
+  <li><strong>Recommendation:</strong> Gate the hidden state on a class that JS sets, for example <code class="language-plaintext highlighter-rouge">.js .reveal{opacity:0}</code> with <code class="language-plaintext highlighter-rouge">document.documentElement.classList.add('js')</code>.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable harden</code></li>
+</ul>
+
+<p><strong>[P2] Mobile nav removed with no replacement</strong></p>
+<ul>
+  <li><strong>Location:</strong> line 186, <code class="language-plaintext highlighter-rouge">.nav ul{display:none}</code> at 960px and below</li>
+  <li><strong>Category:</strong> Responsive</li>
+  <li><strong>Impact:</strong> On tablets and phones the only header action is “RSVP free”. The anchors for The Orionids, When &amp; where and What to bring disappear on a long page (8,875px tall at 375px).</li>
+  <li><strong>Recommendation:</strong> Keep a compact, horizontally scrollable row of the three anchors, or add a small disclosure menu. Three short links fit at 375px with a smaller gap.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable adapt</code></li>
+</ul>
+
+<p><strong>[P2] Touch targets under 44px</strong></p>
+<ul>
+  <li><strong>Location:</strong> header <code class="language-plaintext highlighter-rouge">.btn.sm</code> “RSVP free” is 95x34. The brand link is 133x24. The hero “What are the Orionids?” button is 210x43.</li>
+  <li><strong>Category:</strong> Responsive</li>
+  <li><strong>Impact:</strong> The primary call to action in the fixed header is below the 44px minimum on touch devices.</li>
+  <li><strong>WCAG/Standard:</strong> 2.5.8 Target Size (AA, 24px, passes). Below platform guidance and 2.5.5 (AAA, 44px).</li>
+  <li><strong>Recommendation:</strong> Raise <code class="language-plaintext highlighter-rouge">.btn.sm</code> to <code class="language-plaintext highlighter-rouge">min-height:44px</code> and pad the brand link vertically.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable adapt</code></li>
+</ul>
+
+<p><strong>[P2] Body font size fixed in px</strong></p>
+<ul>
+  <li><strong>Location:</strong> line 38, <code class="language-plaintext highlighter-rouge">body{font-size:17px}</code></li>
+  <li><strong>Category:</strong> Responsive / Accessibility</li>
+  <li><strong>Impact:</strong> Text that inherits from body ignores the user’s browser default font size, while the <code class="language-plaintext highlighter-rouge">rem</code>-sized parts do scale. The result is uneven scaling for low-vision users who raise the default size.</li>
+  <li><strong>WCAG/Standard:</strong> 1.4.4 Resize Text (zoom still works, so this is a robustness issue rather than a fail)</li>
+  <li><strong>Recommendation:</strong> Use <code class="language-plaintext highlighter-rouge">font-size:1.0625rem</code>.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable typeset</code></li>
+</ul>
+
+<p><strong>[P2] Starfield loop never stops, and blur layers repaint every frame</strong></p>
+<ul>
+  <li><strong>Location:</strong> <code class="language-plaintext highlighter-rouge">frame()</code> at lines 540-571. <code class="language-plaintext highlighter-rouge">backdrop-filter</code> on <code class="language-plaintext highlighter-rouge">.nav.scrolled</code> (line 53) and <code class="language-plaintext highlighter-rouge">.ticket</code> (line 82).</li>
+  <li><strong>Category:</strong> Performance</li>
+  <li><strong>Impact:</strong> <code class="language-plaintext highlighter-rouge">requestAnimationFrame</code> runs for the whole visit, even when the hero is scrolled out of view. The <code class="language-plaintext highlighter-rouge">.ticket</code> blur sits directly over the canvas, so the backdrop is re-blurred on every frame. The fixed nav blur adds more compositing. On low-end phones this drains battery and makes scrolling stutter, which matters for people checking the page in a dark field at 2 am. <code class="language-plaintext highlighter-rouge">resize</code> regenerates every star with no debounce, so rotating the phone reshuffles the sky.</li>
+  <li><strong>Recommendation:</strong> Pause the loop with an IntersectionObserver on <code class="language-plaintext highlighter-rouge">.hero</code> and on <code class="language-plaintext highlighter-rouge">visibilitychange</code>. Debounce <code class="language-plaintext highlighter-rouge">resize</code>. Swap the ticket’s <code class="language-plaintext highlighter-rouge">backdrop-filter</code> for a solid <code class="language-plaintext highlighter-rouge">--ink-2</code> at about 0.85 alpha.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable optimize</code></li>
+</ul>
+
+<p><strong>[P2] Numbered eyebrow kickers on every section</strong></p>
+<ul>
+  <li><strong>Location:</strong> lines 228, 260, 334, 396, 414, 454 and 486</li>
+  <li><strong>Category:</strong> Implementation Integrity</li>
+  <li><strong>Impact:</strong> Seven tracked-caps labels, four of them numbered <code class="language-plaintext highlighter-rouge">01</code> to <code class="language-plaintext highlighter-rouge">04</code>, frame an event page like a SaaS template. They add scanning noise and no information: “Pack list” sits directly above “Dress for 4 am, not 8 pm.”</li>
+  <li><strong>Recommendation:</strong> Delete the numbered kickers. Put the hero date into the ticket or the lede, where it already appears.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable distill</code></li>
+</ul>
+
+<p><strong>[P2] Same heading pattern repeated five times</strong></p>
+<ul>
+  <li><strong>Location:</strong> h1 (line 229) and the h2s at lines 261, 335, 415 and 455. CSS <code class="language-plaintext highlighter-rouge">h2 em,h1 em</code> at line 47.</li>
+  <li><strong>Category:</strong> Implementation Integrity</li>
+  <li><strong>Impact:</strong> Every heading is roman Instrument Serif followed by an <em>italic ember fragment</em>. After the hero, the device is predictable and stops adding emphasis.</li>
+  <li><strong>Recommendation:</strong> Keep the italic accent for the hero only. Give the section heads a different, more restrained treatment.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable typeset</code></li>
+</ul>
+
+<p><strong>[P2] Icon-tile feature cards in the pack list</strong></p>
+<ul>
+  <li><strong>Location:</strong> <code class="language-plaintext highlighter-rouge">.bring .item .ic</code> (lines 136 and 420-439)</li>
+  <li><strong>Category:</strong> Implementation Integrity</li>
+  <li><strong>Impact:</strong> This is the generic feature-card layout, with a hover lift on cards that do nothing when clicked (line 135). The lift suggests they are interactive when they are not.</li>
+  <li><strong>Recommendation:</strong> Present the list as a checklist (icon inline with the title, no tile), or as a more specific “what to bring” layout. Remove the hover lift from non-interactive cards.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable distill</code></li>
+</ul>
+
+<p><strong>[P2] Hard-coded secondary text color and alpha variants; no <code class="language-plaintext highlighter-rouge">color-scheme</code></strong></p>
+<ul>
+  <li><strong>Location:</strong> <code class="language-plaintext highlighter-rouge">#c9cee6</code> at lines 80, 104, 128, 142 and 153, plus SVG line 383. About 20 hard-coded <code class="language-plaintext highlighter-rouge">rgba()</code> values derived from existing tokens. <code class="language-plaintext highlighter-rouge">#5e6688</code>, <code class="language-plaintext highlighter-rouge">#ff9b8f</code> and <code class="language-plaintext highlighter-rouge">#ff8f82</code> are also untokenized. There is no <code class="language-plaintext highlighter-rouge">color-scheme: dark</code> on <code class="language-plaintext highlighter-rouge">:root</code>.</li>
+  <li><strong>Category:</strong> Theming</li>
+  <li><strong>Impact:</strong> The most-used body-copy tint is not a token, so palette changes miss it. The error red exists in three variants (<code class="language-plaintext highlighter-rouge">--red</code>, <code class="language-plaintext highlighter-rouge">#ff9b8f</code>, <code class="language-plaintext highlighter-rouge">#ff8f82</code>). Without <code class="language-plaintext highlighter-rouge">color-scheme: dark</code>, native UI such as scrollbars and the autofill background renders in light mode on a dark page.</li>
+  <li><strong>Recommendation:</strong> Add <code class="language-plaintext highlighter-rouge">--text-2:#c9cee6</code>, <code class="language-plaintext highlighter-rouge">--text-3</code> for placeholders and the legend, <code class="language-plaintext highlighter-rouge">--danger</code>, and <code class="language-plaintext highlighter-rouge">--ember-a*</code> alpha tokens (or use <code class="language-plaintext highlighter-rouge">color-mix()</code>). Add <code class="language-plaintext highlighter-rouge">color-scheme: dark</code>. The page is intentionally dark-only (dark-sky theme), and that is the right call. Make it explicit.</li>
+  <li><strong>Suggested command:</strong> <code class="language-plaintext highlighter-rouge">/impeccable colorize</code></li>
+</ul>
+
+<h3 id="p3-polish">P3 Polish</h3>
+
+<p><strong>[P3] Glow accents</strong>: <code class="language-plaintext highlighter-rouge">.tl.peak .dot</code> (line 116) and <code class="language-plaintext highlighter-rouge">.item.red .ic</code> (line 140). The peak glow can be argued for (the meteors are brightest then). The flashlight glow is decoration. Keep at most one. <em>Category: Implementation Integrity.</em> <code class="language-plaintext highlighter-rouge">/impeccable quieter</code></p>
+
+<p><strong>[P3] Brand icon meteor trail invisible</strong>: gradient <code class="language-plaintext highlighter-rouge">#g0</code> (line 206) has coordinates in user space but the default <code class="language-plaintext highlighter-rouge">objectBoundingBox</code> units, so the stroke renders with 0 opacity and the logo shows only a dot. Add <code class="language-plaintext highlighter-rouge">gradientUnits="userSpaceOnUse"</code>. The <code class="language-plaintext highlighter-rouge">#tr</code> gradient (line 296) is defined but never used. <em>Category: Implementation Integrity.</em> <code class="language-plaintext highlighter-rouge">/impeccable polish</code></p>
+
+<p><strong>[P3] Map semantics and micro-text</strong>: <code class="language-plaintext highlighter-rouge">aria-label</code> on the plain <code class="language-plaintext highlighter-rouge">div.card.map</code> (line 364) is ignored because the div has no role, and it duplicates the SVG’s own label. The legend is 9px <code class="language-plaintext highlighter-rouge">#5e6688</code> (3.3:1), and the other map labels are 10px. <em>Category: Accessibility.</em> <code class="language-plaintext highlighter-rouge">/impeccable polish</code></p>
+
+<p><strong>[P3] Display face not preloaded</strong>: the 122px h1 swaps from Georgia to Instrument Serif (<code class="language-plaintext highlighter-rouge">font-display:swap</code>, no <code class="language-plaintext highlighter-rouge">&lt;link rel=preload&gt;</code>), which causes a visible reflow of the largest element. Preload the two Instrument Serif files. The Manrope 800 face is declared but unused (it is not downloaded, so this is only clean-up). <em>Category: Performance.</em> <code class="language-plaintext highlighter-rouge">/impeccable optimize</code></p>
+
+<p><strong>[P3] Countdown has no state for after the event starts</strong>: after 8 pm on Oct 21 it sits at <code class="language-plaintext highlighter-rouge">00 00 00 00</code> while the page keeps asking for RSVPs. Swap in a “Gates are open” or “See you next year” state. <em>Category: Implementation Integrity.</em> <code class="language-plaintext highlighter-rouge">/impeccable harden</code></p>
+
+<p><strong>[P3] Minor semantics</strong>: the <code class="language-plaintext highlighter-rouge">&lt;time&gt;</code> elements have no <code class="language-plaintext highlighter-rouge">datetime</code> (lines 343-359). The stepper buttons give no disabled or bounds feedback at 1 and 10. The inline <code class="language-plaintext highlighter-rouge">list-style:none</code> on the timeline <code class="language-plaintext highlighter-rouge">&lt;ol&gt;</code> drops list semantics in Safari VoiceOver (add <code class="language-plaintext highlighter-rouge">role="list"</code>). <em>Category: Accessibility.</em> <code class="language-plaintext highlighter-rouge">/impeccable polish</code></p>
+
+<hr />
+
+<h2 id="patterns--systemic-issues">Patterns &amp; Systemic Issues</h2>
+
+<ul>
+  <li><strong>Template scaffolding is applied across the whole page, not in one spot.</strong> The same eyebrow, italic-em heading and two-column lede structure is stamped onto all four sections, which is the root of 3 of the P2 integrity issues. Fixing the <code class="language-plaintext highlighter-rouge">.sec-head</code> pattern once fixes most of them.</li>
+  <li><strong>The form’s styles override the global accessibility defaults.</strong> The global focus-visible rule is good, but local <code class="language-plaintext highlighter-rouge">:focus</code> and placeholder rules undo it inside the form. The form is the one place on the page where users must succeed.</li>
+  <li><strong>Fixed-ratio SVGs inside fluid containers.</strong> The map uses <code class="language-plaintext highlighter-rouge">slice</code>. The ridge uses <code class="language-plaintext highlighter-rouge">preserveAspectRatio="none"</code>, which is fine for a silhouette. Any SVG that carries information needs <code class="language-plaintext highlighter-rouge">meet</code> or a fixed aspect ratio.</li>
+  <li><strong>Colors drift outside the token set.</strong> The tokens cover the hero palette, but the next tier (secondary text, error, alpha tints) was written as literals, about 25 times in all.</li>
+</ul>
+
+<h2 id="positive-findings">Positive Findings</h2>
+
+<ul>
+  <li><strong>Contrast is excellent where it matters.</strong> Body and muted text measure 8.2 to 8.9:1, ember labels 9.7:1, the dark text on the ember buttons 9.7:1, and error text 8.9:1.</li>
+  <li><strong>Reduced motion is handled with care.</strong> The canvas still draws a static starfield instead of going blank, reveals render immediately, smooth scroll is turned off, and the RSVP success state still appears. Verified with emulation: all 13 <code class="language-plaintext highlighter-rouge">.reveal</code> elements were visible at opacity 1. The detector found no problem with a blanket 0.01ms kill switch.</li>
+  <li><strong>Keyboard flow is logical.</strong> The tab order goes nav, hero CTAs, fields, stepper, then submit. A clear <code class="language-plaintext highlighter-rouge">:focus-visible</code> outline appears on all links and buttons. On submit, focus moves to the first invalid field. On success, focus moves to a <code class="language-plaintext highlighter-rouge">role="status"</code> region and the “RSVP for someone else” button resets the form and refocuses the name field.</li>
+  <li><strong>Semantics are mostly correct.</strong> There is one h1, sections use h2, and cards use h3. The page has <code class="language-plaintext highlighter-rouge">nav</code>, <code class="language-plaintext highlighter-rouge">header</code>, <code class="language-plaintext highlighter-rouge">main</code> and <code class="language-plaintext highlighter-rouge">footer</code> landmarks. The details are a <code class="language-plaintext highlighter-rouge">&lt;dl&gt;</code> and the schedule an <code class="language-plaintext highlighter-rouge">&lt;ol&gt;</code>. Decorative SVGs have <code class="language-plaintext highlighter-rouge">aria-hidden</code> and the informative ones have <code class="language-plaintext highlighter-rouge">role="img"</code> plus labels. The countdown uses <code class="language-plaintext highlighter-rouge">aria-live="off"</code> so it does not announce every second.</li>
+  <li><strong>No horizontal scroll</strong> at 320px, 375px or 1440px. The timeline changes cleanly to a vertical layout under 960px. The stepper buttons are 52x50.</li>
+  <li><strong>Lean delivery.</strong> One request for the HTML, local fonts with <code class="language-plaintext highlighter-rouge">font-display:swap</code>, no frameworks, no images, and the canvas DPR is capped at 2.</li>
+  <li><strong>The content is specific to the event</strong> and worth keeping: the etiquette tips, the weather-call promise and the timeline tied to moonset.</li>
+</ul>
+
+<h2 id="recommended-actions">Recommended Actions</h2>
+
+<ol>
+  <li><strong>[P1] <code class="language-plaintext highlighter-rouge">/impeccable adapt</code></strong>: fix the park map crop (<code class="language-plaintext highlighter-rouge">meet</code> or a fixed <code class="language-plaintext highlighter-rouge">aspect-ratio</code>, labels inside a safe area). Also bring back mobile section navigation and raise the header RSVP and brand link to 44px.</li>
+  <li><strong>[P2] <code class="language-plaintext highlighter-rouge">/impeccable harden</code></strong>: restore the input focus outline, link errors with <code class="language-plaintext highlighter-rouge">aria-describedby</code>, mark required fields, raise placeholder contrast, fix the brand link’s label-in-name, gate <code class="language-plaintext highlighter-rouge">.reveal</code> on a <code class="language-plaintext highlighter-rouge">.js</code> class, and add a post-event countdown state.</li>
+  <li><strong>[P2] <code class="language-plaintext highlighter-rouge">/impeccable distill</code></strong>: remove the numbered eyebrow kickers and turn the icon-tile pack list into a checklist without hover lift.</li>
+  <li><strong>[P2] <code class="language-plaintext highlighter-rouge">/impeccable typeset</code></strong>: keep the italic-ember accent for the hero only, give the section heads their own treatment, and change <code class="language-plaintext highlighter-rouge">body</code> font size to rem.</li>
+  <li><strong>[P2] <code class="language-plaintext highlighter-rouge">/impeccable optimize</code></strong>: pause the starfield when the hero is off-screen or the tab is hidden, debounce resize, drop the ticket’s <code class="language-plaintext highlighter-rouge">backdrop-filter</code> over the live canvas, and preload Instrument Serif.</li>
+  <li><strong>[P2] <code class="language-plaintext highlighter-rouge">/impeccable colorize</code></strong>: tokenize <code class="language-plaintext highlighter-rouge">#c9cee6</code>, the placeholder and legend gray, the error red and the ember and line alpha variants, and declare <code class="language-plaintext highlighter-rouge">color-scheme: dark</code>.</li>
+  <li><strong>[P3] <code class="language-plaintext highlighter-rouge">/impeccable quieter</code></strong>: reduce the glow accents to at most the peak dot.</li>
+  <li><strong>[P3] <code class="language-plaintext highlighter-rouge">/impeccable polish</code></strong>: fix the brand gradient units, remove the unused <code class="language-plaintext highlighter-rouge">#tr</code> gradient and the stray <code class="language-plaintext highlighter-rouge">aria-label</code>, add <code class="language-plaintext highlighter-rouge">datetime</code> and <code class="language-plaintext highlighter-rouge">role="list"</code>, and finish with a full polish pass.</li>
+</ol>
+
+<blockquote>
+  <p>You can ask me to run these one at a time, all at once, or in any order you prefer.</p>
+
+  <p>Re-run <code class="language-plaintext highlighter-rouge">/impeccable audit</code> after fixes to see your score improve.</p>
+</blockquote>
+
+  <footer class="site">
+    <p>AI Alchemy by Kathryn. Every skill is tested in a fresh, isolated sandbox so they can't mess with each other.</p>
+    <p class="visits">Visitors so far: <img src="https://hits.sh/meifish.github.io/ai_alchemy.svg?label=visits&amp;color=%232B7449&amp;labelColor=%2356615B" alt="Total visits to AI Alchemy" height="20" loading="lazy" style="vertical-align:middle"></p>
+  </footer>
+</div>
+<script src="/ai_alchemy/assets/translate.js"></script>
+</body>
+</html>

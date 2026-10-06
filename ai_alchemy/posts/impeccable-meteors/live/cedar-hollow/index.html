@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orionids Night at Cedar Hollow</title>
+<meta name="description" content="A free night of lying on blankets watching Halley's Comet dust burn up. Orionids watch party, Wed Oct 21 into Thu Oct 22, 2026.">
+<link rel="preload" href="fonts/big-shoulders-display-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Big Shoulders Display";src:url(fonts/big-shoulders-display-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Big Shoulders Display";src:url(fonts/big-shoulders-display-latin-800-normal.woff2) format("woff2");font-weight:800;font-display:swap}
+@font-face{font-family:"Big Shoulders Display";src:url(fonts/big-shoulders-display-latin-900-normal.woff2) format("woff2");font-weight:900;font-display:swap}
+@font-face{font-family:"Atkinson Hyperlegible Next";src:url(fonts/atkinson-hyperlegible-next-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Atkinson Hyperlegible Next";src:url(fonts/atkinson-hyperlegible-next-latin-400-italic.woff2) format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"Atkinson Hyperlegible Next";src:url(fonts/atkinson-hyperlegible-next-latin-600-normal.woff2) format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Atkinson Hyperlegible Next";src:url(fonts/atkinson-hyperlegible-next-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:swap}
+:root{
+  --sky:#0b0e26; --sky-2:#14183a;
+  --indigo:#14183a; --madder:#b8342a; --madder-deep:#7f241e;
+  --mustard:#e0a526; --forest:#2f5a3c; --forest-deep:#1f3f28;
+  --wool:#f1e5c9; --wool-dim:#d9cba8; --bark:#2b1a0d;
+  --thread:#f6ecd4;
+  --display:"Big Shoulders Display", "Arial Narrow", sans-serif;
+  --body:"Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, sans-serif;
+  --weave:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9 .35' numOctaves='2' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  --twill:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%228%22 height=%228%22%3E%3Cpath d=%22M-2 2l4-4M0 8l8-8M6 10l4-4%22 stroke=%22%23000%22 stroke-opacity=%22.16%22 stroke-width=%221.4%22/%3E%3Cpath d=%22M0 .5h8M0 4.5h8%22 stroke=%22%23fff%22 stroke-opacity=%22.05%22/%3E%3C/svg%3E");
+  --fringe:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22168%22 height=%2236%22%3E%3Ccircle cx=%225.4%22 cy=%224%22 r=%222.6%22 fill=%22%23f1e5c9%22/%3E%3Cpath d=%22M4.7 5 q-0.7 8.6 -1.0 17.2 t-0.6 7.4%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.90%22/%3E%3Cpath d=%22M5.4 5 q1.1 8.6 0.0 17.2 t0.0 7.4%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.77%22/%3E%3Cpath d=%22M6.0 5 q2.2 8.6 1.0 17.2 t0.6 7.4%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.96%22/%3E%3Ccircle cx=%2217.4%22 cy=%224%22 r=%222.6%22 fill=%22%23f1e5c9%22/%3E%3Cpath d=%22M16.8 5 q-0.2 7.3 -1.0 14.6 t-0.6 6.2%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.87%22/%3E%3Cpath d=%22M17.4 5 q1.3 7.3 0.0 14.6 t0.0 6.2%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.87%22/%3E%3Cpath d=%22M18.1 5 q2.7 7.3 1.0 14.6 t0.6 6.2%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.79%22/%3E%3Ccircle cx=%2230.3%22 cy=%224%22 r=%222.6%22 fill=%22%23f1e5c9%22/%3E%3Cpath d=%22M29.7 5 q-0.6 9.9 -1.0 19.9 t-0.6 8.5%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.94%22/%3E%3Cpath d=%22M30.3 5 q1.1 9.9 0.0 19.9 t0.0 8.5%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.77%22/%3E%3Cpath d=%22M31.0 5 q2.8 9.9 1.0 19.9 t0.6 8.5%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.90%22/%3E%3Ccircle cx=%2241.5%22 cy=%224%22 r=%222.6%22 fill=%22%23f1e5c9%22/%3E%3Cpath d=%22M40.9 5 q-0.3 6.4 -1.0 12.9 t-0.6 5.5%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.87%22/%3E%3Cpath d=%22M41.5 5 q1.2 6.4 0.0 12.9 t0.0 5.5%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.97%22/%3E%3Cpath d=%22M42.2 5 q2.8 6.4 1.0 12.9 t0.6 5.5%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.98%22/%3E%3Ccircle cx=%2253.7%22 cy=%224%22 r=%222.6%22 fill=%22%23f1e5c9%22/%3E%3Cpath d=%22M53.1 5 q-0.6 9.7 -1.0 19.3 t-0.6 8.3%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.98%22/%3E%3Cpath d=%22M53.7 5 q1.3 9.7 0.0 19.3 t0.0 8.3%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.77%22/%3E%3Cpath d=%22M54.4 5 q2.3 9.7 1.0 19.3 t0.6 8.3%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.80%22/%3E%3Ccircle cx=%2267.1%22 cy=%224%22 r=%222.6%22 fill=%22%23f1e5c9%22/%3E%3Cpath d=%22M66.5 5 q-0.5 8.1 -1.0 16.3 t-0.6 7.0%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.83%22/%3E%3Cpath d=%22M67.1 5 q1.0 8.1 0.0 16.3 t0.0 7.0%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.85%22/%3E%3Cpath d=%22M67.8 5 q2.5 8.1 1.0 16.3 t0.6 7.0%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.90%22/%3E%3Ccircle cx=%2278.2%22 cy=%224%22 r=%222.6%22 fill=%22%23f1e5c9%22/%3E%3Cpath d=%22M77.6 5 q-0.5 10.1 -1.0 20.2 t-0.6 8.7%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.98%22/%3E%3Cpath d=%22M78.2 5 q1.3 10.1 0.0 20.2 t0.0 8.7%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%221.00%22/%3E%3Cpath d=%22M78.8 5 q2.7 10.1 1.0 20.2 t0.6 8.7%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.79%22/%3E%3Ccircle cx=%2290.9%22 cy=%224%22 r=%222.6%22 fill=%22%23f1e5c9%22/%3E%3Cpath d=%22M90.2 5 q-0.3 10.4 -1.0 20.7 t-0.6 8.9%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.89%22/%3E%3Cpath d=%22M90.9 5 q1.2 10.4 0.0 20.7 t0.0 8.9%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.80%22/%3E%3Cpath d=%22M91.5 5 q2.9 10.4 1.0 20.7 t0.6 8.9%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.89%22/%3E%3Ccircle cx=%22101.5%22 cy=%224%22 r=%222.6%22 fill=%22%23f1e5c9%22/%3E%3Cpath d=%22M100.8 5 q-0.3 6.6 -1.0 13.1 t-0.6 5.6%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%221.00%22/%3E%3Cpath d=%22M101.5 5 q0.7 6.6 0.0 13.1 t0.0 5.6%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.95%22/%3E%3Cpath d=%22M102.1 5 q2.5 6.6 1.0 13.1 t0.6 5.6%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.79%22/%3E%3Ccircle cx=%22113.5%22 cy=%224%22 r=%222.6%22 fill=%22%23f1e5c9%22/%3E%3Cpath d=%22M112.9 5 q-0.3 9.5 -1.0 19.1 t-0.6 8.2%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.76%22/%3E%3Cpath d=%22M113.5 5 q1.1 9.5 0.0 19.1 t0.0 8.2%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.76%22/%3E%3Cpath d=%22M114.1 5 q2.8 9.5 1.0 19.1 t0.6 8.2%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.83%22/%3E%3Ccircle cx=%22126.9%22 cy=%224%22 r=%222.6%22 fill=%22%23f1e5c9%22/%3E%3Cpath d=%22M126.3 5 q-0.6 10.4 -1.0 20.8 t-0.6 8.9%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%221.00%22/%3E%3Cpath d=%22M126.9 5 q0.8 10.4 0.0 20.8 t0.0 8.9%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.77%22/%3E%3Cpath d=%22M127.6 5 q2.7 10.4 1.0 20.8 t0.6 8.9%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.76%22/%3E%3Ccircle cx=%22137.3%22 cy=%224%22 r=%222.6%22 fill=%22%23f1e5c9%22/%3E%3Cpath d=%22M136.6 5 q-0.5 8.0 -1.0 16.0 t-0.6 6.9%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.79%22/%3E%3Cpath d=%22M137.3 5 q0.6 8.0 0.0 16.0 t0.0 6.9%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.97%22/%3E%3Cpath d=%22M137.9 5 q2.5 8.0 1.0 16.0 t0.6 6.9%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.99%22/%3E%3Ccircle cx=%22151.0%22 cy=%224%22 r=%222.6%22 fill=%22%23f1e5c9%22/%3E%3Cpath d=%22M150.3 5 q-0.6 7.9 -1.0 15.8 t-0.6 6.8%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.88%22/%3E%3Cpath d=%22M151.0 5 q1.1 7.9 0.0 15.8 t0.0 6.8%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.90%22/%3E%3Cpath d=%22M151.6 5 q2.6 7.9 1.0 15.8 t0.6 6.8%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.91%22/%3E%3Ccircle cx=%22163.1%22 cy=%224%22 r=%222.6%22 fill=%22%23f1e5c9%22/%3E%3Cpath d=%22M162.4 5 q-0.7 8.4 -1.0 16.9 t-0.6 7.2%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.93%22/%3E%3Cpath d=%22M163.1 5 q0.8 8.4 0.0 16.9 t0.0 7.2%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.83%22/%3E%3Cpath d=%22M163.7 5 q3.0 8.4 1.0 16.9 t0.6 7.2%22 stroke=%22%23f1e5c9%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 opacity=%220.88%22/%3E%3C/svg%3E");
+  --bstitch:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2218%22%3E%3Cpath d=%22M0 3h20M4 3v12M4 15c2-1 3-3 3-6%22 stroke=%22%23f6ecd4%22 stroke-width=%222.2%22 fill=%22none%22 stroke-linecap=%22round%22/%3E%3C/svg%3E");
+  --tack:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2216%22%3E%3Cpath d=%22M3 2l4 2-4 2 4 2-4 2 4 2-4 2%22 stroke=%22%237f241e%22 stroke-width=%221.8%22 fill=%22none%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E");
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scrollbar-color:var(--mustard) var(--sky)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--sky);color:var(--wool);font-family:var(--body);font-size:clamp(1.05rem,.98rem + .3vw,1.2rem);line-height:1.6;-webkit-font-smoothing:antialiased}
+::selection{background:var(--mustard);color:var(--bark)}
+a{color:inherit;text-decoration-thickness:2px;text-underline-offset:.22em}
+:focus-visible{outline:3px dashed var(--mustard);outline-offset:4px;border-radius:2px}
+h1,h2,h3{font-family:var(--display);font-weight:900;line-height:.92;letter-spacing:-.005em;margin:0;text-wrap:balance;text-transform:uppercase}
+p{margin:0 0 1em;max-width:62ch}
+.skip{position:absolute;left:-999px;top:8px;background:var(--mustard);color:var(--bark);padding:8px 14px;z-index:10}
+.skip:focus{left:8px}
+
+/* wool bands */
+.band{position:relative;padding:clamp(64px,9vw,128px) clamp(20px,5vw,72px)}
+.band::before{content:"";position:absolute;inset:0;background:var(--twill),var(--weave);opacity:.5;pointer-events:none;mix-blend-mode:soft-light}
+.band::after{content:"";position:absolute;left:0;right:0;top:6px;height:18px;background:var(--bstitch) repeat-x;opacity:.9;pointer-events:none}
+.band > *{position:relative}
+.inner{max-width:1180px;margin:0 auto}
+.pin{height:22px;background:
+  linear-gradient(var(--wool) 0 0) 0 5px/100% 3px no-repeat,
+  linear-gradient(var(--wool) 0 0) 0 14px/100% 3px no-repeat,
+  var(--pin-bg,var(--bark))}
+/* blanket stitch along a top edge */
+.stitch-top{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='16'%3E%3Cpath d='M1 1v12h20' fill='none' stroke='%23f6ecd4' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:repeat-x;background-position:0 10px}
+
+/* ---------- sky + hero ---------- */
+.hero{position:relative;background:var(--madder)}
+.skywrap{position:relative;min-height:max(540px,74svh);display:grid;grid-template-rows:auto 1fr;background:radial-gradient(120% 90% at 70% 0%,var(--sky-2),var(--sky) 65%)}
+#sky{position:absolute;inset:0 0 0 0;width:100%;height:100%;display:block;cursor:crosshair;touch-action:manipulation}
+.nav{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px clamp(20px,4vw,48px);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-family:var(--display);font-weight:800;font-size:1.25rem;letter-spacing:.04em;text-transform:uppercase;line-height:1}
+.brand small{display:block;font-family:var(--body);font-weight:400;font-size:.72rem;letter-spacing:.02em;text-transform:none;color:var(--wool-dim);margin-top:4px}
+.brand svg{flex:0 0 auto}
+.nav ul{list-style:none;display:flex;gap:clamp(12px,2vw,28px);margin:0;padding:0;align-items:center;flex-wrap:wrap}
+.nav ul a{text-decoration:none;font-weight:600;font-size:.95rem}
+.nav ul a:hover{text-decoration:underline;text-decoration-color:var(--mustard)}
+.redbtn{display:inline-flex;align-items:center;gap:8px;font:600 .9rem var(--body);color:var(--wool);background:transparent;border:2px solid var(--madder);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer}
+.redbtn:hover{background:var(--madder)}
+.redbtn[aria-pressed="true"]{background:var(--madder);border-color:var(--madder)}
+
+.hero-copy{position:relative;z-index:1;align-self:end;padding:8px clamp(20px,5vw,72px) 44px;pointer-events:none;max-width:1000px}
+.hero h1{font-size:clamp(3rem,5.6vw,5.6rem);max-width:17ch;color:var(--wool);text-shadow:0 2px 24px rgba(5,7,25,.6)}
+.hero h1 em{font-style:normal;color:var(--mustard)}
+.hero .lede{font-size:clamp(1.1rem,1rem + .4vw,1.3rem);max-width:48ch;margin:22px 0 0;color:var(--wool);text-shadow:0 1px 12px rgba(5,7,25,.8)}
+.hint{display:inline-flex;align-items:center;gap:8px;margin-top:18px;font-size:.92rem;color:var(--wool-dim)}
+.hint svg{flex:0 0 auto}
+
+/* blanket edge + woven label */
+.edge{position:relative;z-index:1;background:var(--madder);padding:0 clamp(20px,5vw,72px) 36px}
+.edge::before{content:"";position:absolute;inset:0;background:var(--twill),var(--weave);opacity:.5;mix-blend-mode:soft-light;pointer-events:none}
+.edge-stripes{position:absolute;inset:0 0 auto;height:100%;pointer-events:none;background:
+  linear-gradient(var(--wool) 0 0) 0 42px/100% 4px no-repeat,
+  linear-gradient(var(--mustard) 0 0) 0 54px/100% 10px no-repeat,
+  linear-gradient(var(--wool) 0 0) 0 72px/100% 4px no-repeat}
+.fringe{height:36px;margin:0 calc(-1 * clamp(20px,5vw,72px));background:var(--fringe) repeat-x 0 0;transform:translateY(-34px) scaleY(-1);margin-bottom:-36px;opacity:.95}
+.label-row{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,560px);gap:32px;margin:0;padding-top:96px;align-items:start}
+.label-facts{display:grid;gap:22px;font-family:var(--display);font-weight:900;font-size:clamp(2rem,1.4rem + 2vw,3.2rem);line-height:1}
+.label-facts h2{font-size:inherit;line-height:1}
+.label-facts span{display:block;font-family:var(--body);text-transform:none;font-weight:400;font-size:1.05rem;max-width:40ch;color:var(--wool);margin-top:6px;line-height:1.45}
+
+.woven{position:relative;margin-top:-300px;background:var(--wool);color:var(--bark);padding:30px 34px 22px;
+  background-image:repeating-linear-gradient(0deg,rgba(43,26,13,.09) 0 1px,transparent 1px 2.5px),repeating-linear-gradient(90deg,rgba(255,255,255,.18) 0 1px,transparent 1px 3px);
+  box-shadow:0 1px 1px rgba(20,8,4,.35),0 10px 22px -10px rgba(20,8,4,.6)}
+/* selvedge: woven border lines top and bottom, not a dashed coupon */
+.woven::before{content:"";position:absolute;left:0;right:0;top:8px;bottom:8px;border-block:3px double var(--madder);pointer-events:none}
+/* folded ends + corner tack stitches */
+.woven::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:var(--tack) no-repeat 6px 18px,var(--tack) no-repeat calc(100% - 6px) 18px,var(--tack) no-repeat 6px calc(100% - 18px),var(--tack) no-repeat calc(100% - 6px) calc(100% - 18px),
+  linear-gradient(90deg,rgba(43,26,13,.22),transparent 12px) no-repeat 0 0/14px 100%,linear-gradient(270deg,rgba(43,26,13,.22),transparent 12px) no-repeat 100% 0/14px 100%}
+.woven h2{mix-blend-mode:multiply}
+.woven :focus-visible{outline-color:var(--madder-deep)}
+.woven h2{font-size:clamp(1.9rem,1.5rem + 1.4vw,2.6rem);color:var(--madder-deep);margin-bottom:6px}
+.woven .when{display:none;font-weight:700;margin:0 0 12px;font-size:.95rem;color:var(--madder-deep)}
+.woven .sub{font-size:.98rem;margin:0 0 16px;color:#4a3320}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+.field{display:grid;gap:4px}
+.field.full{grid-column:1/-1}
+.field label{font-weight:700;font-size:.9rem}
+.field input{font:inherit;font-size:1rem;color:var(--bark);background:#fffaf0;border:2px solid #8f7b52;border-radius:4px;padding:10px 12px;min-height:46px;caret-color:var(--madder)}
+.field input::placeholder{color:#7a6649}
+.field input:hover{border-color:#8f7b52}
+.field input:focus-visible{outline:none;border-color:var(--madder);box-shadow:0 0 0 3px rgba(184,52,42,.28)}
+.field input[aria-invalid="true"]{border-color:var(--madder);background:#fff1ec}
+.err{font-size:.85rem;color:var(--madder-deep);min-height:0}
+.stepper{display:flex;align-items:stretch;border:2px solid #8f7b52;border-radius:4px;background:#fffaf0;min-height:46px;width:max-content}
+.stepper button{font:700 1.2rem var(--body);width:44px;border:0;background:transparent;color:var(--bark);cursor:pointer}
+.stepper button:hover{background:#efe1bf}
+.stepper button:disabled{color:#8f7b52;cursor:not-allowed;background:transparent}
+.stepper output{min-width:2.4ch;display:grid;place-items:center;font-weight:700;font-variant-numeric:tabular-nums;border-inline:2px solid #e2d4b0;padding:0 10px}
+.go{grid-column:1/-1;display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.btn{font:800 1.25rem/1 var(--display);text-transform:uppercase;letter-spacing:.04em;color:var(--wool);background:var(--madder);border:0;border-radius:4px;padding:15px 24px;cursor:pointer;box-shadow:0 2px 0 var(--madder-deep),0 8px 16px -8px rgba(20,8,4,.55);transition:transform .2s cubic-bezier(.16,1,.3,1),background .2s}
+.btn:hover{background:var(--madder-deep);transform:translateY(-1px)}
+.btn:active{transform:translateY(1px)}
+.btn[aria-busy="true"]{opacity:.7;cursor:progress}
+.free{font-size:.9rem;color:#4a3320}
+.done{display:none}
+.woven.is-done .form{display:none}
+.woven.is-done .done{display:block}
+.done p{margin:0 0 10px}
+.tally{display:flex;align-items:center;gap:12px;white-space:nowrap;margin-top:18px;padding-top:14px;border-top:2px dashed #cdbb92;font-size:.9rem;color:#4a3320;min-height:44px}
+.tally svg{flex:0 0 auto}
+.tally svg:empty{display:none}
+.tally b{font-variant-numeric:tabular-nums}
+
+/* ---------- sections ---------- */
+.band h2{font-size:clamp(2.6rem,1.6rem + 4.4vw,5.6rem);margin-bottom:28px}
+.madder{background:var(--madder)}
+.mustard{background:var(--mustard);color:var(--bark)}
+.forest{background:var(--forest)}
+.indigo{background:var(--indigo)}
+.two{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(28px,5vw,72px);align-items:center}
+.big-line{font-family:var(--display);font-weight:800;font-size:clamp(1.7rem,1.3rem + 1.6vw,2.6rem);line-height:1.12;margin:0 0 18px;max-width:20ch}
+.facts{list-style:none;margin:28px 0 0;padding:0;display:grid;gap:0}
+.facts li{display:grid;grid-template-columns:7.5rem 1fr;gap:16px;padding:14px 0;border-top:2px dashed rgba(246,236,212,.45);align-items:baseline}
+.facts b{font-family:var(--display);font-weight:900;font-size:1.9rem;line-height:1;text-transform:uppercase}
+.orbit{width:100%;height:auto;display:block}
+.orbit text{font-family:var(--body);font-size:15px;fill:var(--thread)}
+
+.timeline{list-style:none;margin:8px 0 0;padding:0;position:relative}
+.timeline::before{content:"";position:absolute;left:9.2rem;top:10px;bottom:10px;border-left:3px dashed var(--madder-deep)}
+.timeline li{display:grid;grid-template-columns:8rem 1fr;gap:2.4rem;padding:16px 0;position:relative}
+.timeline li::after{content:"";position:absolute;left:calc(9.2rem - 7px);top:26px;width:17px;height:17px;border-radius:50%;background:var(--mustard);border:3px solid var(--madder-deep)}
+.timeline li.peak::after{background:var(--madder-deep);width:23px;height:23px;left:calc(9.2rem - 10px);top:23px}
+.timeline time{font-family:var(--display);font-weight:900;font-size:clamp(1.6rem,1.3rem + 1vw,2.2rem);line-height:1;text-align:right;font-variant-numeric:tabular-nums}
+.timeline h3{font-size:clamp(1.4rem,1.2rem + .8vw,1.9rem);margin:2px 0 6px}
+.timeline p{margin:0;color:#3d2614}
+.note{font-size:.95rem;margin-top:22px;color:#3d2614}
+
+.patches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(18px,3vw,36px);margin-top:12px;list-style:none;padding:0}
+.patch{display:grid;justify-items:center;text-align:center;gap:14px}
+.patch svg{width:min(100%,190px);height:auto;filter:drop-shadow(0 3px 2px rgba(10,25,14,.45)) drop-shadow(0 10px 14px rgba(10,25,14,.35))}
+.patch .felt{filter:url(#felt)}
+.patch h3{font-size:1.7rem}
+.patch p{font-size:1rem;margin:0;color:var(--wool)}
+.leave{margin-top:48px;display:flex;gap:18px;align-items:flex-start;max-width:760px;padding:22px 24px;border:2px dashed rgba(246,236,212,.55);border-radius:6px}
+.leave svg{flex:0 0 auto}
+.leave p{margin:0}
+
+.where{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,5vw,72px)}
+.where dl{margin:0;display:grid;gap:0}
+.where dt{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:1.35rem;margin-top:18px;color:var(--mustard)}
+.where dd{margin:4px 0 0}
+.close{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(2.4rem,1.4rem + 4vw,5rem);line-height:.95;margin:0 0 22px}
+.btn.big{font-size:1.5rem;padding:18px 30px;display:inline-block;text-decoration:none}
+footer{background:var(--madder);padding:0 clamp(20px,5vw,72px) 40px;position:relative}
+footer .fringe{transform:none;margin:0 calc(-1 * clamp(20px,5vw,72px)) 26px;height:36px;background:var(--fringe) repeat-x 0 0,var(--indigo)}
+footer{padding-top:0}
+footer p{font-size:.95rem;max-width:70ch}
+
+
+.scrub{margin:6px 0 44px;background:var(--sky);color:var(--wool);border-radius:4px;position:relative;box-shadow:0 2px 2px rgba(43,26,13,.35),0 18px 30px -16px rgba(43,26,13,.7)}
+.scrub::before{content:"";position:absolute;inset:0;border:10px solid var(--madder-deep);border-radius:4px;pointer-events:none;z-index:1}
+.scrub::after{content:"";position:absolute;left:10px;right:10px;top:10px;height:18px;background:var(--bstitch) repeat-x;opacity:.9;pointer-events:none;z-index:1}
+.scrub canvas{display:block;width:100%;height:clamp(240px,34vw,420px);border-radius:4px 4px 0 0}
+.scrub-ui{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 28px;align-items:center;padding:18px 30px 26px;position:relative;z-index:2}
+.scrub-time{font-family:var(--display);font-weight:900;font-size:clamp(2.4rem,1.8rem + 2vw,3.6rem);line-height:1;font-variant-numeric:tabular-nums;min-width:4.6ch}
+.scrub-read{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:.98rem;color:var(--wool-dim)}
+.scrub-read b{color:var(--wool);font-variant-numeric:tabular-nums}
+.scrub-read .rate b{color:var(--mustard)}
+.scrub input[type=range]{grid-column:1/-1;width:100%;margin:6px 0 0;-webkit-appearance:none;appearance:none;background:transparent;height:44px;cursor:grab}
+.scrub input[type=range]:active{cursor:grabbing}
+.scrub input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:4px;background:repeating-linear-gradient(90deg,var(--wool) 0 10px,transparent 10px 16px),var(--indigo)}
+.scrub input[type=range]::-moz-range-track{height:8px;border-radius:4px;background:repeating-linear-gradient(90deg,var(--wool) 0 10px,transparent 10px 16px),var(--indigo)}
+.scrub input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;margin-top:-11px;border-radius:50%;background:var(--mustard);border:4px solid var(--madder-deep);box-shadow:0 3px 6px rgba(0,0,0,.45)}
+.scrub input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--mustard);border:4px solid var(--madder-deep)}
+.scrub input[type=range]:focus-visible{outline:3px dashed var(--mustard);outline-offset:2px}
+.scrub-ticks{grid-column:1/-1;display:flex;justify-content:space-between;font-size:.82rem;color:var(--wool-dim);margin-top:-4px}
+.scrub-note{grid-column:1/-1;font-size:.85rem;color:var(--wool-dim);margin:2px 0 0}
+.timeline li{transition:opacity .4s cubic-bezier(.16,1,.3,1)}
+.timeline.scrubbing li{opacity:.78}
+.timeline.scrubbing li.now{opacity:1}
+@media (max-width:560px){.scrub-ui{grid-template-columns:1fr;padding:14px 20px 22px}}
+
+/* red light mode: protect night vision in the car park */
+html.redlight{background:#000}
+html.redlight body{filter:grayscale(1) brightness(.7) contrast(1.1)}
+html.redlight::after{content:"";position:fixed;inset:0;background:#ff2200;mix-blend-mode:multiply;pointer-events:none;z-index:99}
+
+@media (max-width:900px){
+  .label-row{grid-template-columns:1fr;padding-top:92px}
+  .woven{margin-top:0;order:-1}
+  .hero-copy{padding-bottom:28px}
+  .skywrap{min-height:0}
+  .two,.where{grid-template-columns:1fr}
+  .patches{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:560px){
+  .nav ul li:not(:last-child){display:none}
+  .form{grid-template-columns:1fr}
+  .timeline::before{left:5.6rem}
+  .timeline li{grid-template-columns:4.6rem 1fr;gap:2rem}
+  .timeline li::after{left:calc(5.6rem - 7px)}
+  .timeline li.peak::after{left:calc(5.6rem - 10px)}
+  .hero h1{font-size:2.55rem}
+  .hero .lede{font-size:1.02rem;margin-top:14px}
+  .hero-copy{padding-bottom:46px}
+  .hint{display:none}
+  .woven .sub{display:none}
+  .woven .when{display:block}
+  .woven h2{font-size:1.8rem}
+  .field .err:empty{display:none}
+  .form{gap:8px}
+  .field.full{grid-column:auto}
+  .go{margin-top:2px}
+  .go .free{display:none}
+  .go{grid-column:1/-1}
+  .go .btn{width:100%;white-space:nowrap}
+  .label-row{padding-top:88px}
+  .woven{padding:24px 22px 18px}
+  .facts li{grid-template-columns:1fr;gap:4px}
+  .patches{grid-template-columns:1fr 1fr;gap:22px 14px}
+  .patch h3{font-size:1.35rem}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#rsvp">Skip to RSVP</a>
+
+<header class="hero" id="top">
+  <div class="skywrap">
+  <canvas id="sky" aria-hidden="true"></canvas>
+  <nav class="nav" aria-label="Main">
+    <a class="brand" href="#top">
+      <svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true"><circle cx="23" cy="23" r="21" fill="#2c5537" stroke="#f6ecd4" stroke-width="2" stroke-dasharray="3 3"/><path d="M23 10l-8 13h4l-6 9h20l-6-9h4z" fill="#f1e5c9"/><path d="M12 14l9 5" stroke="#e0a526" stroke-width="2.4" stroke-linecap="round"/><rect x="21.5" y="32" width="3" height="5" fill="#f1e5c9"/></svg>
+      <span>Cedar Hollow<small>Dark Sky Reserve · a fictional park</small></span>
+    </a>
+    <ul>
+      <li><a href="#shower">The shower</a></li>
+      <li><a href="#night">The night</a></li>
+      <li><a href="#bring">What to bring</a></li>
+      <li><button class="redbtn" id="redbtn" type="button" aria-pressed="false"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l-1 6h-4z"/><path d="M10 9h4v11a2 2 0 0 1-4 0z"/><path d="M5 4l2 2M19 4l-2 2M12 1v0"/></svg>Red light mode</button></li>
+    </ul>
+  </nav>
+  <div class="hero-copy">
+    <h1>Spread a blanket. <em>Halley's Comet</em> is coming down in pieces.</h1>
+    <p class="lede">Orionids Night at Cedar Hollow. Wednesday Oct 21 into Thursday Oct 22, 2026. Free, no telescope, no experience. You lie back and look up.</p>
+    <p class="hint"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 20L17 7"/><path d="M13 5l6 0 0 6" /></svg>Tap a meteor to count it, like the rangers do.</p>
+  </div>
+  </div>
+  <div class="edge">
+    <div class="edge-stripes" aria-hidden="true"></div>
+    <div class="fringe" aria-hidden="true"></div>
+    <div class="label-row">
+      <div class="label-facts">
+        <div><h2>Gates 8 pm</h2><span>North Meadow, Cedar Hollow Dark Sky Reserve</span></div>
+        <div><h2>Best after 1 am</h2><span>The waxing moon sets around 1 am. From then until dawn the sky is darkest and the shower is strongest.</span></div>
+      </div>
+      <section class="woven" id="rsvp" aria-labelledby="rsvp-h">
+        <h2 id="rsvp-h">Save a spot on the meadow</h2>
+        <p class="sub">Free. It helps the rangers plan parking and cocoa.</p>
+        <p class="when">Wed Oct 21 · gates 8 pm · North Meadow</p>
+        <form class="form" id="form" novalidate>
+          <div class="field">
+            <label for="name">Your name</label>
+            <input id="name" name="name" autocomplete="name" placeholder="Ada Lovelace" required aria-describedby="name-err">
+            <span class="err" id="name-err"></span>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="ada@example.com" required aria-describedby="email-err">
+            <span class="err" id="email-err"></span>
+          </div>
+          <div class="field full">
+            <span id="party-l" style="font-weight:700;font-size:.9rem">People coming, including you</span>
+            <div class="stepper" role="group" aria-labelledby="party-l">
+              <button type="button" id="minus" aria-label="One fewer person">−</button>
+              <output id="party" aria-live="polite">2</output>
+              <button type="button" id="plus" aria-label="One more person">+</button>
+            </div>
+          </div>
+          <div class="go">
+            <button class="btn" type="submit" id="submit">Save my spot</button>
+            <span class="free">No ticket. Just turn up.</span>
+          </div>
+        </form>
+        <div class="done" id="done" role="status" tabindex="-1">
+          <h2>You're on the blanket list</h2>
+          <p id="done-msg">See you at the North Meadow gate from 8 pm.</p>
+          <p class="free">This is a demo page, so nothing was actually sent.</p>
+        </div>
+        <div class="tally" aria-live="polite">
+          <svg id="tally-svg" width="120" height="30" viewBox="0 0 120 30" aria-hidden="true"></svg>
+          <span>Tap meteors in the sky to count them: <b id="tally-n">0</b></span>
+        </div>
+      </section>
+    </div>
+  </div>
+</header>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="felt" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5"/></filter></svg>
+<main>
+  <div class="pin" style="--pin-bg:var(--madder)" aria-hidden="true"></div>
+  <section class="band indigo" id="shower" aria-labelledby="shower-h">
+    <div class="inner two">
+      <div>
+        <h2 id="shower-h">Every streak is a crumb of Halley's Comet</h2>
+        <p class="big-line">Earth drives through the comet's old dust trail every October.</p>
+        <p>Halley's Comet only swings by every 76 years, but it leaves grit behind on each lap. Around October 21, our planet ploughs through that trail and the grains, most smaller than a grain of sand, burn up high in the air. That flash is a meteor.</p>
+        <ul class="facts">
+          <li><b>~20 / hr</b><span>in a typical year, under a properly dark sky. Some years more, some fewer.</span></li>
+          <li><b>66 km/s</b><span>about 148,000 mph. Orionids are among the fastest meteors, so they're quick, bright and often leave a glowing trail.</span></li>
+          <li><b>Orion's club</b><span>is where they seem to come from, near the red star Betelgeuse. You don't need to stare there; meteors cross the whole sky.</span></li>
+        </ul>
+      </div>
+      <svg class="orbit" viewBox="0 0 520 460" role="img" aria-labelledby="orbit-t">
+        <title id="orbit-t">Diagram: Earth's nearly round orbit crosses the long, stretched path of Halley's Comet. The crossing in late October is when we see the Orionids.</title>
+        <circle cx="250" cy="230" r="13" fill="#e0a526"/>
+        <text x="250" y="262" text-anchor="middle">Sun</text>
+        <circle cx="250" cy="230" r="120" fill="none" stroke="#f6ecd4" stroke-width="3" stroke-dasharray="9 7"/>
+        <ellipse cx="200" cy="230" rx="300" ry="96" transform="rotate(-24 250 230)" fill="none" stroke="#b8342a" stroke-width="18" stroke-opacity=".55"/>
+        <ellipse cx="200" cy="230" rx="300" ry="96" transform="rotate(-24 250 230)" fill="none" stroke="#e46b5d" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
+        <circle cx="146" cy="168" r="11" fill="#5d8fd6" stroke="#f6ecd4" stroke-width="3"/>
+        <text x="40" y="128">Earth, late October</text>
+        <path d="M160 190 l14 12 M140 196 l10 16 M168 172 l18 4" stroke="#f6ecd4" stroke-width="2.5" stroke-linecap="round"/>
+        <text x="300" y="400">Halley's dust trail</text>
+        <text x="352" y="150">Earth's orbit</text>
+      </svg>
+    </div>
+  </section>
+
+  <div class="pin" style="--pin-bg:var(--indigo)" aria-hidden="true"></div>
+  <section class="band mustard" id="night" aria-labelledby="night-h">
+    <div class="inner">
+      <h2 id="night-h">The night, hour by hour</h2>
+
+      <figure class="scrub" aria-labelledby="scrub-cap">
+        <canvas id="scrubsky" aria-hidden="true"></canvas>
+        <figcaption class="scrub-ui">
+          <span class="scrub-time" id="scrub-time">8:00 pm</span>
+          <span class="scrub-read" id="scrub-cap"><span>Moon <b id="r-moon">up</b></span><span>Radiant <b id="r-alt">below the trees</b></span><span class="rate">Expect about <b id="r-rate">0</b> an hour</span></span>
+          <input type="range" id="scrub" min="0" max="615" step="5" value="0" aria-label="Time of night, drag from 8 pm to first light">
+          <span class="scrub-ticks" aria-hidden="true"><span>8 pm</span><span>10 pm</span><span>midnight</span><span>2 am</span><span>4 am</span><span>first light</span></span>
+          <p class="scrub-note">Drag through the night. The view faces south-east to south-west from the meadow, for a mid-northern site. Rates are typical-year estimates; the falling meteors are sped up about 150 times.</p>
+        </figcaption>
+      </figure>
+      <ol class="timeline">
+        <li><time>8 pm</time><div><h3>Gates open</h3><p>Park at the North Meadow lot and claim a patch of grass. Headlights off once you're in; the meadow is a red-light-only zone.</p></div></li>
+        <li><time>10:30</time><div><h3>Orion clears the trees</h3><p>The shower's radiant rises in the east. Rangers walk the meadow with a laser pointer to show you where to look and how to count.</p></div></li>
+        <li><time>1 am</time><div><h3>Moonset</h3><p>The moon drops below the hills. Your eyes have had hours to adjust, and fainter meteors start to show.</p></div></li>
+        <li class="peak"><time>2–5 am</time><div><h3>The good part</h3><p>Orion is high and the sky is at its darkest. This is when most meteors fall. Lie flat, look about halfway up, and be patient.</p></div></li>
+        <li><time>6:15</time><div><h3>First light</h3><p>Dawn washes the sky. Last cocoa, fold the blanket, drive home slowly.</p></div></li>
+      </ol>
+      <p class="note">Times are approximate for a mid-northern site. Clouds can win; the weather plan will be announced closer to the night, and people who RSVP hear first.</p>
+    </div>
+  </section>
+
+  <div class="pin" style="--pin-bg:var(--mustard)" aria-hidden="true"></div>
+  <section class="band forest" id="bring" aria-labelledby="bring-h">
+    <div class="inner">
+      <h2 id="bring-h">Pack like it's January</h2>
+      <p class="big-line" style="max-width:28ch">You'll be lying still for hours. October nights get colder than you think.</p>
+      <ul class="patches">
+        <li class="patch">
+          <svg viewBox="0 0 200 220" aria-hidden="true"><path d="M100 6l88 30v70c0 56-44 92-88 108C56 198 12 162 12 106V36z" fill="#b8342a" class="felt"/><path d="M100 6l88 30v70c0 56-44 92-88 108C56 198 12 162 12 106V36z" fill="none" stroke="#7f241e" stroke-width="9" stroke-dasharray="1.3 1.1"/><path d="M100 16l78 26v64c0 50-38 82-78 96-40-14-78-46-78-96V42z" fill="none" stroke="#f6ecd4" stroke-width="3" stroke-dasharray="3 2.4"/><g fill="none" stroke="#f1e5c9" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M74 66l-22 18 10 22 10-6v58h56v-58l10 6 10-22-22-18"/><path d="M74 66c6 10 46 10 52 0"/><path d="M100 76v86"/></g></svg>
+          <h3>Warm layers</h3><p>Hat, gloves, a coat you'd wear in winter.</p>
+        </li>
+        <li class="patch">
+          <svg viewBox="0 0 200 220" aria-hidden="true"><circle cx="100" cy="110" r="96" fill="#e0a526" class="felt"/><circle cx="100" cy="110" r="96" fill="none" stroke="#9c6a10" stroke-width="9" stroke-dasharray="1.3 1.1"/><circle cx="100" cy="110" r="84" fill="none" stroke="#2b1a0d" stroke-width="3" stroke-dasharray="3 2.4"/><g fill="none" stroke="#2b1a0d" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M60 70l28 58h64"/><path d="M76 104h44"/><path d="M98 128l-14 28M140 128l12 28"/></g></svg>
+          <h3>A recliner or blanket</h3><p>Flat on your back beats craning your neck.</p>
+        </li>
+        <li class="patch">
+          <svg viewBox="0 0 200 220" aria-hidden="true"><rect x="10" y="10" width="180" height="200" rx="34" fill="#1d2457" class="felt"/><rect x="10" y="10" width="180" height="200" rx="34" fill="none" stroke="#0b0e26" stroke-width="9" stroke-dasharray="1.3 1.1"/><rect x="20" y="20" width="160" height="180" rx="26" fill="none" stroke="#f6ecd4" stroke-width="3" stroke-dasharray="3 2.4"/><g fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M78 92h44l-6 26H84z" stroke="#f1e5c9"/><path d="M86 118h28v56H86z" stroke="#f1e5c9"/><path d="M80 82l-14-18M100 76V54M120 82l14-18" stroke="#e46b5d"/></g></svg>
+          <h3>A red flashlight</h3><p>Or tape red cellophane over a normal one.</p>
+        </li>
+        <li class="patch">
+          <svg viewBox="0 0 200 220" aria-hidden="true"><path d="M100 6l90 40v128l-90 40-90-40V46z" fill="#efe3c8" class="felt"/><path d="M100 6l90 40v128l-90 40-90-40V46z" fill="none" stroke="#8f7b52" stroke-width="9" stroke-dasharray="1.3 1.1"/><path d="M100 18l78 34v116l-78 34-78-34V52z" fill="none" stroke="#b8342a" stroke-width="3" stroke-dasharray="3 2.4"/><g fill="none" stroke="#2c5537" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M80 70h40v12H80z"/><path d="M76 82h48v86a8 8 0 0 1-8 8H84a8 8 0 0 1-8-8z"/><path d="M76 108h48"/><path d="M92 52c-4 6 4 10 0 16M108 52c-4 6 4 10 0 16"/></g></svg>
+          <h3>A thermos</h3><p>Rangers bring cocoa. Bring your own top-up.</p>
+        </li>
+      </ul>
+      <div class="leave">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#f1e5c9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg>
+        <p><strong>Leave the white light at home.</strong> It takes about 20 minutes for your eyes to adjust to the dark and one glance at a bright phone to undo it. Turn your screen to its dimmest, or flip this page into <button class="redbtn" type="button" data-red style="margin-left:4px">red light mode</button></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="pin" style="--pin-bg:var(--forest)" aria-hidden="true"></div>
+  <section class="band indigo" aria-labelledby="where-h">
+    <div class="inner where">
+      <div>
+        <h2 id="where-h">Finding the meadow</h2>
+        <dl>
+          <dt>Where</dt><dd>North Meadow lot, Cedar Hollow Dark Sky Reserve. The park is made up for this demo; the shower is real, so find your own dark field.</dd>
+          <dt>Cost</dt><dd>Free. RSVP so we can plan parking.</dd>
+          <dt>Kids</dt><dd>Very welcome. Bring a sleeping bag and let them nap until the 2 am good part.</dd>
+          <dt>Still to be decided</dt><dd>Parking capacity and the bad-weather plan. RSVPs hear first.</dd>
+        </dl>
+      </div>
+      <div style="align-self:center">
+        <p class="close">Lie back. Count to twenty. Make a wish on each one.</p>
+        <a class="btn big" href="#rsvp">Save my spot</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="fringe" aria-hidden="true"></div>
+  <p>Cedar Hollow Dark Sky Reserve and this event are fictional, made to test a design skill. The Orionids are real: they peak around October 21 to 22 every year. Meteor rates are typical-year estimates.</p>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* ---------- red light mode ---------- */
+  const root = document.documentElement;
+  const btns = [document.getElementById('redbtn'), ...document.querySelectorAll('[data-red]')];
+  function setRed(on){ root.classList.toggle('redlight', on); btns[0].setAttribute('aria-pressed', on); try{localStorage.setItem('redlight', on?'1':'0')}catch(e){} }
+  try{ if(localStorage.getItem('redlight')==='1') setRed(true) }catch(e){}
+  btns.forEach(b => b.addEventListener('click', () => setRed(!root.classList.contains('redlight'))));
+
+  /* ---------- sky ---------- */
+  const c = document.getElementById('sky'), x = c.getContext('2d');
+  let W, H, dpr, stars = [], orion = [], meteors = [], radiant, last = 0, nextAt = 600;
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  // [RA hours, Dec deg, magnitude, name]
+  const ORI = {bet:[5.92,7.41,.5,'Betelgeuse'], bel:[5.42,6.35,1.6], aln:[5.68,-1.94,1.7], alm:[5.60,-1.2,1.7], min:[5.53,-.3,2.2], sai:[5.80,-9.67,2.1], rig:[5.24,-8.2,.1,'Rigel'], mei:[5.59,9.93,3.4], mu:[6.05,9.65,4.1], nu:[6.13,14.77,4.4], xi:[6.42,14.2,4.4], chi1:[5.91,20.28,4.4], chi2:[6.06,20.14,4.6]};
+  const LINES = [['bet','bel'],['bet','aln'],['bel','min'],['aln','alm'],['alm','min'],['aln','sai'],['min','rig'],['bet','mei'],['bel','mei'],['bet','mu'],['mu','nu'],['nu','chi1'],['nu','xi'],['chi1','chi2']];
+  const RAD = [6.33, 16];
+  function proj(ra, dec){ // simple gnomonic-ish projection centred on Orion, east to the left
+    const s = Math.min(W * .9, H * 1.5) / (W < 700 ? 95 : 64);
+    const cx = W * (W < 700 ? .86 : .76), cy = H * (W < 700 ? .2 : .52);
+    return [cx - (ra - 5.75) * 15 * Math.cos(dec*Math.PI/180) * s, cy - (dec - 5) * s];
+  }
+  function size(){
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    W = c.clientWidth; H = c.clientHeight;
+    c.width = W * dpr; c.height = H * dpr; x.setTransform(dpr,0,0,dpr,0,0);
+    seed = 7; stars = [];
+    const n = Math.round(W * H / 2600);
+    for (let i = 0; i < n; i++) stars.push([rnd()*W, rnd()*H, rnd()*rnd()*1.6 + .25, rnd()*6.28]);
+    orion = {}; for (const k in ORI){ const [ra,dec,m,name] = ORI[k]; orion[k] = [...proj(ra,dec), Math.max(1.1, 3.6 - m*.6), name]; }
+    radiant = proj(...RAD);
+  }
+  function spawn(){
+    const a = rnd()*Math.PI*2, d0 = 40 + rnd()*Math.min(W,H)*.35;
+    const len = 110 + rnd()*170, sp = 260 + rnd()*220;
+    meteors.push({x0: radiant[0] + Math.cos(a)*d0, y0: radiant[1] + Math.sin(a)*d0, a, len, sp, t: 0, life: (len*1.8)/sp, counted:false});
+  }
+  function drawStatic(t){
+    x.clearRect(0,0,W,H);
+    for (const [sx,sy,r,ph] of stars){ const tw = reduce ? .7 : .55 + .45*Math.sin(t/900 + ph); x.globalAlpha = tw*.85; x.fillStyle = '#f1e5c9'; x.beginPath(); x.arc(sx,sy,r,0,6.283); x.fill(); }
+    x.globalAlpha = .5; x.strokeStyle = '#f6ecd4'; x.lineWidth = 1.4; x.setLineDash([5,6]);
+    for (const [a,b] of LINES){ x.beginPath(); x.moveTo(orion[a][0],orion[a][1]); x.lineTo(orion[b][0],orion[b][1]); x.stroke(); }
+    x.setLineDash([]); x.globalAlpha = 1;
+    for (const k in orion){ const [sx,sy,r] = orion[k]; x.fillStyle = k==='bet' ? '#f2a26b' : k==='rig' ? '#cfe0ff' : '#f6ecd4'; x.beginPath(); x.arc(sx,sy,r,0,6.283); x.fill(); }
+    // radiant marker: a stitched cross
+    x.strokeStyle = '#e0a526'; x.lineWidth = 2; x.setLineDash([3,4]);
+    x.beginPath(); x.arc(radiant[0], radiant[1], 18, 0, 6.283); x.stroke(); x.setLineDash([]);
+    x.font = '600 13px "Atkinson Hyperlegible Next", sans-serif'; x.fillStyle = '#e0a526';
+    if (W < 700) return;
+    x.fillText('radiant', radiant[0] + 24, radiant[1] + 4);
+    x.fillStyle = 'rgba(241,229,201,.75)';
+    x.fillText('Betelgeuse', orion.bet[0] + 10, orion.bet[1] + 16);
+    x.fillText('Orion', orion.alm[0] - 60, orion.alm[1] + 4);
+  }
+  function drawMeteors(dt){
+    for (const m of meteors){
+      m.t += dt;
+      const head = Math.min(m.t * m.sp, m.len * 1.8), tail = Math.max(0, head - m.len);
+      const fade = Math.max(0, 1 - m.t / m.life);
+      const hx = m.x0 + Math.cos(m.a)*head, hy = m.y0 + Math.sin(m.a)*head;
+      const tx = m.x0 + Math.cos(m.a)*tail, ty = m.y0 + Math.sin(m.a)*tail;
+      m.hx = hx; m.hy = hy;
+      const g = x.createLinearGradient(tx,ty,hx,hy);
+      g.addColorStop(0,'rgba(241,229,201,0)'); g.addColorStop(.8,`rgba(241,229,201,${.7*fade})`); g.addColorStop(1,`rgba(255,248,230,${fade})`);
+      x.strokeStyle = g; x.lineWidth = m.counted ? 3.2 : 2.2; x.lineCap = 'round';
+      x.beginPath(); x.moveTo(tx,ty); x.lineTo(hx,hy); x.stroke();
+      if (m.counted){ x.strokeStyle = `rgba(217,154,30,${fade})`; x.setLineDash([3,4]); x.beginPath(); x.arc(hx,hy,12,0,6.283); x.stroke(); x.setLineDash([]); }
+    }
+    meteors = meteors.filter(m => m.t < m.life + .2);
+  }
+  let skyVisible = true; new IntersectionObserver(es => { skyVisible = es[0].isIntersecting; }).observe(c);
+  function frame(now){
+    if (!skyVisible || document.hidden){ last = now; requestAnimationFrame(frame); return; }
+    const dt = Math.min(.05, (now - last)/1000 || 0); last = now;
+    drawStatic(now);
+    if (now > nextAt){ spawn(); nextAt = now + 900 + rnd()*2200; }
+    drawMeteors(dt);
+    requestAnimationFrame(frame);
+  }
+  size(); addEventListener('resize', size);
+  if (reduce){ drawStatic(0); for (let i=0;i<3;i++){ spawn(); meteors[i].t = meteors[i].life*.45; } drawMeteors(0); }
+  else requestAnimationFrame(frame);
+
+  /* ---------- counting = stitching ---------- */
+  let count = 0; const tsvg = document.getElementById('tally-svg'), tn = document.getElementById('tally-n');
+  function drawTally(){
+    let s = ''; const shown = Math.min(count, 20);
+    for (let i = 0; i < shown; i++){
+      const g = Math.floor(i/5), k = i % 5, gx = 4 + g*30;
+      s += k < 4 ? `<line x1="${gx+k*5}" y1="5" x2="${gx+k*5}" y2="25" stroke="#b8342a" stroke-width="2.4" stroke-dasharray="4 2.5" stroke-linecap="round"/>`
+                 : `<line x1="${gx-3}" y1="22" x2="${gx+19}" y2="8" stroke="#2b1a0d" stroke-width="2.4" stroke-dasharray="4 2.5" stroke-linecap="round"/>`;
+    }
+    tsvg.innerHTML = s; tn.textContent = count;
+    const tw = 4 + Math.ceil(shown/5)*30; tsvg.setAttribute('width', tw); tsvg.setAttribute('viewBox', `0 0 ${tw} 30`);
+  }
+  c.addEventListener('pointerdown', e => {
+    const r = c.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
+    let best = null, bd = 1e9;
+    for (const m of meteors){ if (m.counted || m.hx == null) continue; const d = Math.hypot(m.hx-px, m.hy-py); if (d < bd){ bd = d; best = m; } }
+    if (best && bd < 220){ best.counted = true; count++; drawTally(); }
+  });
+  drawTally();
+
+
+  /* ---------- scrub the night (overdrive) ---------- */
+  (() => {
+    const cv = document.getElementById('scrubsky'); if (!cv) return;
+    const g = cv.getContext('2d'), range = document.getElementById('scrub');
+    const tl = document.querySelector('.timeline'), items = [...tl.querySelectorAll('li')];
+    const LAT = 40 * Math.PI / 180, D = Math.PI / 180;
+    const STARS = [[5.92,7.41,.5],[5.42,6.35,1.6],[5.68,-1.94,1.7],[5.60,-1.2,1.7],[5.53,-.3,2.2],[5.80,-9.67,2.1],[5.24,-8.2,.1],[5.59,9.93,3.4],[6.75,-16.7,-1.4],[4.6,16.5,.9],[7.75,28,1.1],[7.58,31.9,1.6]];
+    const LINES = [[0,1],[0,2],[1,4],[2,3],[3,4],[2,5],[4,6],[0,7],[1,7]];
+    const RAD = [6.33, 16];
+    let W, H, minutes = 0, ms = [], acc = 0, last = 0, sd = 11;
+    const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+    const bg = []; for (let i = 0; i < 260; i++) bg.push([rnd()*24, (rnd()*2-1)*70, rnd()]);
+    function lst(min){ return ((21.8 + min/60 * 1.0027) % 24 + 24) % 24; }
+    function altaz(ra, dec, L){
+      const Hh = (L - ra) * 15 * D, d = dec * D;
+      const sa = Math.sin(LAT)*Math.sin(d) + Math.cos(LAT)*Math.cos(d)*Math.cos(Hh);
+      const alt = Math.asin(sa);
+      const az = Math.atan2(-Math.sin(Hh)*Math.cos(d), Math.cos(LAT)*Math.sin(d) - Math.sin(LAT)*Math.cos(d)*Math.cos(Hh));
+      return [alt / D, ((az / D) + 360) % 360];
+    }
+    const hz = () => H * .86;
+    function xy(alt, az){ return [(az - 70) / 180 * W, hz() - alt / 78 * (hz() - 8)]; }
+    function moon(min){ // scripted, approximate: waxing gibbous setting around 1 am in the south-west
+      const t = Math.min(1, min / 300); return [36 * (1 - t) - (min > 300 ? 10 : 0), 165 + 80 * t];
+    }
+    function dawn(min){ return Math.max(0, Math.min(1, (min - 560) / 70)); }
+    function rate(min){
+      const [a] = altaz(...RAD, lst(min)); if (a <= 0) return 0;
+      const moonUp = moon(min)[0] > 0 ? .55 : 1;
+      return Math.round(20 * Math.sin(a * D) * moonUp * (1 - dawn(min)));
+    }
+    function clock(min){ const h = (20 + Math.floor(min/60)) % 24, m = min % 60; const h12 = h % 12 || 12; return `${h12}:${String(m).padStart(2,'0')} ${h >= 12 && h < 24 ? 'pm' : 'am'}`; }
+    function size(){ W = cv.clientWidth; H = cv.clientHeight; const r = Math.min(devicePixelRatio || 1, 2); cv.width = W*r; cv.height = H*r; g.setTransform(r,0,0,r,0,0); }
+    function trees(){
+      g.fillStyle = '#0a0d1f'; g.beginPath(); g.moveTo(0, H);
+      let s2 = 5; const rr = () => (s2 = (s2 * 16807) % 2147483647) / 2147483647;
+      for (let x = 0; x <= W + 20; x += 14 + rr()*16){ const h = H*.08 + rr()*H*.11; g.lineTo(x, hz() + 6); g.lineTo(x + 7, hz() - h); g.lineTo(x + 14, hz() + 6); }
+      g.lineTo(W, H); g.closePath(); g.fill();
+      g.fillStyle = '#080a18'; g.fillRect(0, hz() + 4, W, H);
+    }
+    function draw(){
+      const L = lst(minutes), dw = dawn(minutes);
+      const sky = g.createLinearGradient(0, 0, 0, hz());
+      sky.addColorStop(0, `rgb(${11+dw*30},${14+dw*45},${38+dw*80})`);
+      sky.addColorStop(1, `rgb(${20+dw*150},${24+dw*90},${58+dw*70})`);
+      g.fillStyle = sky; g.fillRect(0, 0, W, H);
+      g.fillStyle = '#f1e5c9';
+      for (const [ra, dec, b] of bg){ const [a, z] = altaz(ra, dec, L); if (a < 0) continue; const [x, y] = xy(a, z); if (x < 0 || x > W) continue; g.globalAlpha = (.25 + b*.6) * (1 - dw); g.fillRect(x, y, b > .85 ? 2 : 1.2, b > .85 ? 2 : 1.2); }
+      const P = STARS.map(([ra, dec, m]) => { const [a, z] = altaz(ra, dec, L); return [...xy(a, z), a, m]; });
+      g.globalAlpha = .55 * (1 - dw); g.strokeStyle = '#f6ecd4'; g.lineWidth = 1.3; g.setLineDash([4, 5]);
+      for (const [i, j] of LINES){ if (P[i][2] < 0 || P[j][2] < 0) continue; g.beginPath(); g.moveTo(P[i][0], P[i][1]); g.lineTo(P[j][0], P[j][1]); g.stroke(); }
+      g.setLineDash([]);
+      for (const [x, y, a, m] of P){ if (a < 0) continue; g.globalAlpha = 1 - dw*.8; g.fillStyle = '#f6ecd4'; g.beginPath(); g.arc(x, y, Math.max(1, 3.2 - m*.6), 0, 6.283); g.fill(); }
+      const [ma, mz] = moon(minutes);
+      if (ma > -4){ const [x, y] = xy(ma, mz); g.globalAlpha = 1; g.fillStyle = '#f1e5c9'; g.beginPath(); g.arc(x, y, 14, 0, 6.283); g.fill(); g.fillStyle = 'rgba(11,14,38,.92)'; g.beginPath(); g.arc(x - 9, y, 12, 0, 6.283); g.fill(); }
+      const [ra_, rz] = altaz(...RAD, L);
+      if (ra_ > 0){ const [x, y] = xy(ra_, rz); g.globalAlpha = 1 - dw; g.strokeStyle = '#e0a526'; g.lineWidth = 2; g.setLineDash([3, 4]); g.beginPath(); g.arc(x, y, 16, 0, 6.283); g.stroke(); g.setLineDash([]); }
+      g.globalAlpha = 1;
+      for (const m of ms){
+        const p = Math.min(1, m.t / .5), f = 1 - Math.max(0, (m.t - .3) / .4);
+        const hx = m.x + Math.cos(m.a) * m.l * p, hy = m.y + Math.sin(m.a) * m.l * p;
+        const tx = m.x + Math.cos(m.a) * m.l * Math.max(0, p - .55), ty = m.y + Math.sin(m.a) * m.l * Math.max(0, p - .55);
+        const gr = g.createLinearGradient(tx, ty, hx, hy); gr.addColorStop(0, 'rgba(241,229,201,0)'); gr.addColorStop(1, `rgba(255,248,230,${Math.max(0, f)})`);
+        g.strokeStyle = gr; g.lineWidth = 2; g.lineCap = 'round'; g.beginPath(); g.moveTo(tx, ty); g.lineTo(hx, hy); g.stroke();
+      }
+      trees();
+    }
+    function readout(){
+      const [ma] = moon(minutes), [ra_] = altaz(...RAD, lst(minutes)), r = rate(minutes);
+      document.getElementById('scrub-time').textContent = clock(minutes);
+      document.getElementById('r-moon').textContent = ma > 0 ? 'up, washing out faint ones' : 'set';
+      document.getElementById('r-alt').textContent = ra_ <= 0 ? 'below the trees' : `${Math.round(ra_)}° up`;
+      document.getElementById('r-rate').textContent = r;
+      range.setAttribute('aria-valuetext', `${clock(minutes)}, about ${r} meteors an hour`);
+      const starts = [0, 150, 300, 360, 615];
+      items.forEach((li, i) => li.classList.toggle('now', minutes >= starts[i] && (i === items.length - 1 || minutes < starts[i + 1])));
+    }
+    range.addEventListener('input', () => { minutes = +range.value; tl.classList.add('scrubbing'); readout(); if (reduce) draw(); });
+    function tick(now){
+      const dt = Math.min(.05, (now - last) / 1000 || 0); last = now;
+      const r = rate(minutes); acc += dt * r * 150 / 3600;
+      const [ra_, rz] = altaz(...RAD, lst(minutes));
+      while (acc > 1){ acc--; if (ra_ <= 0) continue; const [x, y] = xy(ra_, rz); const a = rnd() * 6.283; ms.push({x: x + Math.cos(a)*30, y: y + Math.sin(a)*30, a, l: 70 + rnd()*120, t: 0}); }
+      ms.forEach(m => m.t += dt); ms = ms.filter(m => m.t < .75);
+      draw(); requestAnimationFrame(tick);
+    }
+    size(); addEventListener('resize', () => { size(); draw(); });
+    readout(); draw();
+    if (!reduce){
+      const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && !cv._run){ cv._run = 1; requestAnimationFrame(tick); } }));
+      io.observe(cv);
+    }
+  })();
+
+  /* ---------- RSVP ---------- */
+  const form = document.getElementById('form'), out = document.getElementById('party');
+  let party = 2; const minus = document.getElementById('minus'), plus = document.getElementById('plus');
+  function setParty(n){ party = Math.max(1, Math.min(12, n)); out.textContent = party; minus.disabled = party <= 1; plus.disabled = party >= 12; }
+  minus.onclick = () => setParty(party - 1); plus.onclick = () => setParty(party + 1); setParty(2);
+  function check(input, msg){ const ok = input.checkValidity() && input.value.trim(); input.setAttribute('aria-invalid', ok ? 'false' : 'true'); document.getElementById(input.id + '-err').textContent = ok ? '' : msg; return ok; }
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const a = check(form.name, 'Add a name so the rangers know who to expect.');
+    const b = check(form.email, 'That email looks off. Check for a missing @ or dot.');
+    if (!(a && b)) { (a ? form.email : form.name).focus(); return; }
+    const btn = document.getElementById('submit'); btn.setAttribute('aria-busy','true'); btn.textContent = 'Saving…';
+    setTimeout(() => {
+      const first = form.name.value.trim().split(/\s+/)[0];
+      document.getElementById('done-msg').textContent = `Thanks, ${first}. ${party === 1 ? 'One spot' : party + ' spots'} saved. See you at the North Meadow gate from 8 pm on Wednesday, October 21.`;
+      document.getElementById('rsvp').classList.add('is-done');
+      document.getElementById('done').focus();
+    }, 700);
+  });
+})();
+</script>
+</body>
+</html>
