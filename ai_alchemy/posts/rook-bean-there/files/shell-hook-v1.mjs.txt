@@ -1,0 +1,44 @@
+import { spawn } from "node:child_process";
+import { join } from "node:path";
+
+const ENV = {
+  workspace: process.env.ROOK_WORKSPACE,
+};
+
+async function readStdin() {
+  let text = "";
+  process.stdin.setEncoding("utf-8");
+  for await (const chunk of process.stdin) text += chunk;
+  return text;
+}
+
+async function execute() {
+  const goal = await readStdin();
+  if (!ENV.workspace) throw new Error("ROOK_WORKSPACE is not set");
+
+  const answer = await new Promise((resolve, reject) => {
+    const child = spawn(join(ENV.workspace, "ask-bean.sh"), [goal], {
+      cwd: ENV.workspace,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    let out = "";
+    let err = "";
+    child.stdout.setEncoding("utf-8");
+    child.stderr.setEncoding("utf-8");
+    child.stdout.on("data", (chunk) => { out += chunk; });
+    child.stderr.on("data", (chunk) => { err += chunk; });
+    child.on("error", reject);
+    child.on("close", (code) => {
+      if (code === 0) resolve(out.trim());
+      else reject(new Error(err.trim().split("\n").at(-1) || `ask-bean.sh exited ${code}`));
+    });
+  });
+
+  return { agent_reply: answer };
+}
+
+const PHASES = { execute };
+const fn = PHASES[process.argv[2]];
+if (!fn) throw new Error(`unknown phase: ${process.argv[2]}`);
+const result = await fn();
+if (result) console.log(JSON.stringify(result));
