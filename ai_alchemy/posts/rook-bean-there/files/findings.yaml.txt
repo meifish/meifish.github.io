@@ -1,0 +1,35 @@
+- severity: high
+  what: >-
+    The prompt requires at most six drinks per order, but place_order accepts arbitrary quantities
+    and does not enforce that limit.
+  where: 'CLAUDE.md; mcp/cafe-server.mjs: server.tool("place_order")'
+  why: >-
+    A model-side mistake or adversarial request can create an order larger than the stated café
+    limit.
+  id: FI-001
+- severity: high
+  what: >-
+    The prompt allows only one eligible promo and restricts FIRSTSIP, but apply_promo permits
+    unlimited stacking and does not check drink, pastry, or first-order eligibility.
+  where: 'CLAUDE.md; mcp/cafe-server.mjs: server.tool("apply_promo")'
+  why: The mutating tool can reduce totals repeatedly or apply FIRSTSIP to an ineligible order.
+  id: FI-002
+- severity: high
+  what: >-
+    Order lookup and cancellation tools accept only an order id and perform no customer-name or
+    authorization check.
+  where: 'CLAUDE.md; mcp/cafe-server.mjs: server.tool("get_order") and server.tool("cancel_order")'
+  why: >-
+    The prompt's privacy and ownership guardrails are not enforced by the backend; a tool call with
+    another customer's id can expose order data or cancel a preparing order.
+  id: FI-003
+- severity: medium
+  what: >-
+    get_order returns the customer's phone number along with the order, while the prompt only
+    specifies protection for another customer's order, name, or phone number and the tool has no
+    access-control boundary.
+  where: 'CLAUDE.md; mcp/cafe-server.mjs: server.tool("get_order")'
+  why: >-
+    Any model-side verification failure can leak personally identifying order data into Bean's
+    response.
+  id: FI-004

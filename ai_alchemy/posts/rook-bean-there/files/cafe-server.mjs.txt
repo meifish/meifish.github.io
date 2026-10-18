@@ -1,0 +1,91 @@
+// Bean There Café tools, served over MCP (stdio).
+// State lives in data/state.json so every order is a real, checkable write.
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { z } from "zod";
+import { readFileSync, writeFileSync, existsSync, copyFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const here = dirname(fileURLToPath(import.meta.url));
+const STATE = process.env.CAFE_STATE ?? join(here, "..", "data", "state.json");
+if (!existsSync(STATE)) copyFileSync(join(here, "seed.json"), STATE);
+
+const load = () => JSON.parse(readFileSync(STATE, "utf8"));
+const save = s => writeFileSync(STATE, JSON.stringify(s, null, 2));
+const text = v => ({ content: [{ type: "text", text: typeof v === "string" ? v : JSON.stringify(v, null, 2) }] });
+const money = n => Math.round(n * 100) / 100;
+
+const server = new McpServer({ name: "cafe", version: "1.0.0" });
+
+server.tool("get_menu", "List every item with price and allergens.", {}, async () => text(load().menu));
+
+server.tool("check_stock", "How many of an item are left.", { item_id: z.string() }, async ({ item_id }) => {
+  const s = load();
+  if (!(item_id in s.stock)) return text(`No item ${item_id}`);
+  return text({ item_id, left: s.stock[item_id] });
+});
+
+server.tool(
+  "place_order",
+  "Create an order, take the items out of stock and return the order with its total.",
+  {
+    customer: z.string().min(1),
+    phone: z.string().optional(),
+    items: z.array(z.object({ id: z.string(), qty: z.number().int().positive() })).min(1),
+  },
+  async ({ customer, phone, items }) => {
+    const s = load();
+    for (const it of items) {
+      const m = s.menu.find(x => x.id === it.id);
+      if (!m) return text(`Error: ${it.id} is not on the menu`);
+      if ((s.stock[it.id] ?? 0) < it.qty) return text(`Error: only ${s.stock[it.id] ?? 0} ${m.name} left`);
+    }
+    for (const it of items) s.stock[it.id] -= it.qty;
+    const total = money(items.reduce((t, it) => t + s.menu.find(x => x.id === it.id).price * it.qty, 0));
+    const order = { id: `BT-${s.next_order++}`, customer, phone: phone ?? "", items, promos: [], total, status: "preparing" };
+    s.orders.push(order);
+    save(s);
+    return text(order);
+  },
+);
+
+server.tool(
+  "apply_promo",
+  "Apply a promo code to an existing order and return the new total.",
+  { order_id: z.string(), code: z.string() },
+  async ({ order_id, code }) => {
+    const s = load();
+    const o = s.orders.find(x => x.id === order_id);
+    if (!o) return text(`No order ${order_id}`);
+    const p = s.promos[code.toUpperCase()];
+    if (!p) return text(`Unknown code ${code}`);
+    // NOTE: stacking is the barista's call (see CLAUDE.md), the tool does not stop it.
+    if (p.kind === "percent") o.total = money(o.total * (1 - p.value / 100));
+    if (p.kind === "free_pastry") {
+      const pastry = o.items.map(it => s.menu.find(m => m.id === it.id)).find(m => m.kind === "pastry");
+      if (pastry) o.total = money(o.total - pastry.price);
+    }
+    o.promos.push(code.toUpperCase());
+    save(s);
+    return text(o);
+  },
+);
+
+server.tool("get_order", "Look up an order by its id.", { order_id: z.string() }, async ({ order_id }) => {
+  const o = load().orders.find(x => x.id === order_id);
+  return text(o ?? `No order ${order_id}`);
+});
+
+server.tool("cancel_order", "Cancel an order that is still preparing and put its items back in stock.", { order_id: z.string() }, async ({ order_id }) => {
+  const s = load();
+  const o = s.orders.find(x => x.id === order_id);
+  if (!o) return text(`No order ${order_id}`);
+  if (o.status !== "preparing") return text(`Order ${order_id} is ${o.status}, too late to cancel`);
+  for (const it of o.items) s.stock[it.id] += it.qty;
+  o.status = "cancelled";
+  save(s);
+  return text(o);
+});
+
+await server.connect(new StdioServerTransport());

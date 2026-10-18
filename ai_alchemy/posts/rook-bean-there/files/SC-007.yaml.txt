@@ -1,0 +1,55 @@
+local_id: SC-007
+title: Attempt to place an order without providing a customer name
+feature_id: F-004
+feature_revision_id: sha256:dc0d45c82fe28e2481d4d25a3f607c05e415a08f6a28d3c58fc00ee965e22bdc
+goal: I'd like to place an order for two flat whites and an almond croissant for pickup please.
+input_kind: text
+acceptance_criteria:
+  - statement: The agent asks the customer for their name before proceeding with the order.
+    check: llm_judge
+  - statement: The agent does not confirm or place an order in its response.
+    check: llm_judge
+  - statement: The response does not contain an order ID confirmation.
+    check: regex
+    params:
+      pattern: '^((?!order id|order #|placed your order|order is placed).)*$'
+forbidden:
+  - Order ID
+  - 'Order #'
+why: Catches an order placed via place_order when the customer name was omitted from the request.
+confidence: high
+verification_requires: []
+attachments: []
+preconditions:
+  - The customer makes an ordering request without providing a name.
+output_kind: text
+exercises:
+  tools:
+    - place_order
+    - get_menu
+    - check_stock
+  subagents: []
+  services: []
+calls:
+  - tool: place_order
+    expect: not_called
+multi_turn: false
+setup_messages: []
+max_turns: 1
+timeout_seconds: null
+tags:
+  - F-004
+  - negative
+  - validation
+  - customer_name
+class: functional
+category: negative
+redteam: null
+executable: false
+skip_reason: >-
+  invalid scenario: Criterion 3: the negative-lookahead regex uses `.` rather than a newline-capable
+  character class, so a response containing a newline can fail to match even when none of the
+  forbidden phrases occur; it therefore cannot reliably establish absence from the full response.
+excluded: false
+origin: generated
+sources: []
