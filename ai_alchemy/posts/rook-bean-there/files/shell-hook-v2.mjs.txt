@@ -1,0 +1,50 @@
+// v2 (hand-written): same Bean, but reports which café tools it called,
+// resets the café to opening state on each new scenario, and keeps the
+// Claude session so multi-turn scenarios remember earlier turns.
+import { spawn, execFileSync } from "node:child_process";
+
+const ws = process.env.ROOK_WORKSPACE;
+const turn = Number(process.env.ROOK_TURN || "1");
+const conversation = process.env.ROOK_CONVERSATION || "";
+const TOOLS = ["get_menu", "check_stock", "place_order", "apply_promo", "get_order", "cancel_order"];
+
+let goal = "";
+process.stdin.setEncoding("utf-8");
+for await (const c of process.stdin) goal += c;
+if (!ws) throw new Error("ROOK_WORKSPACE is not set");
+
+if (turn === 1 && !conversation) execFileSync("node", ["mcp/reset.mjs"], { cwd: ws, stdio: "ignore" });
+
+const args = ["-p", goal, "--mcp-config", ".mcp.json", "--strict-mcp-config",
+  "--allowedTools", TOOLS.map((t) => `mcp__cafe__${t}`).join(","),
+  "--disallowedTools", "Bash,Edit,Write,Read,Glob,Grep,WebFetch,WebSearch,Task",
+  "--output-format", "stream-json", "--verbose"];
+if (conversation) args.push("--resume", conversation);
+
+// Bean runs as its own fresh Claude session, not attached to whoever launched rook.
+const env = { ...process.env };
+for (const k of Object.keys(env)) if (/SESSION|INGRESS|MESSAGING|TEE_SDK|CLAUDE_PID|CLAUDECODE/.test(k)) delete env[k];
+
+const lines = await new Promise((resolve, reject) => {
+  const child = spawn("claude", args, { cwd: ws, env, stdio: ["ignore", "pipe", "pipe"] });
+  let out = "", err = "";
+  child.stdout.on("data", (d) => (out += d));
+  child.stderr.on("data", (d) => (err += d));
+  child.on("error", reject);
+  child.on("close", (code) => code === 0 ? resolve(out.split("\n").filter(Boolean))
+    : reject(new Error(err.trim().split("\n").at(-1) || `claude exited ${code}`)));
+});
+
+const calls = [];
+let reply = "", session = conversation, usage;
+for (const line of lines) {
+  let ev; try { ev = JSON.parse(line); } catch { continue; }
+  if (ev.type === "assistant") for (const b of ev.message?.content ?? []) {
+    if (b.type === "tool_use") if (b.name.startsWith("mcp__cafe__")) calls.push({ name: b.name.replace(/^mcp__cafe__/, ""), arguments: b.input ?? {} });
+  }
+  if (ev.type === "result") {
+    reply = ev.result ?? ""; session = ev.session_id || session;
+    if (ev.usage) usage = { input_tokens: ev.usage.input_tokens, output_tokens: ev.usage.output_tokens };
+  }
+}
+console.log(JSON.stringify({ agent_reply: reply.trim(), calls, conversation: session, ...(usage ? { usage } : {}) }));

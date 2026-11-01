@@ -1,0 +1,15 @@
+// Inline url(font.woff2) references from Parcel's dist/ into bundle.html as data: URIs,
+// and drop the .woff fallbacks (every browser that runs React 19 reads woff2).
+const fs = require('fs'), path = require('path');
+const [bundle, dist] = process.argv.slice(2);
+let html = fs.readFileSync(bundle, 'utf8');
+let n = 0;
+html = html.replace(/,\s*url\(([^)]+\.woff)\)\s*format\(["']woff["']\)/g, '');
+html = html.replace(/url\(([^)"']+\.(woff2|woff|ttf))\)/g, (m, f, ext) => {
+  const p = path.join(dist, path.basename(f));
+  if (!fs.existsSync(p)) return m;
+  n++;
+  return `url(data:font/${ext};base64,${fs.readFileSync(p).toString('base64')})`;
+});
+fs.writeFileSync(bundle, html);
+console.log(`inlined ${n} font files; bundle now ${(html.length / 1024).toFixed(0)} KB`);

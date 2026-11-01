@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orionids Night at Cedar Hollow</title>
+<!-- fonts self-hosted (same faces the agent chose from Google Fonts) -->
+<style>
+@font-face{font-family:"Instrument Serif";src:url(fonts/instrument-serif-latin-400-normal.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Instrument Serif";src:url(fonts/instrument-serif-latin-400-italic.woff2) format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"Manrope";src:url(fonts/manrope-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Manrope";src:url(fonts/manrope-latin-500-normal.woff2) format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Manrope";src:url(fonts/manrope-latin-600-normal.woff2) format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Manrope";src:url(fonts/manrope-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Manrope";src:url(fonts/manrope-latin-800-normal.woff2) format("woff2");font-weight:800;font-display:swap}
+</style>
+<meta name="description" content="A free public watch party for the Orionid meteor shower at Cedar Hollow Dark-Sky Park, the night of October 21 to 22, 2026.">
+<style>
+:root{
+  --ink:#070b1c;
+  --ink-2:#0d1430;
+  --ink-3:#151d40;
+  --line:rgba(226,232,255,.12);
+  --star:#f4eedf;
+  --muted:#a7aecb;
+  --ember:#f3a65c;
+  --ember-2:#ffcf8f;
+  --trail:#9fd2ff;
+  --red:#ff5a4e;
+  --radius:18px;
+  --serif:"Instrument Serif", Georgia, serif;
+  --sans:"Manrope", system-ui, -apple-system, Segoe UI, sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--ink);color:var(--star);
+  font-family:var(--sans);font-size:17px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+a{color:inherit}
+::selection{background:var(--ember);color:var(--ink)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.eyebrow{font-size:.75rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ember);font-weight:600}
+h1,h2,h3{font-family:var(--serif);font-weight:400;line-height:1.05;margin:0}
+h2{font-size:clamp(2.4rem,5vw,3.8rem);letter-spacing:-.01em}
+h2 em,h1 em{font-style:italic;color:var(--ember-2)}
+p{margin:0 0 1em}
+.lede{color:var(--muted);font-size:1.12rem;max-width:58ch}
+
+/* nav */
+.nav{position:fixed;inset:0 0 auto 0;z-index:20;transition:background .3s, border-color .3s;border-bottom:1px solid transparent}
+.nav.scrolled{background:rgba(7,11,28,.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-color:var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
+.brand{display:flex;gap:10px;align-items:center;text-decoration:none;font-weight:700;letter-spacing:.02em;font-size:.95rem}
+.brand svg{width:22px;height:22px}
+.nav ul{display:flex;gap:28px;list-style:none;margin:0;padding:0;font-size:.9rem;color:var(--muted)}
+.nav ul a{text-decoration:none;transition:color .2s}
+.nav ul a:hover{color:var(--star)}
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;cursor:pointer;font:600 .95rem/1 var(--sans);text-decoration:none;
+  padding:14px 22px;border-radius:999px;background:var(--ember);color:var(--ink);transition:transform .2s, box-shadow .2s, background .2s}
+.btn:hover{transform:translateY(-1px);background:var(--ember-2);box-shadow:0 10px 30px -10px rgba(243,166,92,.6)}
+.btn:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible,button:focus-visible{outline:2px solid var(--trail);outline-offset:3px}
+.btn.ghost{background:transparent;color:var(--star);box-shadow:inset 0 0 0 1px var(--line)}
+.btn.ghost:hover{background:rgba(255,255,255,.05)}
+.btn.sm{padding:10px 16px;font-size:.85rem}
+
+/* hero */
+.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:flex-end;padding:120px 0 72px;isolation:isolate;overflow:hidden}
+#sky{position:absolute;inset:0;width:100%;height:100%;z-index:-2}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:
+   radial-gradient(120% 70% at 70% 0%, rgba(80,96,200,.22), transparent 60%),
+   radial-gradient(80% 50% at 10% 100%, rgba(243,166,92,.12), transparent 70%),
+   linear-gradient(to bottom, transparent 55%, var(--ink) 100%)}
+.ridge{position:absolute;left:0;right:0;bottom:0;z-index:-1;width:100%;height:auto;pointer-events:none}
+.hero-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:48px;align-items:end;width:100%}
+.hero h1{font-size:clamp(3.4rem,9vw,7.6rem);letter-spacing:-.02em;margin:18px 0 22px}
+.hero h1 span{display:block}
+.hero .lede{font-size:1.2rem;color:#c9cee6}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.ticket{background:rgba(13,20,48,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+.ticket dl{margin:0;display:grid;gap:14px}
+.ticket dt{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.ticket dd{margin:2px 0 0;font-size:1.05rem;font-weight:600}
+.countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:20px;padding-top:20px;border-top:1px dashed var(--line);text-align:center}
+.countdown b{display:block;font-family:var(--serif);font-weight:400;font-size:2.2rem;line-height:1;font-variant-numeric:tabular-nums}
+.countdown small{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+
+/* sections */
+section{padding:120px 0;position:relative}
+.sec-head{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:end;margin-bottom:56px}
+.sec-head .eyebrow{display:block;margin-bottom:14px}
+
+/* about */
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.fact{background:var(--ink);padding:30px 26px 28px;position:relative;transition:background .3s}
+.fact:hover{background:var(--ink-2)}
+.fact .num{font-family:var(--serif);font-size:3.4rem;line-height:1;color:var(--star)}
+.fact .num sup{font-size:.4em;color:var(--ember);margin-left:4px;font-family:var(--sans);font-weight:600;vertical-align:top;position:relative;top:.6em}
+.fact h3{font-family:var(--sans);font-size:.95rem;font-weight:700;margin:16px 0 6px}
+.fact p{color:var(--muted);font-size:.92rem;margin:0}
+.story{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:72px;align-items:center}
+.story p{color:#c9cee6}
+.orbit{width:100%;max-width:460px;justify-self:center}
+.dropcap::first-letter{font-family:var(--serif);float:left;font-size:4.2em;line-height:.8;padding:6px 10px 0 0;color:var(--ember-2)}
+
+/* schedule */
+#when{background:linear-gradient(to bottom, var(--ink), var(--ink-2) 30%, var(--ink-2) 70%, var(--ink))}
+.timeline{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:20px}
+.timeline::before{content:"";position:absolute;left:0;right:0;top:27px;height:2px;
+  background:linear-gradient(90deg, rgba(167,174,203,.25) 0%, rgba(167,174,203,.25) 52%, var(--ember) 60%, var(--trail) 85%, rgba(255,207,143,.9) 100%)}
+.tl{position:relative;padding:0 18px 0 0}
+.tl .dot{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--ink-3);border:1px solid var(--line);position:relative;z-index:1;margin-bottom:22px}
+.tl .dot svg{width:24px;height:24px}
+.tl.peak .dot{background:var(--ember);border-color:var(--ember);color:var(--ink);box-shadow:0 0 0 8px rgba(243,166,92,.15),0 0 40px rgba(243,166,92,.5)}
+.tl time{font-family:var(--serif);font-size:1.9rem;line-height:1;display:block;margin-bottom:6px}
+.tl h3{font-family:var(--sans);font-size:.95rem;font-weight:700;margin-bottom:6px}
+.tl p{color:var(--muted);font-size:.9rem;margin:0}
+.tl .tag{display:inline-block;margin-top:10px;font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ember);border:1px solid rgba(243,166,92,.4);border-radius:999px;padding:4px 10px}
+
+.where{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;margin-top:96px}
+.card{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:var(--radius);padding:32px}
+.map{padding:0;overflow:hidden;min-height:340px;position:relative}
+.map svg{display:block;width:100%;height:100%}
+.where h3{font-size:2.2rem;margin:10px 0 14px}
+.where ul{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:14px}
+.where li{display:grid;grid-template-columns:22px 1fr;gap:12px;color:#c9cee6;font-size:.95rem}
+.where li svg{width:20px;height:20px;margin-top:3px;color:var(--ember)}
+.where li b{color:var(--star);font-weight:600}
+
+/* bring */
+.bring{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.item{border:1px solid var(--line);border-radius:var(--radius);padding:28px 24px;background:linear-gradient(180deg, rgba(255,255,255,.03), transparent);transition:transform .3s, border-color .3s}
+.item:hover{transform:translateY(-4px);border-color:rgba(243,166,92,.4)}
+.item .ic{width:56px;height:56px;border-radius:14px;display:grid;place-items:center;background:var(--ink-3);margin-bottom:22px;color:var(--ember-2)}
+.item .ic svg{width:28px;height:28px}
+.item h3{font-size:1.7rem;margin-bottom:8px}
+.item p{color:var(--muted);font-size:.92rem;margin:0}
+.item.red .ic{color:var(--red);box-shadow:0 0 24px rgba(255,90,78,.25)}
+.tips{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.tips span{font-size:.85rem;color:#c9cee6;border:1px dashed var(--line);border-radius:999px;padding:8px 14px}
+.tips span b{color:var(--ember-2);font-weight:600}
+
+/* rsvp */
+#rsvp{padding-bottom:140px}
+.rsvp{display:grid;grid-template-columns:1fr 1.1fr;gap:56px;align-items:start;border:1px solid var(--line);border-radius:28px;padding:56px;position:relative;overflow:hidden;
+  background:radial-gradient(90% 120% at 0% 0%, rgba(243,166,92,.12), transparent 55%), radial-gradient(70% 100% at 100% 100%, rgba(159,210,255,.08), transparent 60%), var(--ink-2)}
+.rsvp h2{margin:14px 0 18px}
+.rsvp .free{display:inline-flex;align-items:center;gap:8px;font-size:.85rem;color:var(--ember-2);margin-top:8px}
+form{display:grid;gap:18px}
+.field{display:grid;gap:8px}
+.field label{font-size:.8rem;font-weight:600;letter-spacing:.06em;color:#c9cee6}
+input,select{width:100%;font:500 1rem var(--sans);color:var(--star);background:rgba(7,11,28,.6);border:1px solid var(--line);border-radius:12px;padding:14px 16px;transition:border-color .2s, background .2s}
+input::placeholder{color:#5e6688}
+input:hover,select:hover{border-color:rgba(226,232,255,.25)}
+input:focus,select:focus{border-color:var(--ember);background:rgba(7,11,28,.9);outline:none}
+.party{display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:rgba(7,11,28,.6);width:max-content}
+.party button{width:52px;height:50px;border:0;background:transparent;color:var(--star);font-size:1.3rem;cursor:pointer}
+.party button:hover{background:rgba(255,255,255,.06)}
+.party output{min-width:64px;text-align:center;font-family:var(--serif);font-size:1.8rem;line-height:1}
+.hint{font-size:.8rem;color:var(--muted)}
+.err{font-size:.8rem;color:#ff9b8f;min-height:0}
+.field.invalid input{border-color:#ff8f82}
+.success{display:none;text-align:left}
+.success.show{display:block;animation:rise .6s ease both}
+.success .big{font-family:var(--serif);font-size:2.6rem;line-height:1.05;margin:12px 0}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+footer{border-top:1px solid var(--line);padding:40px 0 56px;color:var(--muted);font-size:.85rem}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px}
+
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .8s ease, transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:960px){
+  .hero-grid,.sec-head,.story,.where,.rsvp{grid-template-columns:1fr}
+  .facts,.bring{grid-template-columns:repeat(2,1fr)}
+  .timeline{grid-template-columns:1fr;gap:28px}
+  .timeline::before{left:27px;right:auto;top:0;bottom:0;width:2px;height:auto;
+    background:linear-gradient(180deg, rgba(167,174,203,.25) 0%, rgba(167,174,203,.25) 52%, var(--ember) 60%, var(--trail) 85%, rgba(255,207,143,.9) 100%)}
+  .tl{display:grid;grid-template-columns:56px 1fr;gap:20px;padding:0}
+  .tl .dot{margin:0}
+  .rsvp{padding:36px 24px}
+  section{padding:88px 0}
+  .nav ul{display:none}
+}
+@media (max-width:560px){
+  .wrap{padding:0 16px}
+  .facts,.bring{grid-template-columns:1fr}
+  .countdown b{font-size:1.8rem}
+  .hero{padding-top:100px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+  *{animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Orionids Night home">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 4l11 11" stroke="url(#g0)" stroke-width="2" stroke-linecap="round"/><circle cx="16.5" cy="17.5" r="3" fill="#ffcf8f"/><defs><linearGradient id="g0" x1="3" y1="4" x2="14" y2="15"><stop stop-color="#9fd2ff" stop-opacity="0"/><stop offset="1" stop-color="#ffcf8f"/></linearGradient></defs></svg>
+      Cedar Hollow
+    </a>
+    <ul>
+      <li><a href="#about">The Orionids</a></li>
+      <li><a href="#when">When &amp; where</a></li>
+      <li><a href="#bring">What to bring</a></li>
+    </ul>
+    <a class="btn sm" href="#rsvp">RSVP free</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <canvas id="sky" aria-hidden="true"></canvas>
+  <svg class="ridge" viewBox="0 0 1440 220" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 150 L80 120 L140 138 L230 92 L310 126 L380 104 L470 140 L560 110 L640 128 L720 86 L800 118 L900 100 L980 132 L1060 96 L1150 122 L1240 90 L1330 120 L1440 104 L1440 220 L0 220Z" fill="#0b1128"/>
+    <g fill="#070b1c">
+      <path d="M0 220 L0 176 L40 168 L60 140 L70 170 L96 160 L110 128 L124 166 L170 172 L230 160 L250 134 L262 164 L330 174 L420 166 L470 170 L520 158 L540 126 L556 162 L640 172 L760 166 L860 174 L940 162 L962 120 L980 160 L1010 150 L1026 112 L1044 158 L1120 170 L1220 160 L1300 172 L1350 150 L1366 118 L1384 156 L1440 164 L1440 220Z"/>
+    </g>
+  </svg>
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Free public watch party &middot; Oct 21&ndash;22, 2026</span>
+      <h1><span>Orionids Night</span><span><em>at Cedar Hollow</em></span></h1>
+      <p class="lede">Lie back under one of the darkest skies in the region and watch fragments of Halley&rsquo;s Comet burn across the sky at 66&nbsp;km per second. Bring a blanket. We&rsquo;ll bring the cocoa and the telescopes.</p>
+      <div class="cta">
+        <a class="btn" href="#rsvp">Reserve your spot
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="btn ghost" href="#about">What are the Orionids?</a>
+      </div>
+    </div>
+    <aside class="ticket" aria-label="Event details">
+      <dl>
+        <div><dt>Night of</dt><dd>Wed Oct 21 &rarr; Thu Oct 22, 2026</dd></div>
+        <div><dt>Gates open</dt><dd>8:00 pm &middot; best viewing 1 am to dawn</dd></div>
+        <div><dt>Where</dt><dd>Cedar Hollow Dark-Sky Park, Meadow Field</dd></div>
+        <div><dt>Cost</dt><dd>Free &middot; RSVP requested</dd></div>
+      </dl>
+      <div class="countdown" id="countdown" aria-live="off">
+        <div><b data-u="d">00</b><small>Days</small></div>
+        <div><b data-u="h">00</b><small>Hours</small></div>
+        <div><b data-u="m">00</b><small>Min</small></div>
+        <div><b data-u="s">00</b><small>Sec</small></div>
+      </div>
+    </aside>
+  </div>
+</header>
+
+<main>
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <span class="eyebrow">01 &mdash; The shower</span>
+        <h2>Comet dust, <em>on fire</em>.</h2>
+      </div>
+      <p class="lede">Every October, Earth sweeps through the debris trail Halley&rsquo;s Comet leaves behind. Grains no bigger than sand hit our upper atmosphere and flare into streaks of light: the Orionids.</p>
+    </div>
+
+    <div class="facts reveal">
+      <div class="fact">
+        <div class="num">1P</div>
+        <h3>Halley&rsquo;s Comet</h3>
+        <p>The source. Its dust has been drifting along its orbit for centuries; we cross it twice a year.</p>
+      </div>
+      <div class="fact">
+        <div class="num">~20<sup>/hr</sup></div>
+        <h3>Meteors per hour</h3>
+        <p>A steady rate under truly dark skies, with the occasional bright fireball and lingering train.</p>
+      </div>
+      <div class="fact">
+        <div class="num">66<sup>km/s</sup></div>
+        <h3>Very fast</h3>
+        <p>Among the swiftest showers of the year. Blink and they&rsquo;re gone, so keep your eyes up.</p>
+      </div>
+      <div class="fact">
+        <div class="num">Oct 21<sup>&ndash;22</sup></div>
+        <h3>Peak night</h3>
+        <p>The shower runs for weeks, but activity climbs to its maximum around the 21st and 22nd.</p>
+      </div>
+    </div>
+
+    <div class="story">
+      <div class="reveal">
+        <p class="dropcap">The meteors seem to fly out of a single point in the sky, the <em>radiant</em>, which sits near the raised club of Orion, the Hunter. That&rsquo;s where the shower gets its name. Orion clears the eastern horizon late in the evening and climbs high by the small hours, which is why the best show comes after midnight.</p>
+        <p>You don&rsquo;t need to stare at the radiant itself. Meteors appear all over the sky; trace their paths backward and they all point home to Orion. Our volunteers will be on hand with green laser pointers to show you where to look.</p>
+      </div>
+      <svg class="orbit reveal" viewBox="0 0 460 420" role="img" aria-label="Diagram: Orion constellation with meteors radiating from a point near its raised club">
+        <defs>
+          <linearGradient id="tr" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#9fd2ff" stop-opacity="0"/><stop offset="1" stop-color="#f4eedf"/></linearGradient>
+          <radialGradient id="glow"><stop stop-color="#f3a65c" stop-opacity=".55"/><stop offset="1" stop-color="#f3a65c" stop-opacity="0"/></radialGradient>
+        </defs>
+        <circle cx="230" cy="210" r="196" fill="none" stroke="rgba(226,232,255,.08)"/>
+        <circle cx="230" cy="210" r="140" fill="none" stroke="rgba(226,232,255,.06)" stroke-dasharray="2 6"/>
+        <!-- Orion lines -->
+        <g stroke="rgba(167,174,203,.45)" stroke-width="1" fill="none">
+          <path d="M196 120 L262 128 M196 120 L210 210 M262 128 L252 214 M210 210 L232 214 L252 214 M210 210 L190 300 M252 214 L280 296 M196 120 L170 90 L176 60"/>
+        </g>
+        <g fill="#f4eedf">
+          <circle cx="196" cy="120" r="4.5" fill="#ffb37a"/><circle cx="262" cy="128" r="3"/><circle cx="210" cy="210" r="2.6"/><circle cx="232" cy="214" r="2.6"/><circle cx="252" cy="214" r="2.6"/><circle cx="190" cy="300" r="2.6"/><circle cx="280" cy="296" r="4.2" fill="#cfe6ff"/><circle cx="170" cy="90" r="2"/><circle cx="176" cy="60" r="2"/>
+        </g>
+        <!-- radiant -->
+        <circle cx="168" cy="72" r="44" fill="url(#glow)"/>
+        <circle cx="168" cy="72" r="4" fill="#ffcf8f"/>
+        <g stroke-linecap="round">
+          <line x1="260" y1="44" x2="392" y2="8"  stroke="#f4eedf" stroke-width="2" stroke-opacity=".9"/>
+          <line x1="300" y1="140" x2="410" y2="200" stroke="#f4eedf" stroke-width="1.6" stroke-opacity=".75"/>
+          <line x1="110" y1="40" x2="40" y2="14" stroke="#f4eedf" stroke-width="1.4" stroke-opacity=".7"/>
+          <line x1="120" y1="150" x2="50" y2="250" stroke="#f4eedf" stroke-width="1.8" stroke-opacity=".8"/>
+          <line x1="330" y1="250" x2="400" y2="350" stroke="#ffcf8f" stroke-width="2.2" stroke-opacity=".9"/>
+        </g>
+        <g stroke="rgba(255,207,143,.25)" stroke-dasharray="3 5" stroke-width="1">
+          <line x1="168" y1="72" x2="260" y2="44"/><line x1="168" y1="72" x2="300" y2="140"/><line x1="168" y1="72" x2="110" y2="40"/><line x1="168" y1="72" x2="120" y2="150"/><line x1="168" y1="72" x2="330" y2="250"/>
+        </g>
+        <text x="186" y="96" fill="#ffcf8f" font-family="Manrope, sans-serif" font-size="12" letter-spacing="2">RADIANT</text>
+        <text x="296" y="300" fill="#a7aecb" font-family="Manrope, sans-serif" font-size="11" letter-spacing="2">RIGEL</text>
+        <text x="206" y="132" fill="#a7aecb" font-family="Manrope, sans-serif" font-size="11" letter-spacing="2">BETELGEUSE</text>
+        <text x="230" y="404" text-anchor="middle" fill="#a7aecb" font-family="Instrument Serif, serif" font-style="italic" font-size="18">Trace any streak backward and it points to Orion.</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section id="when">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <span class="eyebrow">02 &mdash; When &amp; where</span>
+        <h2>One long night, <em>moon to dawn</em>.</h2>
+      </div>
+      <p class="lede">Come early to settle in and let your eyes adapt. A waxing moon lights the early evening; once it sets around 1&nbsp;am, the sky goes properly dark and the meteors take over until first light.</p>
+    </div>
+
+    <ol class="timeline reveal" style="list-style:none;padding:0;margin:0">
+      <li class="tl">
+        <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20V8l8-4 8 4v12"/><path d="M9 20v-6h6v6"/></svg></div>
+        <div><time>8:00 pm</time><h3>Gates open</h3><p>Park in the lower lot, follow the red lanterns to Meadow Field, claim your patch of grass.</p></div>
+      </li>
+      <li class="tl">
+        <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></div>
+        <div><time>9:00 pm</time><h3>Sky tour</h3><p>Laser-guided walk through the autumn constellations, plus telescopes on the moon and Saturn.</p></div>
+      </li>
+      <li class="tl">
+        <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 9h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V9Z"/><path d="M16 11h2a2 2 0 0 1 0 4h-2"/><path d="M9 3v3M12 3v3"/></svg></div>
+        <div><time>11:00 pm</time><h3>Cocoa &amp; talks</h3><p>Short talk on Halley&rsquo;s Comet by the fire circle. Hot drinks while they last.</p></div>
+      </li>
+      <li class="tl peak">
+        <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 3l12 12"/><circle cx="17.5" cy="17.5" r="3" fill="currentColor"/></svg></div>
+        <div><time>~1:00 am</time><h3>Moonset &mdash; prime time</h3><p>The waxing moon dips below the ridge. Dark skies, Orion high, meteors at their best.</p><span class="tag">Best viewing</span></div>
+      </li>
+      <li class="tl">
+        <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 18h18"/><path d="M7 18a5 5 0 0 1 10 0"/><path d="M12 7v3M5.6 10.6l2 2M18.4 10.6l-2 2"/></svg></div>
+        <div><time>~6:30 am</time><h3>Dawn</h3><p>Twilight washes out the last meteors. Stay for sunrise over the hollow, or head home happy.</p></div>
+      </li>
+    </ol>
+
+    <div class="where">
+      <div class="card map reveal" aria-label="Map of Cedar Hollow Dark-Sky Park">
+        <svg viewBox="0 0 560 360" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Stylized park map showing the lower parking lot, a lantern-lit trail and Meadow Field">
+          <rect width="560" height="360" fill="#0b1128"/>
+          <g fill="none" stroke="rgba(159,210,255,.08)">
+            <path d="M-20 300 C 120 250, 200 330, 340 280 S 520 220, 600 260"/>
+            <path d="M-20 260 C 120 210, 200 290, 340 240 S 520 180, 600 220"/>
+            <path d="M-20 220 C 120 170, 200 250, 340 200 S 520 140, 600 180"/>
+            <path d="M-20 180 C 120 130, 200 210, 340 160 S 520 100, 600 140"/>
+            <path d="M-20 140 C 120 90, 200 170, 340 120 S 520 60, 600 100"/>
+            <path d="M-20 100 C 120 50, 200 130, 340 80 S 520 20, 600 60"/>
+          </g>
+          <g fill="#0f1a36">
+            <circle cx="60" cy="60" r="22"/><circle cx="92" cy="44" r="18"/><circle cx="40" cy="96" r="16"/>
+            <circle cx="480" cy="300" r="26"/><circle cx="516" cy="270" r="20"/><circle cx="450" cy="330" r="18"/>
+            <circle cx="500" cy="60" r="18"/><circle cx="530" cy="96" r="14"/>
+          </g>
+          <ellipse cx="350" cy="140" rx="130" ry="74" fill="rgba(243,166,92,.08)" stroke="rgba(243,166,92,.55)" stroke-dasharray="4 6"/>
+          <path d="M120 300 C 180 280, 200 230, 250 210 S 300 180, 320 160" fill="none" stroke="#ff5a4e" stroke-width="2" stroke-dasharray="1 9" stroke-linecap="round"/>
+          <rect x="70" y="282" width="80" height="44" rx="6" fill="#151d40" stroke="rgba(226,232,255,.18)"/>
+          <text x="110" y="309" text-anchor="middle" fill="#c9cee6" font-family="Manrope, sans-serif" font-size="12" font-weight="700">P</text>
+          <circle cx="350" cy="140" r="5" fill="#ffcf8f"/>
+          <circle cx="350" cy="140" r="14" fill="none" stroke="#ffcf8f" stroke-opacity=".4"/>
+          <circle cx="290" cy="120" r="3" fill="#9fd2ff"/><circle cx="410" cy="128" r="3" fill="#9fd2ff"/><circle cx="380" cy="170" r="3" fill="#9fd2ff"/>
+          <text x="350" y="104" text-anchor="middle" fill="#f4eedf" font-family="Instrument Serif, serif" font-size="22" font-style="italic">Meadow Field</text>
+          <text x="350" y="196" text-anchor="middle" fill="#a7aecb" font-family="Manrope, sans-serif" font-size="10" letter-spacing="2">FIRE CIRCLE &middot; TELESCOPES</text>
+          <text x="110" y="345" text-anchor="middle" fill="#a7aecb" font-family="Manrope, sans-serif" font-size="10" letter-spacing="2">LOWER LOT</text>
+          <text x="226" y="252" fill="#ff8f82" font-family="Manrope, sans-serif" font-size="10" letter-spacing="2" transform="rotate(-28 226 252)">LANTERN TRAIL</text>
+          <g transform="translate(510 30)" fill="#a7aecb" font-family="Manrope, sans-serif" font-size="10"><path d="M0 18 L6 0 L12 18 L6 13Z" fill="#a7aecb"/><text x="6" y="32" text-anchor="middle">N</text></g>
+          <text x="20" y="340" fill="#5e6688" font-family="Manrope, sans-serif" font-size="9" letter-spacing="1.5">ILLUSTRATIVE &middot; NOT TO SCALE</text>
+        </svg>
+      </div>
+      <div class="card reveal">
+        <span class="eyebrow">Getting there</span>
+        <h3>Cedar Hollow Dark-Sky Park</h3>
+        <p style="color:var(--muted)">A sheltered valley ringed by cedar ridges, far from city glow. Meadow Field is a ten-minute walk from the lower lot along a gently graded, lantern-lit trail.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="7" width="18" height="11" rx="2"/><path d="M7 18v2M17 18v2M3 12h18"/></svg><span><b>Arrive with dimmed lights.</b> Switch to parking lights when you pass the park sign so you don&rsquo;t blind early arrivals.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 22s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12Z"/><circle cx="12" cy="10" r="2.5"/></svg><span><b>Meadow Field</b>, Cedar Hollow Dark-Sky Park. Follow the red lanterns from the lower lot.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><b>Come and go freely.</b> Gates stay open all night; leave whenever you like.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></svg><span><b>Cloudy night?</b> We&rsquo;ll post a go / no-go by 5 pm on Oct 21 and email everyone who RSVPs.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="bring">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <span class="eyebrow">03 &mdash; Pack list</span>
+        <h2>Dress for <em>4 am</em>, not 8 pm.</h2>
+      </div>
+      <p class="lede">October nights in the hollow drop close to freezing, and you&rsquo;ll be lying still for hours. Here&rsquo;s what makes the difference between a magical night and a shivering one.</p>
+    </div>
+    <div class="bring">
+      <div class="item reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 3 4 6v5h3v10h10V11h3V6l-4-3c-.5 1.5-2 2.5-4 2.5S8.5 4.5 8 3Z"/></svg></div>
+        <h3>Warm layers</h3>
+        <p>Thermals, a puffy, hat, gloves and thick socks. Bring one more layer than you think you need.</p>
+      </div>
+      <div class="item reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 17 9 8l9 3"/><path d="M5 17h15M7 17l-1 4M18 17l1 4M9 8l2 9"/></svg></div>
+        <h3>Recliner or blanket</h3>
+        <p>A zero-gravity chair or a thick blanket and pad. Lying back lets you take in the whole sky.</p>
+      </div>
+      <div class="item reveal red">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 3h8l-1 5H9L8 3Z"/><rect x="9" y="8" width="6" height="13" rx="1.5"/><path d="M12 12v3"/></svg></div>
+        <h3>Red flashlight</h3>
+        <p>Red light keeps everyone&rsquo;s night vision intact. No red light? A strip of red cellophane works.</p>
+      </div>
+      <div class="item reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="7" y="6" width="10" height="16" rx="2"/><path d="M9 6V3h6v3M7 11h10"/><path d="M5 2c0 1 1 1.5 1 2.5S5 6 5 7" opacity=".6"/></svg></div>
+        <h3>Thermos</h3>
+        <p>Something hot to sip makes 3 am feel cozy. We&rsquo;ll have refills of cocoa at the fire circle.</p>
+      </div>
+    </div>
+    <div class="tips reveal">
+      <span><b>Give it 20 minutes</b> for your eyes to fully dark-adapt</span>
+      <span><b>Phones on red mode</b> or tucked away</span>
+      <span><b>No white lights</b> on the field, please</span>
+      <span><b>Leave no trace:</b> pack out what you pack in</span>
+    </div>
+  </div>
+</section>
+
+<section id="rsvp">
+  <div class="wrap">
+    <div class="rsvp reveal">
+      <div>
+        <span class="eyebrow">04 &mdash; RSVP</span>
+        <h2>Save your <em>patch of sky</em>.</h2>
+        <p class="lede">Entry is completely free. RSVPs help us plan parking, cocoa and volunteers, and make sure you get the weather call on the day.</p>
+        <p class="free"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Free for all ages &middot; families and first-timers welcome</p>
+      </div>
+
+      <div>
+        <form id="rsvpForm" novalidate>
+          <div class="field" id="f-name">
+            <label for="name">Your name</label>
+            <input id="name" name="name" type="text" autocomplete="name" placeholder="Ada Lovelace" required>
+            <span class="err" aria-live="polite"></span>
+          </div>
+          <div class="field" id="f-email">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+            <span class="err" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label id="party-label">Party size</label>
+            <div class="party" role="group" aria-labelledby="party-label">
+              <button type="button" id="minus" aria-label="Fewer people">&minus;</button>
+              <output id="partyOut" aria-live="polite">2</output>
+              <button type="button" id="plus" aria-label="More people">+</button>
+            </div>
+            <input type="hidden" name="party" id="party" value="2">
+            <span class="hint">Including yourself, up to 10 per RSVP.</span>
+          </div>
+          <div><button class="btn" type="submit">Count me in
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+        </form>
+        <div class="success" id="success" role="status" tabindex="-1">
+          <span class="eyebrow">You&rsquo;re on the list</span>
+          <p class="big" id="successMsg">See you under the stars.</p>
+          <p style="color:var(--muted)">We&rsquo;ll email the weather call by 5 pm on October 21. Gates open at 8 pm; the sky gets really good after 1 am.</p>
+          <button class="btn ghost sm" type="button" id="again">RSVP for someone else</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Orionids Night at Cedar Hollow &middot; Oct 21&ndash;22, 2026 &middot; A free community event</span>
+    <span>Keep it dark. Keep it quiet. Look up.</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* nav */
+  var nav = document.getElementById('nav');
+  function onScroll(){ nav.classList.toggle('scrolled', window.scrollY > 40); }
+  window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+  /* starfield + meteors */
+  var c = document.getElementById('sky'), ctx = c.getContext('2d');
+  var W, H, dpr, stars = [], meteors = [];
+  function resize(){
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = c.clientWidth; H = c.clientHeight;
+    c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    var n = Math.round(W * H / 2600);
+    stars = [];
+    for (var i=0;i<n;i++){
+      var r = Math.random();
+      stars.push({x:Math.random()*W, y:Math.random()*H*0.92, r: r<.92 ? Math.random()*0.9+0.2 : Math.random()*1.4+0.9,
+        a: Math.random()*0.6+0.3, tw: Math.random()*0.02+0.004, p: Math.random()*6.28,
+        warm: Math.random()<.12});
+    }
+    // milky band
+  }
+  function spawn(){
+    // radiant up and to the left-ish (Orion rising in the east)
+    var rx = W*0.18, ry = H*0.1;
+    var ang = Math.random()*Math.PI*0.55 + 0.05; // spread downward-right
+    var start = Math.random()*W*0.25 + 40;
+    var sx = rx + Math.cos(ang)*start, sy = ry + Math.sin(ang)*start;
+    var speed = Math.random()*10 + 14;
+    meteors.push({x:sx,y:sy,vx:Math.cos(ang)*speed,vy:Math.sin(ang)*speed,life:0,max:Math.random()*30+28,len:Math.random()*120+90,bright:Math.random()<.15});
+  }
+  var t = 0, next = 40;
+  function frame(){
+    t++;
+    ctx.clearRect(0,0,W,H);
+    // band glow
+    var g = ctx.createLinearGradient(W*0.1,H,W*0.9,0);
+    g.addColorStop(0,'rgba(120,130,220,0)'); g.addColorStop(.5,'rgba(150,160,240,0.06)'); g.addColorStop(1,'rgba(120,130,220,0)');
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+    for (var i=0;i<stars.length;i++){
+      var s = stars[i];
+      var a = reduce ? s.a : s.a * (0.65 + 0.35*Math.sin(s.p + t*s.tw));
+      ctx.fillStyle = s.warm ? 'rgba(255,207,143,'+a+')' : 'rgba(244,238,223,'+a+')';
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,6.283); ctx.fill();
+    }
+    if (!reduce){
+      if (--next <= 0){ spawn(); next = Math.random()*90 + 40; }
+      for (var j=meteors.length-1;j>=0;j--){
+        var m = meteors[j]; m.life++; m.x += m.vx; m.y += m.vy;
+        var k = m.life/m.max, fade = k<.2 ? k/.2 : 1-(k-.2)/.8;
+        var sp = Math.hypot(m.vx,m.vy), tx = m.x - m.vx/sp*m.len, ty = m.y - m.vy/sp*m.len;
+        var gr = ctx.createLinearGradient(m.x,m.y,tx,ty);
+        gr.addColorStop(0,'rgba(255,245,225,'+(0.95*fade)+')');
+        gr.addColorStop(.25,'rgba(159,210,255,'+(0.45*fade)+')');
+        gr.addColorStop(1,'rgba(159,210,255,0)');
+        ctx.strokeStyle = gr; ctx.lineWidth = m.bright ? 2.4 : 1.4; ctx.lineCap='round';
+        ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(tx,ty); ctx.stroke();
+        ctx.fillStyle = 'rgba(255,240,215,'+fade+')';
+        ctx.beginPath(); ctx.arc(m.x,m.y,m.bright?2.2:1.3,0,6.283); ctx.fill();
+        if (m.life >= m.max) meteors.splice(j,1);
+      }
+      requestAnimationFrame(frame);
+    }
+  }
+  resize(); window.addEventListener('resize', function(){ resize(); if (reduce) frame(); });
+  frame();
+
+  /* countdown to gates open: Oct 21 2026 8pm local */
+  var target = new Date(2026, 9, 21, 20, 0, 0).getTime();
+  var cd = document.getElementById('countdown');
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function tick(){
+    var d = Math.max(0, target - Date.now());
+    var s = Math.floor(d/1000);
+    cd.querySelector('[data-u=d]').textContent = pad(Math.floor(s/86400));
+    cd.querySelector('[data-u=h]').textContent = pad(Math.floor(s%86400/3600));
+    cd.querySelector('[data-u=m]').textContent = pad(Math.floor(s%3600/60));
+    cd.querySelector('[data-u=s]').textContent = pad(s%60);
+  }
+  tick(); setInterval(tick, 1000);
+
+  /* reveal */
+  var els = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); }, {threshold:.12, rootMargin:'0px 0px -40px 0px'});
+    els.forEach(function(el){ io.observe(el); });
+  } else els.forEach(function(el){ el.classList.add('in'); });
+
+  /* RSVP */
+  var party = 2, out = document.getElementById('partyOut'), hid = document.getElementById('party');
+  function setParty(n){ party = Math.max(1, Math.min(10, n)); out.textContent = party; hid.value = party; }
+  document.getElementById('minus').onclick = function(){ setParty(party-1); };
+  document.getElementById('plus').onclick = function(){ setParty(party+1); };
+
+  var form = document.getElementById('rsvpForm'), success = document.getElementById('success');
+  function setErr(id, msg){
+    var f = document.getElementById(id); f.classList.toggle('invalid', !!msg);
+    f.querySelector('.err').textContent = msg || '';
+    f.querySelector('input').setAttribute('aria-invalid', msg ? 'true' : 'false');
+  }
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = form.name.value.trim(), email = form.email.value.trim(), ok = true;
+    if (!name){ setErr('f-name','Please tell us your name.'); ok = false; } else setErr('f-name');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ setErr('f-email','Please enter a valid email address.'); ok = false; } else setErr('f-email');
+    if (!ok){ form.querySelector('.invalid input').focus(); return; }
+    try {
+      var list = JSON.parse(localStorage.getItem('orionids-rsvps') || '[]');
+      list.push({name:name, email:email, party:party, at:new Date().toISOString()});
+      localStorage.setItem('orionids-rsvps', JSON.stringify(list));
+    } catch(err){}
+    var first = name.split(/\s+/)[0];
+    document.getElementById('successMsg').textContent = 'See you under the stars, ' + first + '. ' + (party === 1 ? 'One spot' : party + ' spots') + ' saved.';
+    form.style.display = 'none'; success.classList.add('show'); success.focus();
+  });
+  document.getElementById('again').onclick = function(){
+    form.reset(); setParty(2); success.classList.remove('show'); form.style.display = ''; form.name.focus();
+  };
+})();
+</script>
+</body>
+</html>

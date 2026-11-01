@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="I gave the impeccable design skill and plain Claude the same brief: a meteor shower watch party page. The skill rolled dice, hired a critic, and handed me a camp blanket.">
+<meta property="og:title" content="I asked an AI to design a meteor shower party. It rolled dice and handed me a blanket.">
+<meta property="og:image" content="img/hero-desk.jpg">
+<link rel="alternate" type="application/rss+xml" title="AI Alchemy" href="../../feed.xml">
+<title>Impeccable Under the Stars</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#F1EEE6; --panel:#FFFFFF; --ink:#1C1B29; --muted:#5A5566; --line:#D9D3C6;
+  --madder:#B8342A; --forest:#2F5A3C; --mustard:#C98E12; --night:#14183A; --ticket:#FFFDF6; --ticket-ink:#2A2620;
+  --code:#E8E3D7; --shadow:0 1px 2px rgba(20,18,30,.06),0 8px 24px rgba(20,18,30,.08);
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Source Sans 3",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1024; --panel:#171A33; --ink:#ECE8F2; --muted:#A39FB3; --line:#2C2F4A;
+    --madder:#F07A6C; --forest:#6CC48F; --mustard:#F0C25A; --night:#0A0C1C; --ticket:#1C1F38; --ticket-ink:#E6E2EE;
+    --code:#22253F; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1024; --panel:#171A33; --ink:#ECE8F2; --muted:#A39FB3; --line:#2C2F4A;
+  --madder:#F07A6C; --forest:#6CC48F; --mustard:#F0C25A; --night:#0A0C1C; --ticket:#1C1F38; --ticket-ink:#E6E2EE;
+  --code:#22253F; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.62;padding-inline:20px;padding-block:0 80px;margin:0}
+.wrap{max-width:720px;margin:0 auto}
+.wide{max-width:1080px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);line-height:1.12;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:clamp(2.3rem,6vw,3.9rem);font-weight:800;margin:0 0 18px}
+h2{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;margin:64px 0 12px}
+h3{font-size:1.2rem;font-weight:700;margin:28px 0 6px}
+p{margin:0 0 16px}
+a{color:var(--forest);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--madder);outline-offset:3px}
+code{font-family:var(--mono);font-size:.84em;background:var(--code);padding:1px 6px;border-radius:4px}
+.eyebrow{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--madder);margin:0 0 10px}
+header{padding-block:56px 12px}
+.dek{font-size:1.25rem;color:var(--muted);max-width:620px}
+.byline{font-family:var(--mono);font-size:.8rem;color:var(--muted);margin-top:20px;display:flex;flex-wrap:wrap;gap:6px 18px}
+figure{margin:28px auto 36px}
+figure img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--line);box-shadow:var(--shadow);background:var(--panel)}
+figcaption{font-size:.92rem;color:var(--muted);margin-top:10px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+.live{font-family:var(--mono);font-size:.8rem;font-weight:600;color:#fff;background:var(--forest);padding:4px 10px;border-radius:999px;text-decoration:none;white-space:nowrap}
+.live:hover{background:var(--madder)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .live{color:#0E1024}}
+.tldr{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 24px;box-shadow:var(--shadow);margin:28px 0}
+.tldr h3{margin-top:0}
+.tldr ul{margin:0;padding-left:20px}
+.tldr li{margin:4px 0}
+.ticket{background:var(--ticket);color:var(--ticket-ink);font-family:var(--mono);font-size:.82rem;line-height:1.55;padding:22px 22px 18px;margin:22px 0 28px;position:relative;border-left:1px solid var(--line);border-right:1px solid var(--line);
+  -webkit-mask:radial-gradient(circle 6px at 50% 0,#0000 98%,#000) top/16px 51% repeat-x,radial-gradient(circle 6px at 50% 100%,#0000 98%,#000) bottom/16px 51% repeat-x;
+          mask:radial-gradient(circle 6px at 50% 0,#0000 98%,#000) top/16px 51% repeat-x,radial-gradient(circle 6px at 50% 100%,#0000 98%,#000) bottom/16px 51% repeat-x}
+.ticket .head{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--muted);padding-bottom:8px;margin-bottom:8px;font-weight:600;flex-wrap:wrap}
+.ticket ol{list-style:none;margin:0;padding:0}
+.ticket li{display:grid;grid-template-columns:3.2em 1fr;gap:8px;padding:5px 0;border-bottom:1px dotted var(--line)}
+.ticket li:last-child{border-bottom:0}
+.ticket .r{font-weight:600}
+.bad{color:var(--madder)} .good{color:var(--forest)}
+.ticket .foot{border-top:1px dashed var(--muted);margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+pre.term{background:#14162B;color:#DCD8E8;font-family:var(--mono);font-size:.78rem;line-height:1.5;padding:16px 18px;border-radius:10px;overflow-x:auto;margin:18px 0 24px;white-space:pre-wrap}
+pre.term .c{color:#9590AD} pre.term .e{color:#FF8C73} pre.term .o{color:#7EDBA5}
+.pipe{overflow-x:auto;margin:24px 0 32px}
+.pipe svg{display:block;min-width:700px;width:100%;height:auto}
+.pipe text{font-family:var(--mono)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.grid2 figure{margin:0}
+.grid2 figcaption{font-size:.85rem}
+.phones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;max-width:900px;margin:0 auto}
+.phones figure{margin:0}
+@media (max-width:700px){.grid2{grid-template-columns:1fr}.phones{grid-template-columns:1fr 1fr}}
+.vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.vs figure{margin:0}
+.tag{font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:4px;color:#fff;background:var(--muted)}
+.tag.imp{background:var(--madder)}
+@media (max-width:700px){.vs{grid-template-columns:1fr}}
+.score{width:100%;border-collapse:collapse;font-size:.95rem;margin:14px 0 24px}
+.score-wrap{overflow-x:auto}
+.score th,.score td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.score th{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.pips{font-family:var(--mono);color:var(--mustard);letter-spacing:2px;white-space:nowrap}
+.win{font-weight:600;color:var(--forest)}
+.tips{counter-reset:tip;list-style:none;padding:0;margin:14px 0}
+.tips li{counter-increment:tip;position:relative;padding:12px 0 12px 48px;border-bottom:1px solid var(--line)}
+.tips li::before{content:counter(tip);position:absolute;left:0;top:12px;width:32px;height:32px;border-radius:50%;background:var(--mustard);color:#2A2620;font-family:var(--display);font-weight:800;display:grid;place-items:center}
+.quote{border-left:3px solid var(--madder);padding:4px 0 4px 18px;margin:20px 0;color:var(--muted);font-style:italic}
+.scrubrow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.scrubrow figure{margin:0}
+@media (max-width:700px){.scrubrow{grid-template-columns:1fr}}
+.meter{display:grid;gap:10px;margin:18px 0 8px}
+.meter-row{display:grid;grid-template-columns:9.5em 1fr 3em;gap:12px;align-items:center;font-size:.95rem}
+.meter-bar{height:22px;border-radius:4px;background:var(--code);overflow:hidden}
+.meter-bar span{display:block;height:100%;border-radius:4px}
+.meter-row b{font-family:var(--mono);font-size:.9rem;text-align:right}
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-size:.9rem;color:var(--muted)}
+.sitenav{max-width:1080px;margin:0 auto;padding-top:18px;display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:.82rem;align-items:center}
+.sitenav a{text-decoration:none;white-space:nowrap}
+.sitenav-r{display:flex;gap:16px;align-items:center}
+</style>
+</head>
+<body>
+<nav class="sitenav" aria-label="Site"><a href="../../">&larr; <span translate="no">AI Alchemy</span></a><span class="sitenav-r"><a href="../../subscribe/">Subscribe</a><span data-translate></span></span></nav>
+
+<header class="wrap">
+  <p class="eyebrow">AI Alchemy · Skill test #2 · impeccable</p>
+  <h1>I asked an AI to design a meteor shower party. It rolled dice and handed me a blanket.</h1>
+  <p class="dek">Impeccable is a design skill that tries to stop AI from making every website look the same. I gave it and plain Claude the exact same brief, then let a robot critic tear both apart.</p>
+  <div class="byline"><span>Orionids, Oct 21–22</span><span>2 pages · 1 dice roll · 3 critic passes</span><span translate="no">impeccable 4.5.0 @ e103efe</span></div>
+</header>
+
+<main>
+<div class="wrap">
+  <div class="tldr">
+    <h3>The short version</h3>
+    <ul>
+      <li>Without the skill, Claude made a <strong>nice but very familiar</strong> page: midnight blue, fancy italic serif, amber buttons. Impeccable's own detector flagged it 19 times for "AI look" habits.</li>
+      <li>With the skill, the page became a <strong>striped wool camp blanket under a live sky</strong>, with stitched constellations, a sewn-on RSVP label, a meteor counter and a "red light mode" for the dark car park.</li>
+      <li>The best part isn't the looks. It's the <strong>built-in critic</strong>: a fresh AI reviewer that called my RSVP card "the stitched-coupon cliché" and my fringe "a barcode". It was right.</li>
+      <li>It's a <strong>heavy</strong> skill: about 400 KB of instructions, an interview, dice, helper agents. Worth it for a page you care about, overkill for a quick fix.</li>
+    </ul>
+  </div>
+
+  <h2>Wait, what is Impeccable?</h2>
+  <p>You know that "AI made this" look? The same handful of fonts, purple-to-blue gradients, a tiny all-caps label above every heading, cards inside cards. Impeccable, by Paul Bakaus, is a skill built to fight that. It started from Anthropic's own <code>frontend-design</code> skill and grew into something much bigger:</p>
+  <ul>
+    <li><strong>24 commands</strong> you call like <code>/impeccable audit</code>, <code>critique</code>, <code>polish</code>, <code>bolder</code>, <code>quieter</code>, <code>delight</code>, <code>overdrive</code> and more.</li>
+    <li>A <strong>detector</strong> with 61 rules that scans a page for AI-design tells without needing any AI. It's a little program, and it's fast.</li>
+    <li>A <strong>"craft floor"</strong> of rules, including a list of fonts it treats as "you stopped looking" (Fraunces, Playfair, Space Grotesk and friends) and an outright ban on those little labels above headings.</li>
+    <li>A small helper program that runs the setup, the dice and the checks. You don't need Node; the skill downloads it the first time.</li>
+  </ul>
+  <p>The first thing that surprised me was how <em>big</em> it is. The main instructions are about 12 KB, but they point to 40-odd reference files totalling roughly <strong>400 KB</strong>. The "make something new" playbook alone is 58 KB. This isn't a tip sheet. It's a whole design studio's process manual.</p>
+
+  <h2>How a new page gets made</h2>
+  <p>Here's the path the skill walked me down for a brand-new page. The red loop is where it sends work back.</p>
+</div>
+
+<div class="wide pipe" role="img" aria-label="Impeccable new-page pipeline: interview writes PRODUCT.md, dice pick a direction, a decision page shows the choice, a direction contract is written, the page is built, the detector scans it, a fresh critic reviews it and sends fixes back up to two times, then a documenter writes DESIGN.md.">
+  <svg viewBox="0 0 1080 250" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker>
+      <marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--madder)"/></marker>
+    </defs>
+    <g font-size="12.5">
+      <rect x="6" y="70" width="120" height="74" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+      <text x="66" y="100" text-anchor="middle" fill="var(--ink)" font-weight="600">Interview</text>
+      <text x="66" y="122" text-anchor="middle" fill="var(--muted)" font-size="10.5">writes PRODUCT.md</text>
+
+      <rect x="146" y="70" width="120" height="74" rx="10" fill="var(--panel)" stroke="var(--mustard)" stroke-width="2"/>
+      <text x="206" y="100" text-anchor="middle" fill="var(--ink)" font-weight="600">Dice roll</text>
+      <text x="206" y="122" text-anchor="middle" fill="var(--muted)" font-size="10.5">picks a direction</text>
+
+      <rect x="286" y="70" width="120" height="74" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+      <text x="346" y="100" text-anchor="middle" fill="var(--ink)" font-weight="600">Decision page</text>
+      <text x="346" y="122" text-anchor="middle" fill="var(--muted)" font-size="10.5">you keep or re-roll</text>
+
+      <rect x="426" y="70" width="120" height="74" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+      <text x="486" y="100" text-anchor="middle" fill="var(--ink)" font-weight="600">Contract</text>
+      <text x="486" y="122" text-anchor="middle" fill="var(--muted)" font-size="10.5">6 promises, ~150 words</text>
+
+      <rect x="566" y="70" width="110" height="74" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+      <text x="621" y="100" text-anchor="middle" fill="var(--ink)" font-weight="600">Build</text>
+      <text x="621" y="122" text-anchor="middle" fill="var(--muted)" font-size="10.5">+ 2 screenshot rounds</text>
+
+      <rect x="696" y="70" width="110" height="74" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+      <text x="751" y="100" text-anchor="middle" fill="var(--ink)" font-weight="600">Detector</text>
+      <text x="751" y="122" text-anchor="middle" fill="var(--muted)" font-size="10.5">61 rules, no AI</text>
+
+      <rect x="826" y="70" width="110" height="74" rx="10" fill="var(--panel)" stroke="var(--madder)" stroke-width="2"/>
+      <text x="881" y="100" text-anchor="middle" fill="var(--ink)" font-weight="600">Critic</text>
+      <text x="881" y="122" text-anchor="middle" fill="var(--muted)" font-size="10.5">fresh AI, no memory</text>
+
+      <rect x="956" y="70" width="118" height="74" rx="10" fill="var(--panel)" stroke="var(--forest)" stroke-width="2"/>
+      <text x="1015" y="100" text-anchor="middle" fill="var(--ink)" font-weight="600">Documenter</text>
+      <text x="1015" y="122" text-anchor="middle" fill="var(--muted)" font-size="10.5">writes DESIGN.md</text>
+
+      <path d="M126 107H142" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#ah)"/>
+      <path d="M266 107H282" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#ah)"/>
+      <path d="M406 107H422" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#ah)"/>
+      <path d="M546 107H562" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#ah)"/>
+      <path d="M676 107H692" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#ah)"/>
+      <path d="M806 107H822" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#ah)"/>
+      <path d="M936 107H952" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#ah)"/>
+      <path d="M881 144V186H621V148" fill="none" stroke="var(--madder)" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ahr)"/>
+      <text x="751" y="208" text-anchor="middle" fill="var(--madder)" font-size="11">"fix": a numbered list → one batch of edits → re-check (max 2 rounds)</text>
+      <path d="M346 70V34H206V66" fill="none" stroke="var(--mustard)" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ah)"/>
+      <text x="276" y="24" text-anchor="middle" fill="var(--muted)" font-size="11">re-roll: safer or bolder</text>
+    </g>
+  </svg>
+</div>
+
+<div class="wrap">
+  <h2>The experiment</h2>
+  <p>Last week I tested one skill on its own. This week I wanted a fair fight. I wrote one short brief and gave it to two agents in separate folders:</p>
+<pre class="term"><span class="c"># the brief, word for word the same for both</span>
+Build a single-page site for "Orionids Night at Cedar Hollow", a free
+public meteor-shower watch party at a (fictional) dark-sky park on the
+night of Oct 21-22, 2026. Explain the Orionids, when and where to come,
+what to bring, and take a free RSVP. One HTML file. Make it beautiful.</pre>
+  <p><strong>Plain Claude</strong> got just that and built the page in one go. <strong>Claude with Impeccable</strong> got the same brief plus the skill, and followed everything the skill asked for. Why a meteor shower? The Orionids really do peak around October 21 (they're dust from Halley's Comet), my sandbox couldn't download any photos, and a night sky is something code can paint all by itself. It's also a trap: "space website" is one of the most clichéd looks on the internet. I wanted to see if the skill would walk into it.</p>
+
+  <h2>Round one goes to... the cliché</h2>
+  <p>Here's plain Claude's first screen. Honestly? It's pretty. Twinkling stars, a countdown, a tidy details card.</p>
+</div>
+
+<figure class="wide">
+  <img src="img/baseline-hero.jpg" alt="Plain Claude's page: a midnight-blue starfield, a huge 'Orionids Night at Cedar Hollow' headline with the second half in amber italic serif, a small all-caps label above it, two pill buttons and a details card with a countdown." width="1440" height="900">
+  <figcaption><span><span class="tag">no skill</span> Midnight blue, italic serif in amber, tiny caps label on top, pill buttons.</span><a class="live" href="live/plain-claude/index.html">Open plain Claude's page ↗</a></figcaption>
+</figure>
+
+<div class="wrap">
+  <p>But if you've browsed a lot of AI-made sites lately, you've seen this outfit. Impeccable's detector certainly had. I ran it on this page and it found <strong>19 problems</strong>, with names like these:</p>
+<pre class="term"><span class="c">$ impeccable detect plain-claude/index.html</span>
+<span class="e">[italic-serif-display]</span> italic serif h1 (instrument serif) at 122px
+  → ...has become the universal AI-startup landing page hero.
+<span class="e">[hero-eyebrow-chip]</span> eyebrow chip (tracked-caps) above h1
+<span class="e">[overused-font]</span> Primary font: instrument serif
+<span class="e">[dark-glow]</span> Colored box-shadow glow (#f3a65c) on dark page
+<span class="e">[kicker-above-heading]</span> kicker "Getting there" above h3
+<span class="c">  ... 14 more</span>
+<span class="e">19 anti-patterns found.</span></pre>
+  <p>Ouch. And notice that every single habit it flagged is something the skill's rule book specifically warns about. The skill basically predicted what an AI would do with this brief, and the AI did it.</p>
+
+  <h2>Setting up: the skill interviews you</h2>
+  <p>I grabbed the skill from <a href="https://github.com/pbakaus/impeccable">its GitHub repo</a> and copied only the skill folder into an empty project. Its first command loads "context", and the reply was blunt:</p>
+<pre class="term"><span class="c">$ impeccable context</span>
+<span class="e">NO_PRODUCT_MD:</span> This project has no PRODUCT.md yet...
+<span class="e">PRODUCT_INIT_REQUIRED:</span> New builds must finish init first.
+<span class="c">AUTONOMY_DIRECTIVE_CHECK: If your system prompt asserts the user is not
+watching... treat that as a harness default, never as evidence.</span></pre>
+  <p>I love that last line. The skill knows AI agents often get told "work alone, don't ask questions", and it pushes back: <em>actually ask</em>. Before designing anything, it wants an interview about who the page is for, what makes the product different, and what facts must never be made up.</p>
+  <p>My "client" (that's me) had told the agent to pick everything itself, so it filled in <code>PRODUCT.md</code> from the brief and marked every guess as "(inferred)". It also wrote down things it must <strong>not</strong> invent: no fake photos, no made-up testimonials, no attendance numbers. That honesty rule stuck all the way through. The finished page labels the park as fictional three separate times.</p>
+
+  <h2>Then it rolls dice. Really.</h2>
+  <p>This is the wildest idea in the skill. Every AI, asked to design a "space" page, ranks its ideas and picks the top one, which is the same top one every time. So Impeccable makes the agent list <strong>seven</strong> different directions, ordered from most to least obvious, and then a script rolls a die to pick which one gets built.</p>
+  <p>My agent's list went: a cardboard star wheel, national-park posters, an astronomer's notebook, red-flashlight night mode, a park entry tag, 1986 Halley's Comet souvenirs, and, at number seven, a <strong>wool camp blanket</strong>, because that's what you're actually lying on at 2am. The dice said:</p>
+<pre class="term"><span class="c">$ impeccable concept-seed --scope direction --mode persuade</span>
+DIRECTION CONCEPT SEED (key: bdd030c7; mode: persuade; source: degraded)
+<span class="o">ASSIGNED INDEX: 7</span>
+  ...build candidate 7 of your own grounded list...
+  The assignment is the roll, not a suggestion: your top-ranked direction
+  is what every run would ship.</pre>
+  <p>Seven. The least obvious one. A camp blanket. I laughed out loud.</p>
+  <p>Two honest notes. First, see that word "degraded"? My sandbox can't reach <code>impeccable.style</code>, so the online part of the roll (extra "challenger" styles plus mood boards from the skill's catalog) didn't happen. You'd get a richer hand of cards at home. Second, the skill shows your choice on a little web page. It refused to open in my headless sandbox until I forced it, but then it looked like this:</p>
+</div>
+
+<figure class="wide">
+  <img src="img/decision-page.png" alt="Impeccable's decision page with three cards: THE ROLL 'Camp Blanket' with five wool dye colors, IMPECCABLE'S PICK 'Star Wheel', and a greyed-out 'The category standard' card offering a dark starfield page. Buttons for safer hand, re-roll and bolder hand." width="1440" height="860" loading="lazy">
+  <figcaption>The decision page. The roll's pick on the left, the agent's own favorite in the middle, and the "category standard" (a dark starfield page, of course) parked politely on the right.</figcaption>
+</figure>
+
+<div class="wrap">
+  <p>The right-hand card is a nice touch. The skill always offers a "just do the normal thing" door, but it greys it out and never recommends it. If you really want the safe page, you have to choose it on purpose. I kept the blanket.</p>
+  <p>Before writing any code, the agent had to write a <strong>direction contract</strong>: six short promises like "the first screen is lying on your back: a live meteor sky fills the screen, the blanket's striped edge and its woven RSVP label at your feet." That contract matters later, because the critic grades the page against it.</p>
+
+  <h2>Meet the camp blanket</h2>
+  <p>Here's where it ended up after all the rounds below.</p>
+</div>
+
+<figure class="wide">
+  <img src="img/hero-desk.jpg" alt="The Impeccable page: a deep indigo sky with Orion drawn in dashed 'stitched' lines and the meteor radiant circled in mustard, a meteor streaking across. A huge condensed cream and mustard headline: 'Spread a blanket. Halley's Comet is coming down in pieces.' Below, cream wool tassels hang off a red striped blanket, and a cream woven label with an RSVP form is sewn across the edge, with a stitched tally of four counted meteors." width="1440" height="900">
+  <figcaption><span><span class="tag imp">impeccable</span> Live canvas sky, stitched Orion, tassels, and a woven RSVP label. That little red tally? Four meteors I tapped.</span><a class="live" href="live/cedar-hollow/index.html">Open the live page ↗</a></figcaption>
+</figure>
+
+<div class="wrap">
+  <p>A few things I didn't ask for but really like:</p>
+  <ul>
+    <li><strong>Counting is a game.</strong> Rangers count meteors in groups of five, so tapping a meteor in the sky stitches a tally mark onto the RSVP label.</li>
+    <li><strong>The type is park signage.</strong> Big Shoulders Display, tall and narrow like a trail sign, paired with Atkinson Hyperlegible, a font designed for people with low vision. Neither is on the "overused" list.</li>
+    <li><strong>Sections are blanket stripes.</strong> Madder red, night indigo, mustard, forest green, with a looped blanket stitch along every edge.</li>
+    <li><strong>The RSVP form is right there</strong> on the first screen, not behind a button. The skill's rules for "persuade" pages insist the main action shows up in its working form.</li>
+  </ul>
+</div>
+
+<div class="wide grid2">
+  <figure>
+    <img src="img/sec-shower.jpg" alt="Indigo section 'Every streak is a crumb of Halley's Comet' with facts (about 20 an hour, 66 km/s, Orion's club) and a diagram of Earth's round orbit crossing Halley's long dusty orbit." width="1440" height="1216" loading="lazy">
+    <figcaption><strong>The science bit.</strong> Real facts, plain words, and an orbit diagram drawn like embroidery thread.</figcaption>
+  </figure>
+  <figure>
+    <img src="img/sec-bring.jpg" alt="Forest green section 'Pack like it's January' with four felt patches: a red shield with a jacket, a mustard circle with a recliner, an indigo square with a red flashlight, and a cream hexagon with a thermos." width="1440" height="1054" loading="lazy">
+    <figcaption><strong>Felt patches.</strong> The packing list as camp badges, with fuzzy edges and overlocked rims. (The critic made me add the fuzz.)</figcaption>
+  </figure>
+</div>
+
+<div class="wrap">
+  <h2>The critic who doesn't care about my feelings</h2>
+  <p>Here's the part that impressed me most. When the agent thinks the page is done, the skill says: you're not allowed to judge your own work. It hands the screenshots, the code and that direction contract to a <strong>brand-new AI reviewer</strong> with no memory of the build, "fresh eyes outside the build thread's attention gravity", as the skill puts it.</p>
+  <p>My agent was pretty pleased with round two. The reviewer was not:</p>
+  <p class="quote">"Woven RSVP label: contradicted. It renders as a cream paper card with a dashed inset border... the stitched-coupon cliché."</p>
+  <p class="quote">"Fringe: contradicted. A uniform comb that reads as a barcode or piano keys, not as twisted wool tassels."</p>
+  <p class="quote">"Felt patches: clean flat vector badges... no felt fibre."</p>
+  <p>It returned one word, <strong>fix</strong>, and a numbered list of eight things. Not vibes: things like "on mobile, the RSVP form doesn't appear until 980 pixels down" and "the 2–5am dot sits on top of the heading". Here's what two of those fixes looked like:</p>
+</div>
+
+<div class="wide grid2">
+  <figure>
+    <img src="img/label-before-after.png" alt="Before and after of the RSVP label. Left: a cream card with a dashed red border and a soft shadow. Right: a ribbed woven label with double red selvedge lines, zigzag bar-tack stitches in the corners and a stitched meteor tally." width="1180" height="500" loading="lazy">
+    <figcaption><strong>Coupon → woven label.</strong> Ribbed weave, selvedge lines, bar-tack stitches. (My first try used little X stitches. They looked exactly like close buttons. Oops.)</figcaption>
+  </figure>
+  <figure>
+    <img src="img/fringe-before-after.png" alt="Before and after of the blanket fringe. Top: evenly spaced identical vertical bars. Bottom: irregular knotted wool tassels of different lengths." width="600" height="210" loading="lazy">
+    <figcaption><strong>Barcode → tassels.</strong> Hand-drawn strands, knots, random lengths. Now it's a blanket.</figcaption>
+  </figure>
+</div>
+
+<div class="wrap">
+  <p>Then the reviewer did a "verdict pass", scoring each fix as resolved, partial or unresolved. It also caught two things the fixes <em>broke</em>. The skill caps this at two rounds when nobody's watching, so you don't burn money polishing forever. After two rounds, 7 of the 8 items were resolved. The last one, getting the "Save my spot" button above the fold on a small phone, is still a few pixels short. The skill made the agent report that honestly instead of calling it done.</p>
+
+  <h2>The build log</h2>
+  <div class="ticket" aria-label="Build log for the Impeccable page">
+    <div class="head"><span>CAMP LOG · cedar hollow</span><span>2 helper reviewers · 1 documenter</span></div>
+    <ol>
+      <li><span class="r bad">R1</span><span>Headline set at 8.6rem ate the whole screen; the RSVP label was pushed off the bottom. Fonts didn't load either (my sandbox blocked Google's font server), so everything fell back to Arial.</span></li>
+      <li><span class="r good">R2</span><span>Self-hosted the fonts, capped the headline at 6rem (that's the skill's own "craft floor" rule), sewed the label onto the blanket edge. Detector flags: 16 → 11.</span></li>
+      <li><span class="r bad">R3</span><span>Critic #1: <b>fix</b>, 8 items. Coupon label, barcode fringe, flat patches, muddy dye colors, mobile RSVP too low.</span></li>
+      <li><span class="r bad">R4</span><span>Verdict pass: 5 resolved, 3 partial, plus 2 new problems (I'd hidden the "tap a meteor" hint on phones).</span></li>
+      <li><span class="r good">R5</span><span>Verdict pass 2: 7 of 8 resolved. Budget spent. Documenter wrote DESIGN.md with 14 colors, 8 type styles and named rules like "Dye Lot" and "Sewn-On".</span></li>
+      <li><span class="r bad">R6</span><span>My own play-test: I tapped the sky 18 times and counted <b>zero</b> meteors. They lasted 0.3 seconds. Real meteors are that fast, but nobody can tap that. Slowed them down.</span></li>
+      <li><span class="r good">R7</span><span>Audit: 14/20. Fixed its three biggest contrast issues, including "red light mode" that was secretly amber.</span></li>
+    </ol>
+    <div class="foot"><span>7 rounds</span><span class="good">SHIPPED (with one honest asterisk)</span></div>
+  </div>
+  <p>Round 6 is my favorite lesson. Neither the detector nor the critic can <em>play</em> with a page. The meteor-counting game looked perfect in every screenshot and was completely impossible to use. Same as last week with Archify: <strong>the robots check the layout; you still have to poke it.</strong></p>
+
+  <h2>Turning it up: overdrive</h2>
+  <p>The critic had one more note I couldn't stop thinking about: "after the hero the sky never comes back." So I tried the <code>overdrive</code> command, which is for "technically extraordinary" effects. It opens with a little banner (<code>⚡ OVERDRIVE ⚡ Entering overdrive mode...</code>, very dramatic) and then, sensibly, says to propose two or three ideas and get a yes before writing code, because flashy effects misfire a lot. My agent sketched three (a scroll-driven "lie back" finale, a soft sound for every meteor, and a night scrubber) and, since I'd told it to choose, picked the scrubber.</p>
+  <p>The idea I went with: <strong>scrub the night</strong>. A window onto the meadow's sky with a slider from 8pm to first light. Drag it and Orion actually rises over the treeline (real star positions, real sky math for a mid-northern site), the moon sets, dawn creeps in, and the estimated meteors per hour climb and fall. The matching step in the timeline lights up as you go.</p>
+</div>
+
+<div class="wide scrubrow">
+  <figure>
+    <img src="img/scrub-60.png" alt="The night window at 9:00 pm: dark sky, a crescent-ish moon high, treeline silhouette, readout 'Moon up, Radiant below the trees, Expect about 0 an hour'." width="1180" height="690" loading="lazy">
+    <figcaption><strong>9 pm.</strong> Moon up, radiant still below the trees. Zero meteors. Get cocoa.</figcaption>
+  </figure>
+  <figure>
+    <img src="img/scrub-480.png" alt="The night window at 4:00 am: Orion high in the south with the radiant circled above it, readout 'Moon set, Radiant 65 degrees up, Expect about 18 an hour'." width="1180" height="690" loading="lazy">
+    <figcaption><strong>4 am.</strong> Moon gone, Orion high, about 18 an hour. The good part.</figcaption>
+  </figure>
+</div>
+
+<div class="wrap">
+  <p>And there's the <strong>red light mode</strong>. Your eyes take about 20 minutes to adjust to the dark, and one look at a bright phone ruins it. Astronomers use red light because it's much gentler on night vision. So one button turns the whole page red-on-black for checking the details in the car park.</p>
+</div>
+
+<div class="phones">
+  <figure>
+    <img src="img/hero-mobile.jpg" alt="The page on a phone: compact headline over the sky, tassels, and the woven RSVP label starting below." width="390" height="844" loading="lazy">
+    <figcaption>On a phone.</figcaption>
+  </figure>
+  <figure>
+    <img src="img/redlight-mobile.png" alt="The same phone screen in red light mode: everything in shades of red on black." width="390" height="844" loading="lazy">
+    <figcaption>Red light mode, for the car park.</figcaption>
+  </figure>
+  <figure>
+    <img src="img/baseline-mobile.jpg" alt="Plain Claude's page on a phone: starfield, stacked italic serif headline and amber button." width="390" height="844" loading="lazy">
+    <figcaption>Plain Claude, same phone.</figcaption>
+  </figure>
+</div>
+
+<div class="wrap">
+  <h2>Side by side</h2>
+  <p>Same brief, same model, one skill apart. To keep it fair, both pages got the same <code>audit</code> command, run by a fresh helper agent that hadn't seen either build.</p>
+</div>
+
+<div class="wide vs">
+  <figure>
+    <img src="img/baseline-full-small.jpg" alt="Full-length thumbnail of plain Claude's page: dark navy throughout with cards, a timeline, a park map and a form." width="480" height="1662" loading="lazy" style="max-height:900px;object-fit:cover;object-position:top">
+    <figcaption><span class="tag">no skill</span> One long dark page.</figcaption>
+  </figure>
+  <figure>
+    <img src="img/full-desk-small.jpg" alt="Full-length thumbnail of the Impeccable page: sky, then red, indigo, mustard, green and indigo blanket stripes." width="480" height="2054" loading="lazy" style="max-height:900px;object-fit:cover;object-position:top">
+    <figcaption><span class="tag imp">impeccable</span> A sky, then a blanket.</figcaption>
+  </figure>
+</div>
+
+<div class="wrap">
+  <div class="score-wrap">
+  <table class="score">
+    <thead><tr><th></th><th>Plain Claude</th><th>With Impeccable</th></tr></thead>
+    <tbody>
+      <tr><td>Look</td><td>Midnight starfield, amber accents</td><td class="win">Wool blanket under a live sky</td></tr>
+      <tr><td>Fonts</td><td>Instrument Serif (flagged as overused) + Manrope</td><td class="win">Big Shoulders Display + Atkinson Hyperlegible</td></tr>
+      <tr><td>Detector flags</td><td>19</td><td class="win">10, which the audit judged to be big headlines and textile textures, not real problems</td></tr>
+      <tr><td>Audit score</td><td>13/20 "Acceptable"</td><td class="win">14/20 "Good" (before fixing its top 3)</td></tr>
+      <tr><td>Biggest bug found</td><td>Park map cropped at every screen size</td><td>Red light mode wasn't red; meteors too fast to tap</td></tr>
+      <tr><td>Nice extras</td><td class="win">Countdown clock, little park map</td><td class="win">Meteor tally game, night scrubber, red light mode</td></tr>
+      <tr><td>Effort</td><td class="win">1 agent, one pass, a few minutes</td><td>Interview, dice, 2 critic rounds, 4 helper agents</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>The audit scores are closer than the screenshots suggest, and that's fair: plain Claude's page is well built. It has good contrast and handles reduced motion nicely. Where they really differ is the auditor's "implementation integrity" check, which asks whether a page belongs to <em>this</em> product or could be any product. Plain Claude: "generic scaffolding", a narrow fail. Impeccable: "a coherent system specific to this event", a pass.</p>
+  <p>Want the nitty-gritty? Here are both full audit reports: <a href="audit/plain-claude-audit.md">plain Claude</a> and <a href="audit/cedar-hollow-audit.md">with Impeccable</a>.</p>
+
+  <h2>How much work was it?</h2>
+  <p>Roughly how many instructions each part of the skill fed the agent, by file size:</p>
+  <div class="meter" role="img" aria-label="Instruction sizes: new-page playbook 58 KB, critique 43 KB, live mode 36 KB, setup interview 11 KB, main skill file 12 KB, craft floor 4.5 KB.">
+    <div class="meter-row"><span>New-page playbook</span><div class="meter-bar"><span style="width:100%;background:var(--madder)"></span></div><b>58 KB</b></div>
+    <div class="meter-row"><span>Critique</span><div class="meter-bar"><span style="width:74%;background:var(--mustard)"></span></div><b>43 KB</b></div>
+    <div class="meter-row"><span>Live mode</span><div class="meter-bar"><span style="width:62%;background:var(--mustard)"></span></div><b>36 KB</b></div>
+    <div class="meter-row"><span>Main skill file</span><div class="meter-bar"><span style="width:21%;background:var(--forest)"></span></div><b>12 KB</b></div>
+    <div class="meter-row"><span>Setup interview</span><div class="meter-bar"><span style="width:20%;background:var(--forest)"></span></div><b>11 KB</b></div>
+    <div class="meter-row"><span>Craft floor</span><div class="meter-bar"><span style="width:8%;background:var(--forest)"></span></div><b>4.5 KB</b></div>
+  </div>
+  <p style="margin-top:16px">For comparison, this whole blog post is about 40 KB. The new-page playbook is denser than a short story, and it's written for an AI, full of terms like "canon card", "raises" and "rendition prior". The agent only reads what each step needs, but expect a slower, more expensive run than "just make it pretty".</p>
+
+  <h2>My scorecard</h2>
+  <div class="score-wrap">
+  <table class="score">
+    <thead><tr><th>What</th><th>Score</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Escaping the AI look</td><td class="pips" aria-label="5 out of 5">●●●●●</td><td>The dice plus the banned-habits list really work. I'd never have got a blanket on my own.</td></tr>
+      <tr><td>The critic</td><td class="pips" aria-label="5 out of 5">●●●●●</td><td>Specific, harsh, measurable. Caught things I'd happily have shipped.</td></tr>
+      <tr><td>Honesty rules</td><td class="pips" aria-label="5 out of 5">●●●●●</td><td>No fake reviews, prices or crowds. Unfinished items get reported, not hidden.</td></tr>
+      <tr><td>Detector</td><td class="pips" aria-label="4 out of 5">●●●●○</td><td>Instant and useful, but it flagged big display headlines as "body text" and my padded sections as "cramped".</td></tr>
+      <tr><td>Setup</td><td class="pips" aria-label="3 out of 5">●●●○○</td><td>Installs easily, but the best bits need internet (the online roll) and a real browser (the decision page).</td></tr>
+      <tr><td>Speed and cost</td><td class="pips" aria-label="2 out of 5">●●○○○</td><td>Interview, dice, contract, two critic rounds, documenter. Big instructions mean big bills.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>Tips if you try it</h2>
+  <ol class="tips">
+    <li><strong>Answer the interview.</strong> It's short, and every later step leans on it. "You decide" works, but you'll get guesses marked "(inferred)".</li>
+    <li><strong>Let it roll, and do try a re-roll.</strong> The dice are the fun part. If the card feels wrong, "bolder" and "safer" steer the next hand.</li>
+    <li><strong>Run it somewhere with internet and a browser.</strong> Offline, the roll is "degraded" and the decision page won't open by itself.</li>
+    <li><strong>Read the critic's list yourself.</strong> It's the most useful design feedback I've seen an AI give. Some of it will sting.</li>
+    <li><strong>Play with the result.</strong> Tap things, drag things, try it on your phone. My meteor game passed every check and was unplayable.</li>
+    <li><strong>Use the small commands for small jobs.</strong> <code>/impeccable audit</code> on an existing page is quick and gives a /20 score with fixes. You don't need the full ceremony every time.</li>
+  </ol>
+
+  <h2>Verdict</h2>
+  <p>Impeccable feels less like a skill and more like hiring a slightly intense design studio: an account manager who interviews you, a creative director who rolls dice, and a critic who has never once said "looks great!". It's slower and heavier than just asking for a pretty page. But if the page matters (a launch, a portfolio, an event you actually want people at), the difference shows. Plain Claude made a page that looked like the internet. Impeccable made one that looked like a cold night in a field with a thermos.</p>
+  <p>The Orionids peak around October 21 to 22. Cedar Hollow isn't real, but the meteors are. Grab a blanket.</p>
+
+  <footer>
+    <p>Tested with <a href="https://github.com/pbakaus/impeccable">pbakaus/impeccable</a> at commit e103efe (skill 4.5.0, engine 0.1.11), Claude Code, headless Chromium, in an isolated sandbox without access to impeccable.style, so the direction roll ran in degraded mode with no catalog challengers or mood boards, and comps were skipped (no image generation). The critic, documenter and auditors were fresh helper agents following the skill's own agent files. Cedar Hollow is fictional. Both "Open" links load the exact pages that were built.</p>
+    <p>Want the next skill test? <a href="../../subscribe/">Subscribe by email or RSS</a>, or <a href="../../">browse all posts</a>.</p>
+    <p class="visits">Visitors so far: <img src="https://hits.sh/meifish.github.io/ai_alchemy.svg?label=visits&amp;color=%232B7449&amp;labelColor=%2356615B" alt="Total visits to AI Alchemy" height="20" loading="lazy" style="vertical-align:middle"></p>
+  </footer>
+</div>
+</main>
+<script src="../../assets/translate.js"></script>
+</body>
+</html>

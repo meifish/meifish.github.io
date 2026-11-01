@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>愛講 翻譯測試</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#165e54">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="愛講翻譯">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-192.png">
+<style>
+  /* Plain test bench, same look as the speech page: one column, results below. */
+  :root {
+    --bg: #f4f6f5; --panel: #ffffff; --fg: #17211f; --muted: #5d6b67;
+    --line: #d5dddb; --accent: #165e54; --accent-fg: #ffffff; --bad: #b3261e;
+    --draft: #8a6d00; --ok: #1d7a3a;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #111715; --panel: #1a2220; --fg: #e6ecea; --muted: #9aa8a4;
+      --line: #2d3835; --accent: #3fae9b; --accent-fg: #06110f; --bad: #ff6b5e;
+      --draft: #e0c050; --ok: #6fd08c; color-scheme: dark; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    padding: env(safe-area-inset-top, 0px) 16px calc(24px + env(safe-area-inset-bottom, 0px)); }
+  main { max-width: 560px; margin: 0 auto; display: grid; gap: 14px; }
+  h1 { font-size: 20px; margin: 14px 0 0; }
+  h2 { font-size: 15px; margin: 0 0 6px; color: var(--muted); font-weight: 600; }
+  a { color: var(--accent); }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; min-width: 0; }
+  label, .lbl { display: block; font-size: 14px; color: var(--muted); margin-bottom: 4px; }
+  select, input, textarea { width: 100%; font: inherit; color: var(--fg); background: var(--bg);
+    border: 1px solid var(--line); border-radius: 8px; padding: 10px; }
+  textarea { min-height: 96px; resize: vertical; }
+  .row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: end; }
+  .row > div { min-width: 0; }
+  button { font: inherit; cursor: pointer; }
+  .btn { border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 8px; padding: 8px 12px; }
+  .btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; align-items: center; }
+  #go { width: 100%; min-height: 64px; font-size: 21px; font-weight: 700; border: 0; border-radius: 14px;
+    background: var(--accent); color: var(--accent-fg); margin-top: 10px; }
+  #go:disabled { background: var(--line); color: var(--fg); }
+  .check { display: flex; align-items: center; gap: 8px; color: var(--fg); font-size: 15px; margin: 10px 0 0; }
+  .check input { width: 22px; height: 22px; margin: 0; flex: none; }
+  details { margin-top: 8px; }
+  summary { color: var(--muted); font-size: 14px; padding: 4px 0; }
+  .samples { margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+  .samples button { width: 100%; text-align: left; border: 1px solid var(--line); background: var(--bg); color: var(--fg);
+    border-radius: 8px; padding: 8px 10px; font-size: 15px; }
+  #state { font-weight: 700; }
+  #state.busy { color: var(--draft); } #state.ok { color: var(--ok); } #state.bad { color: var(--bad); }
+  #fixed { font-size: 14px; color: var(--muted); white-space: pre-wrap; word-break: break-word; margin: 4px 0 0; }
+  #out { font-size: 18px; min-height: 3em; white-space: pre-wrap; word-break: break-word; margin-top: 8px;
+    border-left: 4px solid var(--line); padding-left: 10px; }
+  #out.streaming { border-color: var(--draft); } #out.done { border-color: var(--ok); } #out.partial { border-color: var(--bad); }
+  #clarify { border: 1px solid var(--draft); border-radius: 8px; padding: 8px 10px; margin-top: 8px; font-size: 15px; }
+  .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+  .metrics div { background: var(--bg); border-radius: 8px; padding: 8px; text-align: center; }
+  .metrics b { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
+  .metrics span { font-size: 12px; color: var(--muted); }
+  .note { font-size: 13px; color: var(--muted); }
+  .err { color: var(--bad); }
+  .verdict { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .verdict button { border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 10px; padding: 12px 4px; font-weight: 600; }
+  .verdict button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+  .types { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; margin-top: 4px; }
+  .types .check { margin: 6px 0 0; font-size: 14px; }
+  #rate-for { font-size: 14px; white-space: pre-wrap; word-break: break-word; background: var(--bg); border-radius: 8px; padding: 8px; margin: 0 0 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+  th, td { border-top: 1px solid var(--line); padding: 5px 4px; text-align: right; vertical-align: top; }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--muted); font-weight: 600; }
+  .scroll { overflow-x: auto; }
+  #log { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  #log li { border-top: 1px solid var(--line); padding-top: 8px; font-size: 14px; word-break: break-word; }
+  #log .m { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  #log .tr { white-space: pre-wrap; }
+  #log .btn { padding: 4px 10px; font-size: 13px; margin-top: 4px; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>愛講 翻譯 API 測試</h1>
+  <p class="note" style="margin:0">一次送出完整原文，譯文邊產生邊出現。<a href="../">← 語音轉文字測試</a></p>
+
+  <section>
+    <h2>設定</h2>
+    <label for="model">翻譯模型</label>
+    <select id="model">
+      <option value="gpt-5.4-mini">gpt-5.4-mini（Tech Spec 基準）</option>
+      <option value="gpt-6-luna">gpt-6-luna（較新、最便宜）</option>
+      <option value="gpt-5.5">gpt-5.5（較強，對照組）</option>
+      <option value="gpt-6.1-sol">gpt-6.1-sol（最強，會先思考）</option>
+    </select>
+    <p id="model-note" class="note"></p>
+    <div class="row" style="margin-top:6px">
+      <div>
+        <label for="src">原文語言</label>
+        <select id="src"></select>
+      </div>
+      <button class="btn" id="swap" aria-label="對調原文與譯文語言" style="padding:10px">⇄</button>
+      <div>
+        <label for="tgt">譯文語言</label>
+        <select id="tgt"></select>
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      <label for="pass">通行碼 Passcode</label>
+      <input id="pass" type="password" autocomplete="off" placeholder="向 Kathryn 索取">
+    </div>
+  </section>
+
+  <section>
+    <h2>原文</h2>
+    <textarea id="text" dir="auto" placeholder="輸入或貼上要翻譯的原文"></textarea>
+    <details id="samples-box">
+      <summary>測試句（點一下填入）</summary>
+      <ul class="samples" id="samples"></ul>
+    </details>
+    <label class="check"><input type="checkbox" id="use-gloss"> 使用術語表 <span class="note" id="gloss-ver"></span></label>
+    <details>
+      <summary>編輯術語表</summary>
+      <textarea id="gloss" dir="auto" style="min-height:160px" placeholder="一行一個：原文詞 = 譯法（適用情境）"></textarea>
+      <div class="btns"><button class="btn" id="gloss-reset">還原預設術語表</button></div>
+    </details>
+    <details>
+      <summary>前文（選填，給模型參考，不會被翻譯）</summary>
+      <textarea id="context" dir="auto" placeholder="例如前一兩句對話"></textarea>
+    </details>
+    <button id="go">翻譯</button>
+  </section>
+
+  <section>
+    <h2>結果</h2>
+    <div><span id="state">尚未開始</span> <span id="state-msg" class="note"></span></div>
+    <p id="fixed"></p>
+    <div id="out" aria-live="polite" dir="auto"></div>
+    <div id="clarify" hidden></div>
+    <div class="metrics">
+      <div><b id="m-fb">–</b><span>按下→有反應 (秒)</span></div>
+      <div><b id="m-first">–</b><span>第一段譯文 (秒)</span></div>
+      <div><b id="m-total">–</b><span>完整譯文 (秒)</span></div>
+    </div>
+    <p id="meta" class="note"></p>
+    <div class="btns" id="retry-box" hidden>
+      <button class="btn" id="retry">重試（另存一筆）</button>
+    </div>
+  </section>
+
+  <section id="rate" hidden>
+    <h2>評分</h2>
+    <div id="rate-for"></div>
+    <div class="verdict" role="group" aria-label="評分">
+      <button data-v="ok" aria-pressed="false">意思正確</button>
+      <button data-v="bad" aria-pressed="false">有問題</button>
+      <button data-v="unsure" aria-pressed="false">無法判斷</button>
+    </div>
+    <div id="bad-box" hidden style="margin-top:10px">
+      <span class="lbl">錯誤類型（可複選）</span>
+      <div class="types" id="types"></div>
+      <details style="margin-top:10px">
+        <summary>補充（選填）</summary>
+        <label for="r-span" style="margin-top:6px">錯誤片段</label>
+        <input id="r-span" dir="auto" placeholder="複製譯文中錯的那幾個字">
+        <label for="r-note" style="margin-top:8px">說明</label>
+        <textarea id="r-note" dir="auto" style="min-height:64px" placeholder="例如：把「不包含」翻成包含"></textarea>
+        <label for="r-fix" style="margin-top:8px">建議改法</label>
+        <textarea id="r-fix" dir="auto" style="min-height:64px"></textarea>
+      </details>
+    </div>
+    <label for="reviewer" style="margin-top:10px">評分的人</label>
+    <select id="reviewer">
+      <option value="tester">測試者（看操作與等待）</option>
+      <option value="bilingual">中英雙語審查（看準確度）</option>
+    </select>
+    <div class="btns">
+      <button class="btn" id="rate-save">儲存評分</button>
+      <span id="rate-msg" class="note"></span>
+    </div>
+  </section>
+
+  <section>
+    <h2>統計（這支手機的紀錄）</h2>
+    <div class="scroll"><table id="stats"></table></div>
+    <p class="note">失敗與未完成都算在次數裡。「1 秒內」是第一段譯文在 1 秒內出現的比例。P50 是中位數，P95 是最慢的 5% 的門檻。</p>
+  </section>
+
+  <section>
+    <h2>測試紀錄</h2>
+    <ul id="log"></ul>
+    <div class="btns">
+      <button class="btn" id="csv">下載 CSV</button>
+      <button class="btn" id="copy">複製 JSON</button>
+      <button class="btn" id="clear">清除紀錄</button>
+    </div>
+    <p id="copy-msg" class="note"></p>
+  </section>
+
+  <p class="note">加到主畫面：iPhone 用 Safari 按「分享」→「加入主畫面」；Android 用 Chrome 按右上「⋮」→「加到主畫面」。紀錄只存在這支手機的瀏覽器裡。</p>
+</main>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var store = {
+    get: function (k, d) { try { var v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+
+  // Same Cloudflare Worker as the speech page (see /talkie-worker in the repo).
+  var PROXY_URL = 'https://talkie-stt.meifish-kat.workers.dev';
+  var TIMEOUT_MS = 30000;
+
+  // US$ per 1M tokens: input, cached input, output (OpenAI price list, Oct 2026).
+  var PRICES = {
+    'gpt-5.4-mini': [0.75, 0.075, 4.50],
+    'gpt-6-luna': [0.10, 0.01, 0.50],
+    'gpt-5.5': [5.00, 0.50, 30.00],
+    'gpt-6.1-sol': [2.00, 0.10, 10.00]
+  };
+  var MODEL_NOTES = {
+    'gpt-5.4-mini': 'Tech Spec 指定的第一版基準。不思考直接翻，US$0.75／4.50（每百萬 token 輸入／輸出）。',
+    'gpt-6-luna': 'OpenAI 目前最新的小模型，資料較新。不思考直接翻，US$0.10／0.50，比 mini 便宜約 8 倍。',
+    'gpt-5.5': '較強的模型，不思考直接翻，用來看小模型差多少。US$5／30。',
+    'gpt-6.1-sol': 'OpenAI 目前的主力強模型，至少要「少量思考」，所以第一段譯文會比較慢。US$2／10。'
+  };
+
+  // value: what the page stores; name: what the model is told.
+  var LANGS = [
+    ['zh-Hant', '中文（繁體）', 'Chinese (Traditional, as written in Taiwan)'],
+    ['zh-Hans', '中文（簡體）', 'Chinese (Simplified)'],
+    ['yue', '廣東話（口語字）', 'Cantonese (written colloquial, Traditional characters)'],
+    ['en', 'English', 'English (Canada)'],
+    ['fr', 'Français', 'French (Canada)'],
+    ['es', 'Español', 'Spanish'],
+    ['pa', 'ਪੰਜਾਬੀ（旁遮普語）', 'Punjabi (Gurmukhi script)'],
+    ['vi', 'Tiếng Việt（越南語）', 'Vietnamese'],
+    ['ko', '한국어（韓語）', 'Korean'],
+    ['fil', 'Tagalog（菲律賓語）', 'Tagalog']
+  ];
+  var langName = function (v) { for (var i = 0; i < LANGS.length; i++) if (LANGS[i][0] === v) return LANGS[i][2]; return v; };
+  var langLabel = function (v) { for (var i = 0; i < LANGS.length; i++) if (LANGS[i][0] === v) return LANGS[i][1]; return v; };
+
+  // Job-site sentences that hit the Tech Spec's risk areas: numbers, units,
+  // not-included, certainty, missing units, vague references.
+  var SAMPLES = {
+    zh: ['這個櫃子寬三十英吋，報價不包含檯面。', '總共三千元，不包含拆除費。', '最快週二可以開始，但要看材料什麼時候到。',
+      '浴室磁磚每平方呎四塊半，工錢另外算。', '這面牆可能是承重牆，要先請工程師看過才能拆。', '櫃子寬三十，高八十。',
+      '防水做兩層，保固一年，但水管本身漏水不在保固範圍。', '那個也一起換掉。'],
+    en: ['The quote doesn\'t include the countertop, right?', 'Can you make the backsplash eighteen inches high?',
+      'If the wall is load-bearing, we\'ll leave it.', 'Please don\'t start before 9 a.m.; the neighbours complained.',
+      'Is the $3,000 including demolition and disposal?', 'Can we move that over a bit?']
+  };
+
+  var DEFAULT_GLOSSARY = [
+    '檯面 = countertop', '櫃子 = cabinet（廚房、浴室）', '防濺板／背牆 = backsplash', '磁磚 = tile', '填縫 = grout',
+    '防水 = waterproofing', '拆除 = demolition', '清運 = disposal / haul-away', '水電 = plumbing and electrical',
+    '水電師傅 = plumber / electrician（依上下文）', '石膏板 = drywall', '踢腳板 = baseboard', '承重牆 = load-bearing wall',
+    '報價 = quote', '工錢 = labour', '材料費 = materials', '英吋 = inches', '英尺／呎 = feet', '平方呎 = square feet'
+  ].join('\n');
+
+  var log = store.get('tr.log', []);
+  var running = null;      // the test in flight
+  var rateId = null;       // which record the rating panel is for
+
+  // ---- settings ----
+  ['src', 'tgt'].forEach(function (id) {
+    LANGS.forEach(function (l) { var o = document.createElement('option'); o.value = l[0]; o.textContent = l[1]; $(id).appendChild(o); });
+  });
+  $('src').value = store.get('tr.src', 'zh-Hant');
+  $('tgt').value = store.get('tr.tgt', 'en');
+  $('model').value = store.get('tr.model', 'gpt-5.4-mini');
+  if (!$('model').value) $('model').value = 'gpt-5.4-mini';
+  $('pass').value = store.get('pass', ''); // shared with the speech page
+  $('gloss').value = store.get('tr.gloss', DEFAULT_GLOSSARY);
+  $('use-gloss').checked = store.get('tr.useGloss', false);
+  $('context').value = store.get('tr.context', '');
+  $('text').value = store.get('tr.text', '');
+
+  function hash(s) { var h = 5381; for (var i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h.toString(16).slice(-6); }
+  function glossVersion() { return 'g-' + hash($('gloss').value.trim()); }
+  function showSettings() {
+    $('model-note').textContent = MODEL_NOTES[$('model').value] || '';
+    $('gloss-ver').textContent = '版本 ' + glossVersion();
+    var list = SAMPLES[$('src').value.indexOf('zh') === 0 || $('src').value === 'yue' ? 'zh' : $('src').value];
+    $('samples-box').hidden = !list;
+    var ul = $('samples'); ul.textContent = '';
+    (list || []).forEach(function (t) {
+      var li = document.createElement('li'), b = document.createElement('button');
+      b.textContent = t; b.dir = 'auto';
+      b.onclick = function () { $('text').value = t; store.set('tr.text', t); $('samples-box').open = false; $('text').focus(); };
+      li.appendChild(b); ul.appendChild(li);
+    });
+  }
+  $('model').onchange = function () { store.set('tr.model', this.value); showSettings(); };
+  $('src').onchange = function () { store.set('tr.src', this.value); showSettings(); };
+  $('tgt').onchange = function () { store.set('tr.tgt', this.value); };
+  $('swap').onclick = function () {
+    var s = $('src').value; $('src').value = $('tgt').value; $('tgt').value = s;
+    store.set('tr.src', $('src').value); store.set('tr.tgt', $('tgt').value); showSettings();
+  };
+  $('pass').onchange = function () { store.set('pass', this.value.trim()); };
+  $('gloss').oninput = function () { store.set('tr.gloss', this.value); $('gloss-ver').textContent = '版本 ' + glossVersion(); };
+  $('gloss-reset').onclick = function () { $('gloss').value = DEFAULT_GLOSSARY; $('gloss').oninput(); };
+  $('use-gloss').onchange = function () { store.set('tr.useGloss', this.checked); };
+  $('context').oninput = function () { store.set('tr.context', this.value); };
+  $('text').oninput = function () { store.set('tr.text', this.value); };
+  showSettings();
+
+  // ---- running one test ----
+  var MARK = '[[CLARIFY]]';
+  // Split the model's raw text into the translation and its clarifying
+  // question, hiding a marker that has only partly arrived.
+  function split(raw) {
+    var i = raw.indexOf(MARK);
+    if (i >= 0) return { main: raw.slice(0, i).replace(/\s+$/, ''), ask: raw.slice(i + MARK.length).trim() };
+    for (var n = Math.min(MARK.length - 1, raw.length); n > 0; n--) {
+      if (raw.slice(-n) === MARK.slice(0, n)) return { main: raw.slice(0, -n), ask: '' };
+    }
+    return { main: raw, ask: '' };
+  }
+  // Calls back once the browser has painted what we just put on screen.
+  function painted(cb) { requestAnimationFrame(function () { setTimeout(cb, 0); }); }
+  var sec = function (ms) { return ms == null ? '–' : (ms / 1000).toFixed(2); };
+
+  function setState(kind, text, msg) {
+    $('state').className = kind; $('state').textContent = text; $('state-msg').textContent = msg || '';
+  }
+  function showOutput(r) {
+    var p = split(r.output || '');
+    $('out').textContent = p.main;
+    $('clarify').hidden = !p.ask;
+    $('clarify').textContent = p.ask ? '⚠ 模型請說話者澄清：' + p.ask : '';
+  }
+
+  function start(retryOf) {
+    if (running) return;
+    var t0 = performance.now();
+    var text = $('text').value.trim();
+    var pass = $('pass').value.trim();
+    if (!text) { setState('bad', '沒有原文', '請先輸入或貼上原文。'); return; }
+    if (!pass) { setState('bad', '需要通行碼', '請在上方設定輸入通行碼。'); $('pass').focus(); return; }
+    store.set('pass', pass);
+
+    var useGloss = $('use-gloss').checked;
+    var r = {
+      id: 't' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+      retryOf: retryOf || null,
+      at: new Date().toISOString(),
+      source: $('src').value, target: $('tgt').value, text: text,
+      provider: 'openai', model: $('model').value, actualModel: null, promptVersion: null, effort: null,
+      glossaryOn: useGloss, glossaryVersion: useGloss ? glossVersion() : null, glossary: useGloss ? $('gloss').value.trim() : '',
+      context: $('context').value.trim(),
+      output: '', status: 'running', error: null,
+      tFeedback: null, tFirst: null, tTotal: null, usage: null, cost: null,
+      device: deviceName(), network: (navigator.connection && navigator.connection.effectiveType) || null,
+      rating: null
+    };
+    running = r;
+
+    // The input is fixed from here on; edits to the box start a new test.
+    $('go').disabled = true; $('go').textContent = '翻譯中…';
+    $('retry-box').hidden = true; $('rate').hidden = true;
+    $('fixed').textContent = '本次原文：' + text;
+    $('out').className = 'streaming'; showOutput(r);
+    $('m-fb').textContent = $('m-first').textContent = $('m-total').textContent = '–';
+    $('meta').textContent = r.model + (useGloss ? '・術語表 ' + r.glossaryVersion : '・無術語表');
+    setState('busy', '翻譯中', '等待第一段譯文…');
+    painted(function () { r.tFeedback = performance.now() - t0; $('m-fb').textContent = sec(r.tFeedback); });
+
+    var ctrl = new AbortController(), timedOut = false;
+    var timer = setTimeout(function () { timedOut = true; ctrl.abort(); }, TIMEOUT_MS);
+    var finished = false;
+
+    function finish(status, error) {
+      if (finished) return; finished = true;
+      clearTimeout(timer);
+      r.status = status; r.error = error || null;
+      painted(function () {
+        if (status === 'done') { r.tTotal = performance.now() - t0; $('m-total').textContent = sec(r.tTotal); }
+        save(r); running = null;
+        $('go').disabled = false; $('go').textContent = '翻譯';
+        if (status === 'done') {
+          $('out').className = 'done';
+          setState('ok', '翻譯完成', '');
+          openRating(r.id);
+        } else {
+          $('out').className = r.output ? 'partial' : '';
+          setState('bad', r.output ? '未完成' : '失敗', (r.output ? '下面只是收到的部分譯文，不算成功。' : '') + (error || ''));
+          $('retry-box').hidden = false;
+        }
+        $('meta').textContent = metaLine(r);
+      });
+    }
+
+    fetch(PROXY_URL + '/translate', {
+      method: 'POST', signal: ctrl.signal,
+      headers: { 'Content-Type': 'application/json', 'X-Passcode': pass },
+      body: JSON.stringify({ text: text, source: langName(r.source), target: langName(r.target), model: r.model,
+        glossary: r.glossary, context: r.context })
+    }).then(function (res) {
+      if (!res.ok || !res.body) {
+        return res.text().then(function (t) {
+          var m; try { m = JSON.parse(t).error.message; } catch (e) { m = t.slice(0, 200); }
+          finish('failed', 'HTTP ' + res.status + '：' + (m || ''));
+        });
+      }
+      var reader = res.body.getReader(), dec = new TextDecoder(), buf = '';
+      function onEvent(name, data) {
+        var j; try { j = JSON.parse(data); } catch (e) { return; }
+        if (name === 'delta' && j.t) {
+          r.output += j.t; showOutput(r);
+          if (r.tFirst == null && split(r.output).main.trim()) {
+            r.tFirst = -1; // claimed; the real time is set once it is on screen
+            setState('busy', '生成中', '還沒完成，這只是預覽。');
+            painted(function () { r.tFirst = performance.now() - t0; $('m-first').textContent = sec(r.tFirst); });
+          }
+        } else if (name === 'done') {
+          r.actualModel = j.model || null; r.usage = j.usage || null;
+          r.promptVersion = j.prompt_version || null; r.effort = j.reasoning_effort || null;
+          r.cost = costOf(r.model, r.usage);
+          finish('done');
+        } else if (name === 'error') {
+          finish(r.output ? 'incomplete' : 'failed', j.message);
+        }
+      }
+      function pump() {
+        return reader.read().then(function (x) {
+          if (x.done) { finish(r.output ? 'incomplete' : 'failed', '連線中斷，沒有收到完成訊號。'); return; }
+          buf += dec.decode(x.value, { stream: true });
+          // One event ends at a blank line; network packets can split it anywhere.
+          var m;
+          while ((m = /\r?\n\r?\n/.exec(buf))) {
+            var block = buf.slice(0, m.index); buf = buf.slice(m.index + m[0].length);
+            var name = 'message', data = [];
+            block.split(/\r?\n/).forEach(function (l) {
+              if (l.indexOf('event:') === 0) name = l.slice(6).trim();
+              else if (l.indexOf('data:') === 0) data.push(l.slice(5).replace(/^ /, ''));
+            });
+            if (data.length) onEvent(name, data.join('\n'));
+          }
+          if (!finished) return pump();
+        });
+      }
+      return pump();
+    }).catch(function (e) {
+      finish(r.output ? 'incomplete' : 'failed', timedOut ? '逾時（超過 ' + TIMEOUT_MS / 1000 + ' 秒）' : '網路錯誤：' + (e && e.message || e));
+    });
+  }
+  $('go').onclick = function () { start(null); };
+  $('retry').onclick = function () {
+    // Retry the same input as the failed test, linked to it.
+    var last = log[0];
+    if (last) { $('text').value = last.text; $('src').value = last.source; $('tgt').value = last.target; $('model').value = last.model; }
+    start(last ? last.id : null);
+  };
+
+  function deviceName() {
+    var u = navigator.userAgent;
+    var m = u.match(/Android [\d.]+; ([^;)]+)/);
+    if (m) return m[1].trim();
+    if (/iPhone/.test(u)) return 'iPhone';
+    return /Mobile/.test(u) ? 'mobile' : 'desktop';
+  }
+  function costOf(model, usage) {
+    var p = PRICES[model];
+    if (!p || !usage || usage.prompt_tokens == null || usage.completion_tokens == null) return null;
+    var cached = (usage.prompt_tokens_details && usage.prompt_tokens_details.cached_tokens) || 0;
+    return ((usage.prompt_tokens - cached) * p[0] + cached * p[1] + usage.completion_tokens * p[2]) / 1e6;
+  }
+  function metaLine(r) {
+    var bits = [r.actualModel || r.model];
+    bits.push(r.glossaryOn ? '術語表 ' + r.glossaryVersion : '無術語表');
+    if (r.usage) bits.push('token 輸入 ' + r.usage.prompt_tokens + '／輸出 ' + r.usage.completion_tokens);
+    bits.push('成本 ' + (r.cost == null ? '不可得' : 'US$' + r.cost.toFixed(6)));
+    return bits.join('・');
+  }
+
+  // ---- rating ----
+  var TYPES = [['num', '數字／單位'], ['neg', '否定／條件／承諾'], ['term', '術語'], ['omit', '漏譯'],
+    ['add', '多加內容'], ['tone', '語氣／不自然'], ['other', '其他']];
+  var TYPE_NAME = {}; TYPES.forEach(function (t) { TYPE_NAME[t[0]] = t[1]; });
+  TYPES.forEach(function (t) {
+    var l = document.createElement('label'); l.className = 'check';
+    l.innerHTML = '<input type="checkbox" value="' + t[0] + '"> ' + t[1];
+    $('types').appendChild(l);
+  });
+  var verdict = null;
+  function setVerdict(v) {
+    verdict = v;
+    document.querySelectorAll('.verdict button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.v === v)); });
+    $('bad-box').hidden = v !== 'bad';
+  }
+  document.querySelectorAll('.verdict button').forEach(function (b) { b.onclick = function () { setVerdict(b.dataset.v); }; });
+  $('reviewer').value = store.get('tr.reviewer', 'tester');
+  $('reviewer').onchange = function () { store.set('tr.reviewer', this.value); };
+
+  function find(id) { for (var i = 0; i < log.length; i++) if (log[i].id === id) return log[i]; return null; }
+  function openRating(id) {
+    var r = find(id); if (!r) return;
+    rateId = id;
+    var x = r.rating || {};
+    setVerdict(x.verdict || null);
+    document.querySelectorAll('#types input').forEach(function (c) { c.checked = (x.types || []).indexOf(c.value) >= 0; });
+    $('r-span').value = x.span || ''; $('r-note').value = x.note || ''; $('r-fix').value = x.fix || '';
+    if (x.reviewer) $('reviewer').value = x.reviewer;
+    $('rate-for').textContent = '原文：' + r.text + '\n譯文：' + (r.output || '（無）');
+    $('rate-msg').textContent = '';
+    $('rate').hidden = false;
+  }
+  $('rate-save').onclick = function () {
+    var r = find(rateId); if (!r) return;
+    if (!verdict) { $('rate-msg').textContent = '請先選一個評分。'; return; }
+    var types = [];
+    document.querySelectorAll('#types input').forEach(function (c) { if (c.checked) types.push(c.value); });
+    if (verdict === 'bad' && !types.length) { $('rate-msg').textContent = '「有問題」請至少選一個錯誤類型。'; return; }
+    // The model's own text stays as it was; corrections live only here.
+    r.rating = { verdict: verdict, types: verdict === 'bad' ? types : [],
+      span: verdict === 'bad' ? $('r-span').value.trim() : '', note: verdict === 'bad' ? $('r-note').value.trim() : '',
+      fix: verdict === 'bad' ? $('r-fix').value.trim() : '', reviewer: $('reviewer').value, at: new Date().toISOString() };
+    store.set('tr.log', log); renderLog();
+    $('rate-msg').textContent = '已儲存。';
+  };
+
+  // ---- log, stats, export ----
+  function save(r) { log.unshift(r); store.set('tr.log', log); renderLog(); }
+  var STATUS = { done: '完成', incomplete: '未完成', failed: '失敗' };
+  var VERDICT = { ok: '意思正確', bad: '有問題', unsure: '無法判斷' };
+  function ratingText(x) {
+    if (!x) return '未評分';
+    var s = VERDICT[x.verdict];
+    if (x.types && x.types.length) s += '（' + x.types.map(function (t) { return TYPE_NAME[t]; }).join('、') + '）';
+    if (x.note) s += '：' + x.note;
+    return s + (x.reviewer === 'bilingual' ? '・雙語審查' : '・測試者');
+  }
+  function renderLog() {
+    var ul = $('log'); ul.textContent = '';
+    log.forEach(function (r) {
+      var li = document.createElement('li');
+      var m = document.createElement('div'); m.className = 'm';
+      m.textContent = new Date(r.at).toLocaleString() + '・' + r.model + '・' + (r.glossaryOn ? '術語表' : '無術語表') + '・' +
+        STATUS[r.status] + '・首段 ' + sec(r.tFirst) + 's・完整 ' + sec(r.tTotal) + 's' + (r.retryOf ? '・重試' : '');
+      var a = document.createElement('div'); a.dir = 'auto'; a.textContent = r.text;
+      var b = document.createElement('div'); b.dir = 'auto'; b.className = 'tr'; var sp = split(r.output || ''); b.textContent = '→ ' + (sp.main || '（無譯文）') + (sp.ask ? '\n⚠ 澄清：' + sp.ask : '');
+      var c = document.createElement('div'); c.className = 'm'; c.textContent = ratingText(r.rating) + (r.error ? '・錯誤：' + r.error : '');
+      li.appendChild(m); li.appendChild(a); li.appendChild(b); li.appendChild(c);
+      if (r.status === 'done') {
+        var btn = document.createElement('button'); btn.className = 'btn'; btn.textContent = '評分這筆';
+        btn.onclick = function () { openRating(r.id); $('rate').scrollIntoView({ behavior: 'smooth' }); };
+        li.appendChild(btn);
+      }
+      ul.appendChild(li);
+    });
+    renderStats();
+  }
+  function pct(list, p) {
+    if (!list.length) return null;
+    var s = list.slice().sort(function (a, b) { return a - b; });
+    return s[Math.min(s.length - 1, Math.ceil(p / 100 * s.length) - 1)];
+  }
+  function renderStats() {
+    var groups = {}, order = [];
+    log.forEach(function (r) {
+      var k = r.model + (r.glossaryOn ? '＋術語' : '');
+      if (!groups[k]) { groups[k] = []; order.push(k); }
+      groups[k].push(r);
+    });
+    var t = $('stats');
+    if (!order.length) { t.innerHTML = '<tr><td>還沒有紀錄</td></tr>'; return; }
+    var html = '<tr><th>模型</th><th>次數</th><th>完成率</th><th>1 秒內</th><th>首段 P50／P95</th><th>完整 P50／P95</th><th>意思正確</th></tr>';
+    order.sort().forEach(function (k) {
+      var rs = groups[k];
+      var firsts = rs.filter(function (r) { return r.tFirst > 0; }).map(function (r) { return r.tFirst; });
+      var totals = rs.filter(function (r) { return r.status === 'done'; }).map(function (r) { return r.tTotal; });
+      var fast = rs.filter(function (r) { return r.tFirst > 0 && r.tFirst <= 1000; }).length;
+      var rated = rs.filter(function (r) { return r.rating && r.rating.verdict !== 'unsure'; });
+      var ok = rated.filter(function (r) { return r.rating.verdict === 'ok'; }).length;
+      var cell = function (s) { return '<td>' + s + '</td>'; };
+      html += '<tr>' + cell(k.replace(/</g, '&lt;')) + cell(rs.length) + cell(Math.round(totals.length / rs.length * 100) + '%') +
+        cell(Math.round(fast / rs.length * 100) + '%') +
+        cell(sec(pct(firsts, 50)) + '／' + sec(pct(firsts, 95))) + cell(sec(pct(totals, 50)) + '／' + sec(pct(totals, 95))) +
+        cell(rated.length ? ok + '/' + rated.length : '–') + '</tr>';
+    });
+    t.innerHTML = html;
+  }
+  renderLog();
+
+  var COLS = ['id', 'retryOf', 'at', 'source', 'target', 'text', 'provider', 'model', 'actualModel', 'promptVersion', 'effort',
+    'glossaryOn', 'glossaryVersion', 'context', 'output', 'status', 'error', 'tFeedback', 'tFirst', 'tTotal',
+    'inputTokens', 'outputTokens', 'cachedTokens', 'costUSD', 'device', 'network',
+    'verdict', 'errorTypes', 'errorSpan', 'note', 'fix', 'reviewer', 'ratedAt'];
+  function flat(r) {
+    var u = r.usage || {}, x = r.rating || {};
+    return {
+      id: r.id, retryOf: r.retryOf, at: r.at, source: r.source, target: r.target, text: r.text, provider: r.provider,
+      model: r.model, actualModel: r.actualModel, promptVersion: r.promptVersion, effort: r.effort,
+      glossaryOn: r.glossaryOn, glossaryVersion: r.glossaryVersion, context: r.context, output: r.output,
+      status: r.status, error: r.error,
+      tFeedback: r.tFeedback == null ? '' : Math.round(r.tFeedback), tFirst: r.tFirst > 0 ? Math.round(r.tFirst) : '',
+      tTotal: r.tTotal == null ? '' : Math.round(r.tTotal),
+      inputTokens: u.prompt_tokens, outputTokens: u.completion_tokens,
+      cachedTokens: u.prompt_tokens_details && u.prompt_tokens_details.cached_tokens,
+      costUSD: r.cost == null ? '不可得' : r.cost.toFixed(6), device: r.device, network: r.network,
+      verdict: x.verdict ? VERDICT[x.verdict] : '', errorTypes: (x.types || []).map(function (t) { return TYPE_NAME[t]; }).join('、'),
+      errorSpan: x.span, note: x.note, fix: x.fix, reviewer: x.reviewer, ratedAt: x.at
+    };
+  }
+  $('csv').onclick = function () {
+    var esc = function (v) { v = v == null ? '' : String(v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+    var lines = [COLS.join(',')].concat(log.map(function (r) { var f = flat(r); return COLS.map(function (c) { return esc(f[c]); }).join(','); }));
+    // The BOM makes Excel read the Chinese correctly.
+    var blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'talkie-translate-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  };
+  $('copy').onclick = function () {
+    var text = JSON.stringify(log, null, 2);
+    var done = function () { $('copy-msg').textContent = '已複製 ' + log.length + ' 筆。'; };
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, function () { $('copy-msg').textContent = '無法複製，請改用下載 CSV。'; });
+  };
+  var clearArmed = false;
+  $('clear').onclick = function () {
+    if (!clearArmed) { clearArmed = true; this.textContent = '再按一次確定清除'; return; }
+    log = []; store.set('tr.log', log); renderLog(); clearArmed = false; this.textContent = '清除紀錄';
+    $('rate').hidden = true;
+  };
+})();
+</script>
+</body>
+</html>

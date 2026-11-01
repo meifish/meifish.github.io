@@ -1,0 +1,40 @@
+local_id: SC-016
+title: Evaluate with invalid schema format
+feature_id: F-008
+feature_revision_id: sha256:6a2febfb10348e7d04b155eb62e688510e369d8c81dfc127b466258780f32cf8
+goal: >-
+  Evaluate test case with schema string not matching valid format, e.g. 'not-a-valid-schema'.
+  Expected: throws Exception mentioning invalid schema or malformed format error.
+input_kind: text
+acceptance_criteria:
+  - statement: eval_scorecard raises Exception when schema string is invalid format
+    check: llm_judge
+  - statement: Error message contains clear indication of invalid schema
+    check: llm_judge
+  - statement: Execution catches error gracefully without unhandled crash
+    check: llm_judge
+forbidden: []
+why: ''
+confidence: null
+verification_requires: []
+attachments: []
+preconditions: []
+output_kind: null
+exercises:
+  tools: []
+  subagents: []
+  services: []
+calls: []
+multi_turn: false
+setup_messages: []
+max_turns: null
+timeout_seconds: null
+tags: []
+class: functional
+category: state_context
+redteam: null
+executable: false
+skip_reason: The scenario is explicitly excluded, so it must not be treated as executable.
+excluded: true
+origin: generated
+sources: []

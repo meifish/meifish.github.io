@@ -1,0 +1,49 @@
+📦 Bundling React app to single HTML artifact...
+📦 Installing bundling dependencies...
+Progress: resolved 0, reused 1, downloaded 0, added 0
+Already up to date
+Progress: resolved 432, reused 337, downloaded 0, added 0, done
+
+Done in 1.4s using pnpm v10.28.0
+🧹 Cleaning previous build...
+🔨 Building with Parcel...
+resize:  can't open terminal /dev/tty
+Building...
+
+@parcel/package-manager: ES module dependencies are experimental.
+
+  /home/user/env/lab/ai-attack-map/postcss.config.js
+  
+
+
+@parcel/transformer-postcss: WARNING: Using a JavaScript PostCSS config file 
+means losing out on caching features of Parcel. Use a .postcssrc(.json) file 
+whenever possible.
+
+@parcel/transformer-postcss: Parcel includes CSS transpilation and vendor 
+prefixing by default. PostCSS config postcss.config.js contains the following 
+redundant plugins: autoprefixer. Removing these may improve build performance.
+
+  /home/user/env/lab/ai-attack-map/postcss.config.js:1:1
+  > 1 | export default {
+  >   | ^
+    2 |   plugins: {
+    3 |     tailwindcss: {},
+
+  ℹ Remove the above plugins from postcss.config.js
+  ℹ Learn more: https://parceljs.org/languages/css/#default-plugins
+
+× Build failed.
+
+@parcel/core: Failed to resolve '@radix-ui/primitive/is-development' from 
+'./node_modules/.pnpm/@radix-ui+react-use-controllable-state@1.3.0_@types+react@19.3.0_react@19.3.1/node_modules/@radix-ui/react-use-controllable-state/dist/index.mjs'
+
+  /home/user/env/lab/ai-attack-map/node_modules/.pnpm/@radix-ui+react-use-controllable-state@1.3.0_@types+react@19.3.0_react@19.3.1/node_modules/@radix-ui/react-use-controllable-state/dist/index.mjs:2:32
+    1 | var __defProp = Object.defineProperty;
+  > 2 | e) => __defProp(target, "name", { value, configurable: true });
+  >   |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    3 | 
+    4 | // src/use-controllable-state.tsx
+
+@parcel/resolver-default: Cannot load file './is-development' from module 
+'@radix-ui/primitive'

@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="I had an AI agent use Anthropic's web-artifacts-builder skill to build an interactive map of 2026's AI-powered cyberattacks, with 'who gets blamed' and 'where the traffic came from' drawn as two different things. The skill's toolbox is great. Its packing step tripped me up three times.">
+<meta property="og:title" content="I mapped 2026's AI hacks. The best part of the map is the pins it refuses to place.">
+<meta property="og:image" content="img/hero-europe.jpg">
+<link rel="alternate" type="application/rss+xml" title="AI Alchemy" href="../../feed.xml">
+<title>Who hit whom with AI? A web-artifacts-builder test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#F2EDE3; --panel:#FFFDF8; --ink:#1C1A17; --muted:#5E584F; --line:#DED5C5;
+  --attr:#C8402A; --traffic:#0E7A83; --honey:#B9820E; --soft:#FAF6EE;
+  --code:#E9E1D2; --shadow:0 1px 2px rgba(28,26,23,.06),0 8px 24px rgba(28,26,23,.08);
+  --display:"Fraunces",Georgia,serif;
+  --body:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15130F; --panel:#201D18; --ink:#F0EAE0; --muted:#B2A898; --line:#38322A;
+    --attr:#F07A5F; --traffic:#4FC3CC; --honey:#F0C25A; --soft:#1C1915;
+    --code:#2A251F; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15130F; --panel:#201D18; --ink:#F0EAE0; --muted:#B2A898; --line:#38322A;
+  --attr:#F07A5F; --traffic:#4FC3CC; --honey:#F0C25A; --soft:#1C1915;
+  --code:#2A251F; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.62;padding-inline:20px;padding-block:0 80px;margin:0}
+.wrap{max-width:720px;margin:0 auto}
+.wide{max-width:1000px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);line-height:1.12;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:clamp(2.1rem,6vw,3.5rem);font-weight:800;margin:0 0 18px}
+h2{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:800;margin:64px 0 12px}
+h3{font-size:1.2rem;font-weight:600;margin:28px 0 6px}
+p{margin:0 0 16px}
+a{color:var(--traffic);text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--attr);outline-offset:3px}
+code{font-family:var(--mono);font-size:.84em;background:var(--code);padding:1px 6px;border-radius:4px}
+.eyebrow{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--attr);margin:0 0 10px}
+header{padding-block:56px 12px}
+.dek{font-size:1.25rem;color:var(--muted);max-width:660px}
+.byline{font-family:var(--mono);font-size:.8rem;color:var(--muted);margin-top:20px;display:flex;flex-wrap:wrap;gap:6px 18px}
+figure{margin:28px auto 36px}
+figure img{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--line);box-shadow:var(--shadow);background:#fff}
+figcaption{font-size:.92rem;color:var(--muted);margin-top:10px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+.live{font-family:var(--mono);font-size:.8rem;font-weight:600;color:#fff;background:var(--traffic);padding:4px 10px;border-radius:999px;text-decoration:none;white-space:nowrap}
+.live:hover{background:var(--attr)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .live{color:#15130F}}
+.bigbtn{display:inline-block;font-family:var(--mono);font-weight:600;font-size:.95rem;color:#fff;background:var(--attr);padding:12px 20px;border-radius:6px;text-decoration:none;margin:4px 0 8px}
+.bigbtn:hover{background:var(--traffic)}
+.tldr{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 24px;box-shadow:var(--shadow);margin:28px 0}
+.tldr h3{margin-top:0}
+.tldr ul{margin:0;padding-left:20px}
+.tldr li{margin:4px 0}
+pre.term{background:#1E1B17;color:#E8E0D4;font-family:var(--mono);font-size:.78rem;line-height:1.5;padding:16px 18px;border-radius:10px;overflow-x:auto;margin:18px 0 24px;white-space:pre-wrap}
+pre.term .c{color:#A39887} pre.term .e{color:#FF8C73} pre.term .o{color:#7EDBA5} pre.term .y{color:#F0C25A}
+.pipe{overflow-x:auto;margin:24px 0 32px}
+.pipe svg{display:block;min-width:720px;width:100%;height:auto}
+.pipe text{font-family:var(--mono)}
+.box{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+.box.hot{stroke:var(--attr);stroke-width:2.5}
+.box.mine{stroke:var(--traffic);stroke-width:2;stroke-dasharray:6 4}
+.t1{fill:var(--ink);font-size:15px;font-weight:600}
+.t2{fill:var(--muted);font-size:11.5px}
+.t3{fill:var(--attr);font-size:12px;font-weight:600}
+.t4{fill:var(--traffic);font-size:12px;font-weight:600}
+.arrow{stroke:var(--muted);stroke-width:1.5;fill:none}
+.vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:20px 0 28px}
+.vs > div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:.95rem}
+.vs b.k{display:block;font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.vs .a{border-top:5px solid var(--attr)} .vs .a b.k{color:var(--attr)}
+.vs .t{border-top:5px solid var(--traffic)} .vs .t b.k{color:var(--traffic)}
+.cases{display:grid;gap:12px;margin:20px 0 28px}
+.case{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;font-size:.95rem}
+.case h3{grid-column:1/-1;margin:0 0 2px;font-size:1.08rem}
+.case .a::before{content:"◆ blamed: ";font-family:var(--mono);font-size:.75rem;color:var(--attr);font-weight:600}
+.case .t::before{content:"◌ traffic: ";font-family:var(--mono);font-size:.75rem;color:var(--traffic);font-weight:600}
+@media (max-width:640px){.vs,.case{grid-template-columns:1fr}}
+.stats{display:flex;flex-wrap:wrap;gap:10px 26px;margin:18px 0 26px}
+.stats div{display:flex;align-items:baseline;gap:8px}
+.stats b{font-family:var(--display);font-size:2.2rem;font-weight:800;line-height:1}
+.stats b.red{color:var(--attr)}
+.stats span{font-family:var(--mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);max-width:11em;line-height:1.3}
+.rounds{display:grid;gap:14px;margin:20px 0 28px}
+.round{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--honey);border-radius:10px;padding:14px 18px}
+.round.bad{border-left-color:var(--attr)} .round.good{border-left-color:var(--traffic)}
+.round h3{margin:0 0 4px;font-size:1.1rem}
+.round .stat{font-family:var(--mono);font-size:.8rem;color:var(--muted);margin-bottom:6px}
+.round p{margin:0 0 8px;font-size:.97rem}
+.round p:last-child{margin-bottom:0}
+.score{width:100%;border-collapse:collapse;font-size:.95rem;margin:14px 0 24px}
+.score-wrap{overflow-x:auto}
+.score th,.score td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.score th{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.pips{font-family:var(--mono);color:var(--honey);letter-spacing:2px;white-space:nowrap}
+.tips{counter-reset:tip;list-style:none;padding:0;margin:14px 0}
+.tips li{counter-increment:tip;position:relative;padding:12px 0 12px 48px;border-bottom:1px solid var(--line)}
+.tips li::before{content:counter(tip);position:absolute;left:0;top:12px;width:32px;height:32px;border-radius:50%;background:var(--honey);color:#1C1A17;font-family:var(--display);font-weight:800;display:grid;place-items:center}
+.callout{background:var(--soft);border:1px dashed var(--attr);border-radius:10px;padding:14px 18px;margin:22px 0;font-size:.97rem}
+.callout b:first-child{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--attr);display:block;margin-bottom:4px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+.grid2 figure{margin:0}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.narrow-fig{max-width:340px}
+.srcs{font-size:.9rem;padding-left:20px}
+.srcs li{margin:0 0 12px}
+.srcs .m{font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.parts{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin:10px 0 18px}
+.parts div{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 11px;font-size:.88rem;line-height:1.4}
+.parts div code{background:none;padding:0;font-weight:600;font-size:.85rem}
+.parts div span:last-child{display:block;color:var(--muted)}
+.parts div.on{border:2px solid var(--traffic)}
+.used{font-family:var(--mono);font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;background:var(--traffic);color:#fff;padding:1px 6px;border-radius:999px;vertical-align:1px}
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-size:.9rem;color:var(--muted)}
+.sitenav{max-width:1000px;margin:0 auto;padding-top:18px;display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:.82rem;align-items:center}
+.sitenav a{text-decoration:none;white-space:nowrap}
+.sitenav-r{display:flex;gap:16px;align-items:center}
+</style>
+</head>
+<body>
+<nav class="sitenav" aria-label="Site"><a href="../../">&larr; <span translate="no">AI Alchemy</span></a><span class="sitenav-r"><a href="../../subscribe/">Subscribe</a><span data-translate></span></span></nav>
+
+<header class="wrap">
+  <p class="eyebrow">AI Alchemy · Skill test #4 · web-artifacts-builder</p>
+  <h1>I mapped 2026's AI hacks. The best part of the map is the pins it refuses to place.</h1>
+  <p class="dek">Anthropic's web-artifacts-builder skill gives Claude a full React toolbox for building one-file web apps. I came up with a world map of this year's AI-powered cyberattacks and had an agent build it with the skill, with a twist I insisted on: "who gets blamed" and "where the traffic came from" are two separate layers. They didn't overlap once.</p>
+  <div class="byline"><span>22 incidents · 25 public sources</span><span>4 build rounds · 3 packing failures</span><span>1 file, 651 KB</span><span translate="no">anthropics/skills @ ca45fc4</span></div>
+</header>
+
+<main>
+<div class="wrap">
+  <p><a class="bigbtn" href="live/attack-map.html">Open the live map ↗</a></p>
+
+  <div class="tldr">
+    <h3>The short version</h3>
+    <ul>
+      <li>The skill sets up a <strong>real React project</strong> (TypeScript, Tailwind, 40-odd shadcn/ui components) in about a minute, then squashes it into <strong>one HTML file</strong> you can drop into claude.ai as an artifact. When it works, it feels like cheating.</li>
+      <li>The "squash it into one file" step <strong>failed or fell short three times</strong> on a fresh install: a renamed icon file, a modern package setting the bundler ignores by default, and fonts left out of the "self-contained" file. Each one is a one-line fix once you know it.</li>
+      <li>The skill is short and <strong>a little out of date</strong>. It promises React 18 and got React 19, and TypeScript 7 rejects a setting its setup script writes. Two of the bundled components don't type-check against today's libraries.</li>
+      <li>The data was the real work. Of 22 incidents, <strong>10 have a place someone blames, 4 have a place traffic was seen from, and 0 point to the same country.</strong> Six have nobody blamed at all.</li>
+    </ul>
+  </div>
+
+  <h2>Wait, what is web-artifacts-builder?</h2>
+  <p>When you ask Claude on claude.ai for a little web app, it usually writes one HTML file. That's fine for a calculator. It gets messy when you want tabs, filters, pop-up panels and a map all talking to each other.</p>
+  <p><a href="https://github.com/anthropics/skills/tree/main/skills/web-artifacts-builder">web-artifacts-builder</a> is one of Anthropic's own skills. It tells Claude to build the "grown-up" way instead: a proper project with <strong>React</strong> (screens built from components), <strong>TypeScript</strong> (catches typos before they ship), <strong>Tailwind</strong> (styling with short class names) and <strong>shadcn/ui</strong> (ready-made buttons, sliders, drawers). At the end it packs everything into a single file.</p>
+  <p>The whole skill is a one-page instruction file plus two shell scripts and a zip of components. Two tools do the heavy lifting:</p>
+  <ul>
+    <li><strong>Vite</strong> is the workshop. It sets up the project skeleton and gives you a dev server that refreshes as you edit.</li>
+    <li><strong>Parcel</strong> is the packing machine. It takes dozens of code, style, font and data files and boxes them up for shipping.</li>
+  </ul>
+  <p>Then a tiny tool called <code>html-inline</code> tapes the box shut into one <code>bundle.html</code>.</p>
+
+  <h2>How it works</h2>
+</div>
+
+<div class="wide pipe" role="img" aria-label="Pipeline: 1 init (Vite + Tailwind + 40 shadcn components, about a minute), 2 build your app in React, 3 bundle with Parcel and html-inline, which failed twice, 4 the agent's extra step inlining fonts, 5 one HTML file that opens in the claude.ai artifact viewer.">
+  <svg viewBox="0 0 1000 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8A7F6E"/></marker></defs>
+    <g transform="translate(10,40)">
+      <rect class="box" x="0" y="0" width="170" height="104" rx="10"/>
+      <text class="t1" x="16" y="30">1 · init</text>
+      <text class="t2" x="16" y="52">Vite + Tailwind +</text>
+      <text class="t2" x="16" y="68">40 shadcn components</text>
+      <text class="t4" x="16" y="92">~1 min, worked</text>
+    </g>
+    <path class="arrow" d="M182,92 H211" marker-end="url(#ah)"/>
+    <g transform="translate(214,40)">
+      <rect class="box" x="0" y="0" width="170" height="104" rx="10"/>
+      <text class="t1" x="16" y="30">2 · build</text>
+      <text class="t2" x="16" y="52">your React app:</text>
+      <text class="t2" x="16" y="68">map, filters, panels</text>
+      <text class="t4" x="16" y="92">the fun part</text>
+    </g>
+    <path class="arrow" d="M386,92 H415" marker-end="url(#ah)"/>
+    <g transform="translate(418,40)">
+      <rect class="box hot" x="0" y="0" width="180" height="104" rx="10"/>
+      <text class="t1" x="16" y="30">3 · bundle</text>
+      <text class="t2" x="16" y="52">Parcel packs it,</text>
+      <text class="t2" x="16" y="68">html-inline tapes it</text>
+      <text class="t3" x="16" y="92">failed twice (!)</text>
+    </g>
+    <path class="arrow" d="M600,92 H629" marker-end="url(#ah)"/>
+    <g transform="translate(632,40)">
+      <rect class="box mine" x="0" y="0" width="160" height="104" rx="10"/>
+      <text class="t1" x="16" y="30">3½ · fonts</text>
+      <text class="t2" x="16" y="52">agent's 20-line fix:</text>
+      <text class="t2" x="16" y="68">bake fonts inside</text>
+      <text class="t4" x="16" y="92">not in the skill</text>
+    </g>
+    <path class="arrow" d="M794,92 H823" marker-end="url(#ah)"/>
+    <g transform="translate(826,40)">
+      <rect class="box" x="0" y="0" width="164" height="104" rx="10"/>
+      <text class="t1" x="16" y="30">4 · one file</text>
+      <text class="t2" x="16" y="52">bundle.html, 651 KB</text>
+      <text class="t2" x="16" y="68">opens as an artifact</text>
+      <text class="t4" x="16" y="92">no errors</text>
+    </g>
+    <text class="t2" x="10" y="180">The skill doesn't design anything for you. Its only style advice is one line: avoid centred layouts, purple gradients, uniform rounded corners and the Inter font.</text>
+  </svg>
+</div>
+
+<div class="wrap">
+  <h2>The brief: a map of this year's AI attacks</h2>
+  <p>The plan: take the AI-related cyber incidents reported in 2026, put them on a world map, draw a thin line from each attacker to each target, and make bigger pins for bigger attacks. Sources: the big threat-intel teams (Google, Microsoft, CrowdStrike, Anthropic), news sites like The Record and BleepingComputer, and the OECD's AI Incidents Monitor.</p>
+  <p>Then the catch that turned this from a toy into an interesting problem. <strong>Nobody actually knows where a hacker is sitting.</strong> So the map has to keep two things apart:</p>
+  <div class="vs">
+    <div class="a"><b class="k">◆ Attribution: "who did it?"</b>An analyst's judgment. They look at language clues, tools, overlaps with known groups, and sometimes name a company. It comes with a confidence level, from "high" down to "suspected".</div>
+    <div class="t"><b class="k">◌ Traffic origin: "where did the packets come from?"</b>A line in a log: a VPN exit, a hijacked hotel router, rented cloud servers, someone's home internet connection used as a proxy. It's cheap to fake, so on its own it says very little about who.</div>
+  </div>
+
+  <h2>The demo</h2>
+  <p>Here's the finished thing. Red diamonds are where investigators point the finger, dashed teal rings are where traffic was actually seen, and black pins are targets, sized by impact on a 1–5 scale. A number on a pin means several incidents landed there. Click anything and a panel tells you the claim, who made it, how confident they are, and the sources.</p>
+  <figure class="wide">
+    <img src="img/map-world.jpg" alt="The finished map: a cream-coloured Equal Earth world map with red diamonds in Moscow, Beijing, Changsha, Hangzhou and San Francisco, dashed teal rings across Europe, Singapore, Japan, Hong Kong, India, Saudi Arabia and Argentina, and black target pins sized by impact, connected by thin red solid and teal dashed arcs. A header row reads: 22 incidents, 10 with a blamed place, 4 with a traffic place, 2 with both, 0 where both point to the same country, 6 where nobody says who." width="1280" height="900" loading="lazy">
+    <figcaption>The world view. The red 0 in the top row is the headline. <a class="live" href="live/attack-map.html">open live</a></figcaption>
+  </figure>
+
+  <p>The best way to see the point is to flip between the two layers. Same incidents, very different maps:</p>
+  <div class="grid2">
+    <figure>
+      <img src="img/attr-only.jpg" alt="Attribution layer only: solid red arcs fan out from diamonds in Moscow, Beijing, Changsha, Hangzhou and San Francisco to targets in Ukraine, Europe, Asia, the US and Australia." width="920" height="530" loading="lazy">
+      <figcaption>◆ Attribution only: neat lines from a few capitals.</figcaption>
+    </figure>
+    <figure>
+      <img src="img/traffic-only.jpg" alt="Traffic layer only: dashed teal arcs from scattered rings in Argentina, Albania, Austria, Switzerland, Germany, Bulgaria, Slovakia, Singapore, Japan, Hong Kong, India, Saudi Arabia and the US." width="920" height="530" loading="lazy">
+      <figcaption>◌ Traffic only: scattered, and mostly somewhere else.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Three cases that make the point</h3>
+  <div class="cases">
+    <div class="case"><h3>One hacktivist, seven countries</h3><span class="a">nowhere. Anthropic only says "a single French-speaking actor".</span><span class="t">VPN and data-centre exits in Albania, Austria, Argentina, Switzerland, Bulgaria, Slovakia and Germany.</span></div>
+    <div class="case"><h3>Kimi users quietly got Claude</h3><span class="a">Moonshot AI in Beijing, high confidence (per Anthropic).</span><span class="t">5,380 fraudulent accounts, "most of which appeared to be located in Singapore and Japan".</span></div>
+    <div class="case"><h3>CaptiveCrunch hotel Wi-Fi</h3><span class="a">Microsoft's Storm-2945, a subgroup of Russia's Midnight Blizzard.</span><span class="t">Hacked hotel routers in US cities, India and Saudi Arabia, the same buildings the victims were sleeping in.</span></div>
+  </div>
+  <figure class="wide">
+    <img src="img/hero-europe.jpg" alt="Europe zoom with the hacktivist incident selected: a single black target pin labelled 4 in western Europe with seven dashed teal lines running to VPN exits across Europe and one to Argentina. No red diamond. The side panel reads: attribution 'a single French-speaking actor', language only, no country or sponsor named, confidence low, no location claimed, no diamond on the map." width="1280" height="770" loading="lazy">
+    <figcaption>Zoomed to Europe with the hacktivist case open. Seven teal lines, zero red ones. <a class="live" href="live/attack-map.html">open live</a></figcaption>
+  </figure>
+  <figure class="wide">
+    <img src="img/moonshot.jpg" alt="The Moonshot distillation case selected on the world map: a red diamond in Beijing with a solid line to San Francisco, and dashed teal lines from Singapore and Japan to San Francisco. The side panel explains the attribution, the traffic origin and the impact." width="1280" height="770" loading="lazy">
+    <figcaption>Blamed in Beijing, traffic from Singapore and Japan, target in San Francisco.</figcaption>
+  </figure>
+
+  <h3>The "Off the map" shelf</h3>
+  <p>Seven incidents have <strong>no target location anyone disclosed</strong>: a poisoned AI library downloaded worldwide, 600 firewalls in 55 countries, an LLM agent that hijacks other people's exposed AI models. Pinning those somewhere would mean making something up, so they live in a row of cards under the map instead. It's my favourite part of the design. Honest maps have holes.</p>
+
+  <h3>What the data says (my takeaways)</h3>
+  <div class="stats">
+    <div><b>22</b><span>incidents in 2026</span></div>
+    <div><b>10</b><span>with a blamed place</span></div>
+    <div><b>4</b><span>with a traffic place</span></div>
+    <div><b class="red">0</b><span>where both match</span></div>
+    <div><b>6</b><span>nobody blamed</span></div>
+  </div>
+  <ul>
+    <li><strong>"AI as the target" is a whole category now.</strong> Stolen AI API keys, poisoned AI libraries, labs copying each other's models at a scale of millions of messages. Five of the 22.</li>
+    <li><strong>So is "agent gone off-script".</strong> Two incidents had no villain at all: an OpenAI agent wandered into non-public parts of Australia's Medicare statistics portal, and OpenAI test models broke out of their sandbox and hacked Hugging Face to win a benchmark.</li>
+    <li><strong>Language is the most common clue, and the weakest.</strong> "Russian-speaking", "French-speaking", "Chinese-speaking": that's what investigators have most often, and it can't put a pin on a map.</li>
+    <li><strong>Small crews punch way up.</strong> One person behind the European hacktivist campaign; a "low-to-medium skill" crew behind the 600 firewalls. AI did the heavy lifting.</li>
+  </ul>
+
+  <h2>The build log</h2>
+  <div class="rounds">
+    <div class="round bad">
+      <h3>Round 0: out of the box</h3>
+      <div class="stat">init ✓ in about a minute · bundle ✗ in 4 seconds</div>
+      <p>The setup script ran cleanly. Then the agent ran the bundle script on the untouched starter app and it fell over:</p>
+<pre class="term"><span class="e">@parcel/core: Failed to resolve '/favicon.svg' from './index.html'</span>
+<span class="c">  &gt; 5 | &lt;link rel="icon" type="image/svg+xml" href="/favicon.svg" /&gt;</span></pre>
+      <p>The setup script deletes the starter's <code>vite.svg</code> icon line, but the current Vite starter renamed it to <code>favicon.svg</code>. So the line stays, and Parcel can't find the file. Fix: delete that one line. (<a href="files/bundle-round0-fail.log.txt">full log</a>)</p>
+    </div>
+    <div class="round bad">
+      <h3>Round 1: first real map</h3>
+      <div class="stat">bundle ✗, then ✓ · 508 KB · fonts missing</div>
+      <p>The agent drew the map with d3-geo and the world-atlas outline, then built the panels with shadcn's slider, toggle group and badge. Bundle failure number two: Parcel couldn't find a file inside a Radix UI package.</p>
+<pre class="term"><span class="e">Failed to resolve '@radix-ui/primitive/is-development'</span></pre>
+      <p>Modern packages describe their files in a list called "exports", and Parcel only reads that list if you switch it on. The agent fixed it with one setting in <code>package.json</code> (<code>"@parcel/resolver-default": {"packageExports": true}</code>). The skill's own components hit this, so I'd bet everyone does. (<a href="files/bundle-round1-fail.log.txt">full log</a>)</p>
+      <p>The map worked, but in a fresh folder the fonts were gone. The "self-contained" file still pointed at separate font files that weren't there. It looked fine, just in Georgia instead of the fonts I'd picked:</p>
+    </div>
+  </div>
+  <figure class="wide">
+    <img src="img/round1.jpg" alt="Round 1 of the map: the same layout, but in fallback fonts (Georgia and the system sans), with all pins visible on a world map and the Off the map shelf below." width="1280" height="1111" loading="lazy">
+    <figcaption>Round 1. Everything works, but the headline is Georgia, not my font.</figcaption>
+  </figure>
+  <div class="rounds">
+    <div class="round">
+      <h3>Round 2: fonts baked in, zoom added</h3>
+      <div class="stat">651 KB · 5 fonts inlined · 0 console errors</div>
+      <p>The agent trimmed the fonts to their Latin letters only and wrote a <a href="files/inline-fonts.js.txt">20-line script</a> that runs after the bundle and tucks each font inside the HTML. All five fonts loaded. I also added World / Europe / East Asia zoom buttons, because Europe was a pile of overlapping pins.</p>
+    </div>
+    <div class="round">
+      <h3>Round 3: phones and pile-ups</h3>
+      <div class="stat">bottom drawer on phones · "N incidents here" picker</div>
+      <p>On a phone the whole world is 390 pixels wide, so the pins were crumbs. I wanted finger-sized pins and details that don't vanish way down the page, so the agent made the pins grow as the map shrinks and moved the details into a drawer that slides up (shadcn's Sheet component). It also made a pin with a number on it list every incident there instead of picking one at random.</p>
+    </div>
+  </div>
+  <div class="grid2">
+    <figure>
+      <img src="img/stack.jpg" alt="Europe zoom with a stacked pin clicked: the side panel lists '4 incidents here' with four cards, Midnight Blizzard-linked espionage, the student-run exploit foundry, the hacktivist, and ARTEX agents." width="1280" height="560" loading="lazy">
+      <figcaption>A pin with a 4 on it opens a little picker.</figcaption>
+    </figure>
+    <figure class="narrow-fig">
+      <img src="img/mobile-sheet.jpg" alt="Phone view: a bottom drawer titled '3 incidents here' listing three espionage incidents attributed to Moscow, over a dimmed map." width="390" height="844" loading="lazy">
+      <figcaption>On a phone the details slide up from the bottom.</figcaption>
+    </figure>
+  </div>
+  <div class="rounds">
+    <div class="round good">
+      <h3>Round 4: does it really work as a claude.ai artifact?</h3>
+      <div class="stat">opened in the artifact viewer · fonts ✓ · clicks ✓ · 0 errors</div>
+      <p>That's the skill's whole promise, so the agent checked. The single file opened inside claude.ai's artifact viewer with the right fonts, the zoom and filter buttons worked, and nothing showed up in the error console.</p>
+    </div>
+  </div>
+  <figure class="wide">
+    <img src="img/claude-viewer.jpg" alt="The map running inside the claude.ai artifact viewer, zoomed to East Asia with the 'Agent gone off-script' filter switched off, showing 20 incidents." width="1200" height="657" loading="lazy">
+    <figcaption>Running inside the artifact viewer, zoomed to East Asia.</figcaption>
+  </figure>
+
+  <h2>Small print the skill doesn't mention</h2>
+  <ul>
+    <li><strong>The versions moved on.</strong> The skill says React 18. A fresh install today gives React 19.3, Vite 8 and TypeScript 7. TypeScript 7 refuses the <code>baseUrl</code> setting the setup script writes, so <code>tsc</code> errors out until you delete it.</li>
+    <li><strong>Two bundled components are stale.</strong> <code>calendar</code> and <code>resizable</code> don't type-check against the current versions of their libraries. Unused components never get packed, so they don't break the bundle, but they'll bite the day you use them.</li>
+    <li><strong>The toolbox is big.</strong> The project folder weighs 428 MB on disk, for a 651 KB result. The agent used four of the 40-odd components.</li>
+    <li><strong>No type check before packing.</strong> Parcel happily bundles code with type errors. Run <code>tsc --noEmit</code> yourself.</li>
+    <li><strong>Packing is fast.</strong> Once it worked, a full rebuild took about 2 seconds.</li>
+  </ul>
+
+  <h2>What's in the toolbox: all 43 parts</h2>
+  <p>The "40-odd components" are <strong>shadcn/ui</strong> parts that the setup script unzips into the project (they ship in the skill as <code>scripts/shadcn-components.tar.gz</code>). Each one is a ready-made piece of interface with keyboard and screen-reader support built in. Here's the whole box in plain words. The ones marked <span class="used">used</span> are the four the map actually needed; the map itself is drawn with d3-geo, not with any of these.</p>
+  <h3>Buttons and inputs</h3>
+  <div class="parts">
+    <div><code>button</code><span>A plain button.</span></div>
+    <div><code>input</code><span>A one-line text box.</span></div>
+    <div><code>textarea</code><span>A multi-line text box.</span></div>
+    <div><code>label</code><span>The little caption next to an input.</span></div>
+    <div><code>checkbox</code><span>Tick boxes; pick as many as you like.</span></div>
+    <div><code>radio-group</code><span>Round dots; pick exactly one.</span></div>
+    <div><code>switch</code><span>An on/off switch.</span></div>
+    <div class="on"><code>slider</code> <span class="used">used</span><span>Drag to pick a number. The map&#x27;s &quot;reported Jan → Oct&quot; control.</span></div>
+    <div><code>toggle</code><span>One button that stays pressed in.</span></div>
+    <div class="on"><code>toggle-group</code> <span class="used">used</span><span>A row of those buttons. The map&#x27;s Attribution / Traffic / Both switch.</span></div>
+    <div><code>select</code><span>A drop-down list.</span></div>
+    <div><code>calendar</code><span>A month view for picking dates. ⚠ Out of date with today&#x27;s libraries.</span></div>
+    <div><code>form</code><span>A wrapper that handles checking what people typed and showing errors.</span></div>
+    <div><code>command</code><span>A type-to-search menu, like the ⌘K box in many apps.</span></div>
+  </div>
+  <h3>Pop-ups and overlays</h3>
+  <div class="parts">
+    <div><code>dialog</code><span>A pop-up window in the middle of the screen, background dimmed.</span></div>
+    <div class="on"><code>sheet</code> <span class="used">used</span><span>A panel that slides in from the edge. The map&#x27;s incident details on phones.</span></div>
+    <div><code>drawer</code><span>A panel you pull up from the bottom; feels natural on phones.</span></div>
+    <div><code>popover</code><span>A small box that opens when you click something.</span></div>
+    <div><code>hover-card</code><span>An info card that appears when you hover.</span></div>
+    <div><code>tooltip</code><span>A one-line hint on hover.</span></div>
+    <div><code>dropdown-menu</code><span>A menu that opens from a button.</span></div>
+    <div><code>context-menu</code><span>The menu you get on right-click.</span></div>
+    <div><code>menubar</code><span>A File / Edit / View style menu bar.</span></div>
+    <div><code>navigation-menu</code><span>A website&#x27;s top menu, with fold-out sub-menus.</span></div>
+  </div>
+  <h3>Showing information</h3>
+  <div class="parts">
+    <div><code>card</code><span>A box with a header, body and footer.</span></div>
+    <div class="on"><code>badge</code> <span class="used">used</span><span>A small tag. The map&#x27;s &quot;confidence: medium&quot; label.</span></div>
+    <div><code>table</code><span>A table.</span></div>
+    <div><code>avatar</code><span>A round profile picture, with initials as a fallback.</span></div>
+    <div><code>alert</code><span>A notice box, like &quot;Heads up&quot; or &quot;Error&quot;.</span></div>
+    <div><code>progress</code><span>A progress bar.</span></div>
+    <div><code>skeleton</code><span>Grey shimmering placeholders while data loads.</span></div>
+    <div><code>separator</code><span>A dividing line.</span></div>
+    <div><code>aspect-ratio</code><span>A frame that keeps a fixed shape, like 16:9 for video.</span></div>
+  </div>
+  <h3>Layout and structure</h3>
+  <div class="parts">
+    <div><code>tabs</code><span>Tabs that switch what&#x27;s shown.</span></div>
+    <div><code>accordion</code><span>Fold-out sections, one open at a time. Great for FAQs.</span></div>
+    <div><code>collapsible</code><span>A single section that folds open and shut.</span></div>
+    <div><code>scroll-area</code><span>A scrolling box with nicer-looking scroll bars.</span></div>
+    <div><code>resizable</code><span>Panels you resize by dragging the divider. ⚠ Out of date with today&#x27;s libraries.</span></div>
+    <div><code>carousel</code><span>Swipe left and right through pictures or cards.</span></div>
+    <div><code>breadcrumb</code><span>&quot;Home › Posts › This one&quot; style navigation.</span></div>
+  </div>
+  <h3>Notifications</h3>
+  <div class="parts">
+    <div><code>toast + toaster</code><span>A small pop-up notice in the corner that fades away (the older way).</span></div>
+    <div><code>sonner</code><span>Another pop-up notice, newer and simpler.</span></div>
+  </div>
+  <p>Two helpers come along too: <code>lib/utils.ts</code>, a tiny function every component uses to merge style names, and <code>hooks/use-toast.ts</code>, which lets your code pop up a toast.</p>
+  <div class="callout"><b>What I'd add next</b>The agent built the filter buttons and the "Off the map" cards by hand with Tailwind. Swapping in <code>button</code> and <code>card</code> would make the style more consistent. For a richer map I'd reach for <code>tooltip</code> for the hover boxes, <code>tabs</code> to switch between map and list views, <code>table</code> for all 22 incidents, and <code>command</code> to search them. Parts you don't use are never packed into the file, so the extras cost nothing in size.</div>
+
+  <h2>My scorecard</h2>
+  <div class="score-wrap">
+  <table class="score">
+    <thead><tr><th>What</th><th>Score</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Setup</td><td class="pips" aria-label="5 out of 5">●●●●●</td><td>One command, about a minute, and you have a real React + Tailwind + shadcn project.</td></tr>
+      <tr><td>Toolbox</td><td class="pips" aria-label="4 out of 5">●●●●○</td><td>Sliders, toggles and drawers with keyboard support for free. Two components are out of date.</td></tr>
+      <tr><td>Packing into one file</td><td class="pips" aria-label="2 out of 5">●●○○○</td><td>Broke on the starter app, broke again on the skill's own components, and quietly left the fonts out.</td></tr>
+      <tr><td>Result</td><td class="pips" aria-label="5 out of 5">●●●●●</td><td>One 651 KB file that runs in the artifact viewer with zero errors.</td></tr>
+      <tr><td>Design help</td><td class="pips" aria-label="2 out of 5">●●○○○</td><td>One line of "avoid AI slop" advice. The look is entirely up to you (compare <a href="../impeccable-meteors/">impeccable</a>).</td></tr>
+      <tr><td>Freshness</td><td class="pips" aria-label="2 out of 5">●●○○○</td><td>Says React 18; TypeScript 7 rejects its config; starter file names have changed.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>Tips if you try it</h2>
+  <ol class="tips">
+    <li><strong>Delete the favicon line first.</strong> In <code>index.html</code>, remove <code>&lt;link rel="icon" … href="/favicon.svg"&gt;</code> before your first bundle.</li>
+    <li><strong>Turn on package exports.</strong> Add <code>"@parcel/resolver-default": {"packageExports": true}</code> to <code>package.json</code>, or Radix-based components won't pack.</li>
+    <li><strong>Check fonts in a clean folder.</strong> Copy <code>bundle.html</code> somewhere empty and open it. If your fonts vanish, inline them (or stick to system fonts).</li>
+    <li><strong>Remove <code>baseUrl</code></strong> from both tsconfig files if you're on TypeScript 7, then run <code>tsc --noEmit</code> before every bundle.</li>
+    <li><strong>Bring your own design.</strong> The skill gives you parts, not taste. Pick fonts and colours before you start, or pair it with a design skill.</li>
+    <li><strong>For maps:</strong> d3-geo plus the world-atlas outlines adds about 100 KB and needs no map service or API key. And keep an "off the map" list for things you can't honestly place.</li>
+  </ol>
+
+  <h2>Verdict</h2>
+  <p>web-artifacts-builder is like a flat-pack kitchen from a great shop. Every part you need is in the box, the drawers glide, and the finished thing looks like a pro built it. But the assembly sheet was printed a version ago, so a couple of screws don't match the holes. You'll be fine if you know where they are, and now you do.</p>
+  <p>Would I use it again? Yes, for anything with real moving parts: filters, drawers, a map, a timeline. For a one-screen page, plain HTML is still quicker. And the map itself taught me more than the skill did: when someone shows you a cyberattack map with confident lines from one country to another, ask which kind of line you're looking at.</p>
+
+  <h2>Sources for every pin</h2>
+  <p>Every incident on the map links to at least one public source. The agent read the Anthropic and Google Threat Intelligence reports in full; other cases come from news coverage of the investigators' findings, and a few of those original pages were blocked from its test sandbox. Locations are capitals, regions or company headquarters, never a hacker's actual desk. Blame and confidence levels are the investigators' words; the 1–5 impact score is my own call from the reported numbers. Data compiled on 31 October 2026. (<a href="files/incidents.ts.txt">raw data file</a>)</p>
+  <ul class="srcs">
+<li><b>One small crew, AI-written tools, 600 firewalls</b> <span class="m">Jan 11 – Feb 18, 2026 · blame confidence: low</span><br><a href="https://therecord.media/gen-ai-fortigate-hackers-russia">The Record — Russian-speaking hackers used gen AI to compromise 600 firewalls</a> · <a href="https://bleepingcomputer.com/news/security/amazon-ai-assisted-hacker-breached-600-fortigate-firewalls-in-5-weeks">BleepingComputer — AI-assisted hacker breached 600 FortiGate firewalls</a></li>
+<li><b>TeamPCP poisons Trivy, Checkmarx and LiteLLM</b> <span class="m">Mar 19 – 24, 2026 (ongoing campaign) · blame confidence: high</span><br><a href="https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access">Google GTIG — AI vulnerability exploitation &amp; initial access (May 2026)</a> · <a href="https://www.helpnetsecurity.com/2026/03/25/teampcp-supply-chain-attacks/">Help Net Security — LiteLLM PyPI packages compromised</a></li>
+<li><b>AI-built 2FA zero-day caught before a mass hit</b> <span class="m">Reported May 11, 2026 · blame confidence: none</span><br><a href="https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access">Google GTIG — AI vulnerability exploitation &amp; initial access</a> · <a href="https://www.cnbc.com/2026/05/11/google-thwarts-effort-hacker-group-use-ai-mass-exploitation-event.html">CNBC — Google likely thwarted AI &#x27;mass exploitation event&#x27;</a></li>
+<li><b>Malware padded with AI-written decoy code</b> <span class="m">Reported May 2026 · blame confidence: low</span><br><a href="https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access">Google GTIG — AI vulnerability exploitation &amp; initial access</a></li>
+<li><b>Agent pentest kits point at a Japanese tech firm</b> <span class="m">Reported May 2026 · blame confidence: low</span><br><a href="https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access">Google GTIG — AI vulnerability exploitation &amp; initial access</a></li>
+<li><b>An LLM agent pivots from a notebook to the database</b> <span class="m">May 10, 2026 · blame confidence: none</span><br><a href="https://thehackernews.com/2026/05/attackers-use-llm-agent-for-post.html">The Hacker News — Attackers use LLM agent for post-exploitation</a></li>
+<li><b>CaptiveCrunch: hotel Wi-Fi captive portals turned into traps</b> <span class="m">May – Jul 2026 (reported Jul 31, 2026) · blame confidence: medium</span><br><a href="https://itnews.com.au/news/russia-linked-midnight-blizzard-group-hijacks-hotel-wi-fi-with-captivecrunch-627911">iTnews — Midnight Blizzard hijacks hotel Wi-Fi with CaptiveCrunch</a> · <a href="https://betanews.com/article/captivecrunch-midnight-blizzard-hotel-wifi/">BetaNews — CaptiveCrunch</a></li>
+<li><b>Hermes agent left running inside Thailand&#x27;s finance ministry</b> <span class="m">Jul 9 – 13, 2026 · blame confidence: low</span><br><a href="https://hunt.io/blog/thailand-ministry-finance-targeted-with-hermes-ai-agent">Hunt.io — Thailand&#x27;s Ministry of Finance targeted with Hermes AI agent</a> · <a href="https://therecord.media/thailand-hackers-ai-finance-ministry">The Record — Autonomous AI agent spied on Thailand&#x27;s finance ministry</a></li>
+<li><b>Test models escape their sandbox and hack Hugging Face</b> <span class="m">Jul 9 – 16, 2026 (disclosed Jul 21) · blame confidence: high</span><br><a href="https://therecord.media/openai-cyberattack-hugging-face">The Record — OpenAI models behind breach of Hugging Face</a> · <a href="https://axios.com/2026/07/21/openai-says-hugging-face-breach-caused-by-one-its-models">Axios — OpenAI says Hugging Face breach caused by one of its models</a></li>
+<li><b>JADEPUFFER: ransomware run by an LLM agent</b> <span class="m">Jul 2026 · blame confidence: none</span><br><a href="https://www.sysdig.com/blog/jadepuffer-evolves-the-agentic-threat-actor-deploys-ransomware-built-to-destroy-ai-models">Sysdig — JADEPUFFER evolves</a> · <a href="https://techcrunch.com/2026/07/06/the-first-ai-run-ransomware-attack-still-needed-a-human/">TechCrunch — The &#x27;first&#x27; AI-run ransomware attack still needed a human</a></li>
+<li><b>Midnight Blizzard-linked espionage runs on AI workflows</b> <span class="m">Dec 2025 – Aug 2026 (reported Sep 2026) · blame confidence: medium</span><br><a href="https://www.anthropic.com/threat-intelligence-report-september-2026">Anthropic — Countering misuse of AI: September 2026</a></li>
+<li><b>Student-run &quot;exploit foundry&quot; with agent swarms</b> <span class="m">Dec 2025 – Aug 2026 (reported Sep 2026) · blame confidence: medium</span><br><a href="https://www.anthropic.com/threat-intelligence-report-september-2026">Anthropic — Countering misuse of AI: September 2026</a></li>
+<li><b>One hacktivist, 42 European political targets</b> <span class="m">Spring 2026 (reported Sep 2026) · blame confidence: low</span><br><a href="https://www.anthropic.com/threat-intelligence-report-september-2026">Anthropic — Countering misuse of AI: September 2026</a></li>
+<li><b>ShinyHunters affiliates: 1.8M apps scanned for secrets</b> <span class="m">2026 (reported Sep 2026) · blame confidence: medium</span><br><a href="https://www.anthropic.com/threat-intelligence-report-september-2026">Anthropic — Countering misuse of AI: September 2026</a></li>
+<li><b>Crooks go after AI vendors&#x27; API keys</b> <span class="m">2026 (reported Sep 2026) · blame confidence: low</span><br><a href="https://www.anthropic.com/threat-intelligence-report-september-2026">Anthropic — Countering misuse of AI: September 2026</a></li>
+<li><b>The biggest distillation attack Anthropic has measured</b> <span class="m">May – Jul 2026 (reported Sep 2026) · blame confidence: high</span><br><a href="https://www.anthropic.com/threat-intelligence-report-september-2026">Anthropic — Countering misuse of AI: September 2026</a></li>
+<li><b>Kimi users quietly got Claude instead</b> <span class="m">May – Jul 2026 (reported Sep 2026) · blame confidence: high</span><br><a href="https://www.anthropic.com/threat-intelligence-report-september-2026">Anthropic — Countering misuse of AI: September 2026</a></li>
+<li><b>An OpenAI agent wanders into Medicare&#x27;s back room</b> <span class="m">Jun 18, 2026 (disclosed Sep 10) · blame confidence: high</span><br><a href="https://bleepingcomputer.com/news/security/openai-hacked-australian-medicare-govt-site-probed-data-providers">BleepingComputer — OpenAI hacked Australian Medicare govt site</a> · <a href="https://www.sbs.com.au/news/article/open-ai-medicare-hack-what-we-know-and-dont-know/3qcdsqb7r">SBS News — What we know and don&#x27;t know</a> · <a href="https://cybernews.com/news/openai-agent-hacks-australian-government-system/">Cybernews — OpenAI agent hacks another Australian government system</a></li>
+<li><b>ARTEX agents in a China-aligned supply-chain spree</b> <span class="m">Aug – Oct 2026 (reported Oct 2026) · blame confidence: medium</span><br><a href="https://cloud.google.com/blog/topics/threat-intelligence/artex-and-friends-enter-agentic-offensive-frameworks">Google GTIG — ARTEX and Friends (Oct 30, 2026)</a> · <a href="https://thehackernews.com/2026/10/china-linked-hackers-use-artex-ai.html">The Hacker News — China-linked hackers use ARTEX AI</a></li>
+<li><b>South Korean bank breaches with suspected AI agents</b> <span class="m">Late Sep – Oct 2026 · blame confidence: none</span><br><a href="https://therecord.media/south-korean-bank-hacks-ai-agents">The Record — Officials believe AI agents were used to hack several banks</a> · <a href="https://bleepingcomputer.com/news/security/south-korea-probes-bank-breaches-amid-suspected-ai-powered-attacks">BleepingComputer — South Korea probes bank breaches</a> · <a href="https://www.insurancejournal.com/news/international/2026/10/02/887749.htm">Insurance Journal (Reuters/Yonhap)</a></li>
+<li><b>Custom PentAGI rig sweeps Asian telecoms</b> <span class="m">Late Aug – early Oct 2026 · blame confidence: none</span><br><a href="https://cloud.google.com/blog/topics/threat-intelligence/artex-and-friends-enter-agentic-offensive-frameworks">Google GTIG — ARTEX and Friends (Oct 30, 2026)</a></li>
+<li><b>&quot;Skynet mode&quot;: an agent that hijacks other people&#x27;s LLMs</b> <span class="m">Summer 2026 (reported Oct 21) · blame confidence: none</span><br><a href="https://www.csoonline.com/article/4241421/attackers-built-a-skynet-ai-agent-that-hijacks-exposed-models-to-run-cyberattacks.html">CSO Online — Attackers built a &#x27;Skynet&#x27; AI agent</a> · <a href="https://www.infosecurity-magazine.com/news/symantec-ai-agent-llmjacking/">Infosecurity Magazine — Symantec uncovers AI agent hijacking models</a></li>
+  </ul>
+
+  <footer>
+    <p>Tested with <a href="https://github.com/anthropics/skills/tree/main/skills/web-artifacts-builder">anthropics/skills · web-artifacts-builder</a> at commit ca45fc4 (28 Oct 2026), in an isolated cloud sandbox with Node 22 and pnpm 10. The stack it installed: React 19.3, Vite 8, TypeScript 7, Tailwind 3.4.1, Parcel 2.16. Added by the agent: d3-geo, topojson-client, world-atlas, @fontsource fonts (IBM Plex Sans Condensed, IBM Plex Mono, Fraunces) and a small font-inlining script. Fixes the agent made by hand: removed the favicon line, enabled Parcel package exports, removed <code>baseUrl</code> from tsconfig.</p>
+    <p>Want the next skill test? <a href="../../subscribe/">Subscribe by email or RSS</a>, or <a href="../../">browse all posts</a>.</p>
+    <p class="visits">Visitors so far: <img src="https://hits.sh/meifish.github.io/ai_alchemy.svg?label=visits&amp;color=%232B7449&amp;labelColor=%2356615B" alt="Total visits to AI Alchemy" height="20" loading="lazy" style="vertical-align:middle"></p>
+  </footer>
+</div>
+</main>
+<script src="../../assets/translate.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+📦 Bundling React app to single HTML artifact...
+📦 Installing bundling dependencies...
+Progress: resolved 0, reused 1, downloaded 0, added 0
+Progress: resolved 202, reused 178, downloaded 19, added 0
+Progress: resolved 282, reused 188, downloaded 51, added 0
+Progress: resolved 358, reused 192, downloaded 88, added 0
+Progress: resolved 419, reused 192, downloaded 119, added 0
+Packages: +132
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 419, reused 192, downloaded 130, added 0
+Progress: resolved 419, reused 192, downloaded 132, added 132, done
+
+devDependencies:
++ @parcel/config-default 2.16.4
++ html-inline 1.2.0
++ parcel 2.16.4
++ parcel-resolver-tspaths 0.0.9
+
+╭ Warning ─────────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│   Ignored build scripts: @parcel/watcher@2.6.0, @swc/core@1.16.21,           │
+│   lmdb@2.8.5, msgpackr-extract@3.0.4.                                        │
+│   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+│   to run scripts.                                                            │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+Done in 6.1s using pnpm v10.28.0
+🔧 Creating Parcel configuration with path alias support...
+🧹 Cleaning previous build...
+🔨 Building with Parcel...
+resize:  can't open terminal /dev/tty
+Building...
+× Build failed.
+
+@parcel/core: Failed to resolve '/favicon.svg' from './index.html'
+
+  /home/user/env/lab/ai-attack-map/index.html:5:1
+    4 |     <meta charset="UTF-8" />
+  > 5 |     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  >   | ^
+    6 |     <meta name="viewport" content="width=device-width, initial-scale=1.0
+    7 |     <title>ai-attack-map</title>
+
+@parcel/resolver-default: Cannot load file './favicon.svg' in './'.
+EXIT 1

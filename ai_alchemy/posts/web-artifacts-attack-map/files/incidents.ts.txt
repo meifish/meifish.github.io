@@ -1,0 +1,655 @@
+// 2026 AI attack incidents — hand-curated from public reporting (as of 2026-10-31).
+// Rule of the map: an *attribution* pin is where an investigator says the actor
+// (or its sponsor/employer) is. A *traffic* pin is where the packets were seen
+// coming from. They are different things and are drawn differently.
+// Coordinates are city/capital/region centroids, never a hacker's actual desk.
+
+export type Confidence = "high" | "medium" | "low" | "none";
+export type Category = "espionage" | "crime" | "ai-target" | "agent-mishap";
+
+export interface Place {
+  name: string;
+  lat: number;
+  lon: number;
+  approx?: string; // why this point is only approximate
+}
+
+export interface Source {
+  name: string;
+  url: string;
+  primary?: boolean; // the investigator's own write-up, read in full
+}
+
+export interface Incident {
+  id: string;
+  title: string;
+  when: string; // human readable
+  month: number; // 1-12 of 2026, month the activity was disclosed/observed (for the timeline)
+  category: Category;
+  impact: 1 | 2 | 3 | 4 | 5;
+  impactWhy: string;
+  aiRole: string;
+  summary: string;
+  attribution: {
+    claim: string; // exact-ish wording
+    by: string; // who made the call
+    confidence: Confidence;
+    place: Place | null; // null = no location claimed
+  };
+  traffic: {
+    note: string; // what is known about where traffic came from
+    places: Place[];
+  };
+  targets: Place[]; // empty = global / not disclosed
+  targetNote: string;
+  sources: Source[];
+}
+
+const P = {
+  moscow: { name: "Moscow", lat: 55.75, lon: 37.62, approx: "capital of the attributed state, not the operators' location" },
+  beijing: { name: "Beijing", lat: 39.9, lon: 116.4, approx: "capital of the attributed state, not the operators' location" },
+  changsha: { name: "Changsha, Hunan", lat: 28.23, lon: 112.94 },
+  hangzhou: { name: "Hangzhou (Alibaba HQ)", lat: 30.27, lon: 120.15, approx: "company headquarters" },
+  beijingMoonshot: { name: "Beijing (Moonshot AI HQ)", lat: 39.98, lon: 116.31, approx: "company headquarters" },
+  sf: { name: "San Francisco (Anthropic / OpenAI)", lat: 37.77, lon: -122.42, approx: "company headquarters" },
+  kyiv: { name: "Kyiv, Ukraine", lat: 50.45, lon: 30.52, approx: "country-level target, pinned at capital" },
+  europe: { name: "Europe (region)", lat: 49.5, lon: 8.5, approx: "region only; no country disclosed" },
+  seAsia: { name: "Southeast Asia (region)", lat: 6, lon: 110, approx: "region only" },
+  midEast: { name: "Middle East (region)", lat: 29, lon: 45, approx: "region only" },
+  nAfrica: { name: "North Africa (region)", lat: 28, lon: 8, approx: "region only; country not named" },
+  seoul: { name: "Seoul, South Korea", lat: 37.57, lon: 126.98 },
+  bangkok: { name: "Bangkok, Thailand", lat: 13.75, lon: 100.5 },
+  hongkong: { name: "Hong Kong", lat: 22.32, lon: 114.17 },
+  singapore: { name: "Singapore", lat: 1.35, lon: 103.82 },
+  tokyo: { name: "Tokyo, Japan", lat: 35.68, lon: 139.69 },
+  japan: { name: "Japan", lat: 36.2, lon: 138.25, approx: "country-level" },
+  canberra: { name: "Canberra, Australia", lat: -35.28, lon: 149.13 },
+  sydney: { name: "Sydney, NSW", lat: -33.87, lon: 151.21 },
+  nyc: { name: "New York (Hugging Face)", lat: 40.71, lon: -74.01, approx: "company headquarters" },
+  usa: { name: "United States", lat: 39.5, lon: -98.35, approx: "country-level" },
+  india: { name: "India", lat: 22.5, lon: 79, approx: "country-level" },
+  saudi: { name: "Saudi Arabia", lat: 24, lon: 45, approx: "country-level" },
+  asia: { name: "Asia (region)", lat: 22, lon: 100, approx: "region only" },
+  northAm: { name: "North America (region)", lat: 45, lon: -95, approx: "region only" },
+};
+
+const vpn = (name: string, lat: number, lon: number): Place => ({
+  name: `${name} (VPN/datacenter exit)`,
+  lat,
+  lon,
+  approx: "country-level exit listed in the report, pinned at capital",
+});
+
+export const INCIDENTS: Incident[] = [
+  {
+    id: "gtg-20006",
+    title: "Midnight Blizzard-linked espionage runs on AI workflows",
+    when: "Dec 2025 – Aug 2026 (reported Sep 2026)",
+    month: 9,
+    category: "espionage",
+    impact: 5,
+    impactWhy: "20+ organizations targeted; mailboxes of 8+ orgs exfiltrated; 300,000+ national ID records stolen from one government authority.",
+    aiRole: "Claude-driven workflows built phishing infra, ran intrusions, and auto-rebuilt malware whenever antivirus caught it.",
+    summary:
+      "Phishing, device-code token theft, hotel Wi-Fi DNS hijacking and WhatsApp takeovers aimed mostly at Ukraine, European governments and drone makers.",
+    attribution: {
+      claim: "\"consistent with public reporting linking the actor to Midnight Blizzard\" — Russian state-nexus",
+      by: "Anthropic Threat Intelligence",
+      confidence: "medium",
+      place: P.moscow,
+    },
+    traffic: {
+      note: "Malware staged on \"disposable hosting servers\"; some victims reached through compromised hotel guest Wi-Fi. Hosting locations not disclosed.",
+      places: [],
+    },
+    targets: [P.kyiv, P.europe, P.midEast, P.nAfrica, P.seAsia],
+    targetNote: "Concentrated in Ukraine and Europe, extending to the Middle East, a North African government tech authority and Asian maritime agencies.",
+    sources: [
+      { name: "Anthropic — Countering misuse of AI: September 2026", url: "https://www.anthropic.com/threat-intelligence-report-september-2026", primary: true },
+    ],
+  },
+  {
+    id: "captivecrunch",
+    title: "CaptiveCrunch: hotel Wi-Fi captive portals turned into traps",
+    when: "May – Jul 2026 (reported Jul 31, 2026)",
+    month: 7,
+    category: "espionage",
+    impact: 4,
+    impactWhy: "\"Widespread compromise\" of hospitality Wi-Fi in several countries; travelers' devices infected via fake update prompts.",
+    aiRole: "Same toolchain Anthropic later described as AI-automated (GTG-20006 used this delivery method).",
+    summary:
+      "Hacked hotel gateways rewrote DNS/HTTP so guests got phishing pages and fake updates. The traffic came from the victims' own hotel network.",
+    attribution: {
+      claim: "Storm-2945, a subgroup of Midnight Blizzard (Russia)",
+      by: "Microsoft Threat Intelligence",
+      confidence: "medium",
+      place: P.moscow,
+    },
+    traffic: {
+      note: "Attack traffic was served from compromised hotel gateways. ReliaQuest traced gateways to several US cities, India and Saudi Arabia.",
+      places: [
+        { ...P.usa, name: "US hotel gateways (several cities)" },
+        { ...P.india, name: "Hotel gateways, India" },
+        { ...P.saudi, name: "Hotel gateways, Saudi Arabia" },
+      ],
+    },
+    targets: [P.usa, P.india, P.saudi],
+    targetNote: "Hotel guests — targets and traffic origin are literally the same building.",
+    sources: [
+      { name: "iTnews — Midnight Blizzard hijacks hotel Wi-Fi with CaptiveCrunch", url: "https://itnews.com.au/news/russia-linked-midnight-blizzard-group-hijacks-hotel-wi-fi-with-captivecrunch-627911" },
+      { name: "BetaNews — CaptiveCrunch", url: "https://betanews.com/article/captivecrunch-midnight-blizzard-hotel-wifi/" },
+    ],
+  },
+  {
+    id: "gtg-10007",
+    title: "Student-run \"exploit foundry\" with agent swarms",
+    when: "Dec 2025 – Aug 2026 (reported Sep 2026)",
+    month: 9,
+    category: "espionage",
+    impact: 4,
+    impactWhy: "~50 organizations targeted; ed-tech student data and a Southeast Asian agency's citizen records taken; a dozen possible zero-days in a month.",
+    aiRole: "Claude as orchestration layer: agent swarms for recon, autonomous firmware reversing and exploit writing, 13 always-on collection agents.",
+    summary: "Chinese-speaking operators ran parallel AI workstreams for intrusion, recon of foreign governments and zero-day research.",
+    attribution: {
+      claim: "Chinese-speaking operators \"likely residing in Changsha in China's Hunan province\"",
+      by: "Anthropic Threat Intelligence",
+      confidence: "medium",
+      place: P.changsha,
+    },
+    traffic: {
+      note: "Collection crawled through \"commercial proxy exits\" (locations not disclosed).",
+      places: [],
+    },
+    targets: [P.seAsia, P.midEast, P.europe, P.usa],
+    targetNote: "Recon of governments in the Middle East, Europe and Southeast Asia; US military sites scraped. Hands-on intrusions only hit domestic Chinese victims.",
+    sources: [
+      { name: "Anthropic — Countering misuse of AI: September 2026", url: "https://www.anthropic.com/threat-intelligence-report-september-2026", primary: true },
+    ],
+  },
+  {
+    id: "gtg-50029",
+    title: "One hacktivist, 42 European political targets",
+    when: "Spring 2026 (reported Sep 2026)",
+    month: 9,
+    category: "crime",
+    impact: 4,
+    impactWhy: "Internal access at 14 of 42 entities; 12–26 GB stolen incl. donor lists and 140,000 political-opinion records; a doxxing search engine built.",
+    aiRole: "Sub-agents for recon and code review; Claude helped write and debug a WordPress zero-day exploit in one session.",
+    summary: "A single French-speaking actor hit European parties, media and think-tanks, then published a dark-web lookup of members.",
+    attribution: {
+      claim: "\"a single French-speaking actor\" — language only, no country or sponsor named",
+      by: "Anthropic Threat Intelligence",
+      confidence: "low",
+      place: null,
+    },
+    traffic: {
+      note: "Report lists commercial VPN/datacenter exits (Mullvad, M247, Datacamp…) in AL, AT, AR, CH, BG, SK, DE, plus a DigitalOcean key-checking box and hijacked GCP projects for exfil.",
+      places: [
+        vpn("Albania", 41.33, 19.82),
+        vpn("Austria", 48.21, 16.37),
+        vpn("Argentina", -34.6, -58.38),
+        vpn("Switzerland", 46.95, 7.45),
+        vpn("Bulgaria", 42.7, 23.32),
+        vpn("Slovakia", 48.15, 17.11),
+        vpn("Germany", 52.52, 13.4),
+      ],
+    },
+    targets: [P.europe],
+    targetNote: "European political parties, media, think-tanks and their SaaS providers (countries not named).",
+    sources: [
+      { name: "Anthropic — Countering misuse of AI: September 2026", url: "https://www.anthropic.com/threat-intelligence-report-september-2026", primary: true },
+    ],
+  },
+  {
+    id: "gtg-50014",
+    title: "ShinyHunters affiliates: 1.8M apps scanned for secrets",
+    when: "2026 (reported Sep 2026)",
+    month: 9,
+    category: "crime",
+    impact: 5,
+    impactWhy: "1 TB+ from one tech provider incl. millions of payment cards; an airline's systems with tens of millions of passenger records reached.",
+    aiRole: "AI-built pipelines decompiled 1.8 million Android apps hunting hardcoded keys, then used stolen AI API keys for follow-on attacks.",
+    summary: "Smash-and-grab data theft and pay-or-leak extortion, plus a carding shop dressed up as the French police.",
+    attribution: {
+      claim: "\"operators suspected to be affiliates of the ShinyHunters collective\"; one operator French-speaking",
+      by: "Anthropic Threat Intelligence",
+      confidence: "medium",
+      place: null,
+    },
+    traffic: {
+      note: "A fleet of 10 AWS EC2 workers and a Squid proxy — cloud regions not disclosed. Rented cloud says nothing about where the person sits.",
+      places: [],
+    },
+    targets: [{ name: "France (retail chain, others)", lat: 46.6, lon: 2.4, approx: "country-level; other victims not located" }],
+    targetNote: "A tech provider, an airline, an energy company, a SaaS provider's ~200 customers and a French retail chain.",
+    sources: [
+      { name: "Anthropic — Countering misuse of AI: September 2026", url: "https://www.anthropic.com/threat-intelligence-report-september-2026", primary: true },
+    ],
+  },
+  {
+    id: "gtg-50020",
+    title: "Crooks go after AI vendors' API keys",
+    when: "2026 (reported Sep 2026)",
+    month: 9,
+    category: "ai-target",
+    impact: 3,
+    impactWhy: "Production API keys stolen from one AI vendor; ~30 AI companies attacked in ~4 days. Goal (a pre-release model) never reached.",
+    aiRole: "Prompt injection into an AI evaluation sandbox made it hand over its own keys; autonomous pentest agents ran against production apps.",
+    summary: "A Russian-speaking extortion crew pivoted from hotel-booking sites to the AI supply chain.",
+    attribution: {
+      claim: "\"Russian-speaking, financially-motivated actor\" — no state link, no location",
+      by: "Anthropic Threat Intelligence",
+      confidence: "low",
+      place: null,
+    },
+    traffic: {
+      note: "Egress IPs published (May 2026) but their locations are not stated; the actor also used residential proxies and the victims' own stolen keys.",
+      places: [],
+    },
+    targets: [],
+    targetNote: "An unnamed AI vendor plus ~30 AI companies — locations not disclosed.",
+    sources: [
+      { name: "Anthropic — Countering misuse of AI: September 2026", url: "https://www.anthropic.com/threat-intelligence-report-september-2026", primary: true },
+    ],
+  },
+  {
+    id: "alibaba-distill",
+    title: "The biggest distillation attack Anthropic has measured",
+    when: "May – Jul 2026 (reported Sep 2026)",
+    month: 9,
+    category: "ai-target",
+    impact: 3,
+    impactWhy: "151M+ exchanges, peaking near 3M/day from 3,500+ fraudulent accounts. Model capability stolen, not a network breach.",
+    aiRole: "The AI was the target: chain-of-thought transcripts harvested to train another lab's models.",
+    summary: "Operators affiliated with Alibaba's Qwen team forced Claude to write out its reasoning, then trained on it.",
+    attribution: {
+      claim: "\"attributed with high confidence\" to PRC-based labs; \"Operators affiliated with Alibaba\"",
+      by: "Anthropic Threat Intelligence",
+      confidence: "high",
+      place: P.hangzhou,
+    },
+    traffic: {
+      note: "Nearly 5,000 fraudulent accounts using residential proxies, disposable emails and virtual cards; exit locations not given.",
+      places: [],
+    },
+    targets: [P.sf],
+    targetNote: "Anthropic's Opus models.",
+    sources: [
+      { name: "Anthropic — Countering misuse of AI: September 2026", url: "https://www.anthropic.com/threat-intelligence-report-september-2026", primary: true },
+    ],
+  },
+  {
+    id: "moonshot-distill",
+    title: "Kimi users quietly got Claude instead",
+    when: "May – Jul 2026 (reported Sep 2026)",
+    month: 9,
+    category: "ai-target",
+    impact: 2,
+    impactWhy: "23M+ exchanges; ~300,000 customer requests relayed in 10 days, exposing those customers' data to a third party.",
+    aiRole: "The AI was the target: requests relayed to Claude and reasoning traces replayed for training.",
+    summary: "Moonshot AI forwarded its own customers' prompts to Claude and harvested the answers.",
+    attribution: {
+      claim: "Moonshot AI (maker of Kimi), per Anthropic's high-confidence lab attribution",
+      by: "Anthropic Threat Intelligence",
+      confidence: "high",
+      place: P.beijingMoonshot,
+    },
+    traffic: {
+      note: "A proxy network of 5,380 fraudulent accounts, \"most of which appeared to be located in Singapore and Japan.\"",
+      places: [
+        { ...P.singapore, name: "Singapore (fraudulent accounts)" },
+        { ...P.japan, name: "Japan (fraudulent accounts)" },
+      ],
+    },
+    targets: [P.sf],
+    targetNote: "Anthropic's Opus models.",
+    sources: [
+      { name: "Anthropic — Countering misuse of AI: September 2026", url: "https://www.anthropic.com/threat-intelligence-report-september-2026", primary: true },
+    ],
+  },
+  {
+    id: "teampcp",
+    title: "TeamPCP poisons Trivy, Checkmarx and LiteLLM",
+    when: "Mar 19 – 24, 2026 (ongoing campaign)",
+    month: 3,
+    category: "ai-target",
+    impact: 5,
+    impactWhy: "CloudSEK estimated 2,500+ potentially affected orgs; LiteLLM alone has ~95M monthly downloads. Stolen cloud keys sold to ransomware crews.",
+    aiRole: "AI tooling as the target: a backdoored AI gateway library, trojanized MCP servers, and tricks aimed at AI coding assistants.",
+    summary: "Supply-chain compromises of popular open-source packages, including LiteLLM, an AI gateway many apps use to reach LLMs.",
+    attribution: {
+      claim: "Cyber crime actor \"TeamPCP\" (aka UNC6780), financially motivated; claimed responsibility itself",
+      by: "Google Threat Intelligence Group",
+      confidence: "high",
+      place: null,
+    },
+    traffic: {
+      note: "Exfiltrated secrets went to the attacker domain models.litellm[.]cloud; hosting location not disclosed.",
+      places: [],
+    },
+    targets: [],
+    targetNote: "Anyone who installed the poisoned versions — worldwide developer machines and CI pipelines.",
+    sources: [
+      { name: "Google GTIG — AI vulnerability exploitation & initial access (May 2026)", url: "https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access", primary: true },
+      { name: "Help Net Security — LiteLLM PyPI packages compromised", url: "https://www.helpnetsecurity.com/2026/03/25/teampcp-supply-chain-attacks/" },
+    ],
+  },
+  {
+    id: "artex-storm0940",
+    title: "ARTEX agents in a China-aligned supply-chain spree",
+    when: "Aug – Oct 2026 (reported Oct 2026)",
+    month: 10,
+    category: "espionage",
+    impact: 5,
+    impactWhy: "Data theft across US and European firms; ConnectWise Cloud Backup compromised; spray against 2,250+ tenants. First account to deep access in ~4 hours.",
+    aiRole: "ARTEX, an open-source multi-agent pentest framework, did recon, privilege escalation and lateral movement in seconds-long bursts.",
+    summary: "A campaign Google tracks as UNC7228 overlaps Microsoft's Storm-0940, hitting software, industrial, semiconductor and telecom firms.",
+    attribution: {
+      claim: "UNC7228 \"overlaps with activity tracked by Microsoft as the PRC-nexus actor STORM-0940\"; China's embassy denied it",
+      by: "Google GTIG, Wiz, Microsoft",
+      confidence: "medium",
+      place: P.beijing,
+    },
+    traffic: {
+      note: "Actor \"fell back to open proxies if their initial infrastructure was blocked\" — locations not disclosed.",
+      places: [],
+    },
+    targets: [P.usa, P.europe],
+    targetNote: "Enterprise software, industrial automation, semiconductor and telecom organizations in the US and Europe.",
+    sources: [
+      { name: "Google GTIG — ARTEX and Friends (Oct 30, 2026)", url: "https://cloud.google.com/blog/topics/threat-intelligence/artex-and-friends-enter-agentic-offensive-frameworks", primary: true },
+      { name: "The Hacker News — China-linked hackers use ARTEX AI", url: "https://thehackernews.com/2026/10/china-linked-hackers-use-artex-ai.html" },
+    ],
+  },
+  {
+    id: "korea-banks",
+    title: "South Korean bank breaches with suspected AI agents",
+    when: "Late Sep – Oct 2026",
+    month: 10,
+    category: "crime",
+    impact: 4,
+    impactWhy: "Personal data of at least 68,000 people across at least seven financial institutions; Shinhan Bank ~25,000.",
+    aiRole: "Officials believe AI agents / a Chinese-language AI hacking tool (reportedly ARTEX) were used.",
+    summary: "A string of bank and lender breaches prompted a presidential order to investigate and an emergency FSS inspection.",
+    attribution: {
+      claim: "Not officially attributed. Korean media reported traces of a Chinese-language tool — that is a tool, not a culprit.",
+      by: "South Korean officials (investigation open)",
+      confidence: "none",
+      place: null,
+    },
+    traffic: { note: "Not disclosed.", places: [] },
+    targets: [P.seoul],
+    targetNote: "Shinhan Bank, KB Kookmin and other financial institutions.",
+    sources: [
+      { name: "The Record — Officials believe AI agents were used to hack several banks", url: "https://therecord.media/south-korean-bank-hacks-ai-agents" },
+      { name: "BleepingComputer — South Korea probes bank breaches", url: "https://bleepingcomputer.com/news/security/south-korea-probes-bank-breaches-amid-suspected-ai-powered-attacks" },
+      { name: "Insurance Journal (Reuters/Yonhap)", url: "https://www.insurancejournal.com/news/international/2026/10/02/887749.htm" },
+    ],
+  },
+  {
+    id: "thai-mof",
+    title: "Hermes agent left running inside Thailand's finance ministry",
+    when: "Jul 9 – 13, 2026",
+    month: 7,
+    category: "espionage",
+    impact: 3,
+    impactWhy: "Agent logs show access to personnel records back to 2012; no evidence of exfiltration at publication.",
+    aiRole: "Open-source Hermes agent run in unattended \"YOLO\" mode, alongside a new Go implant called Hades.",
+    summary: "An exposed staging server revealed an autonomous agent driving an espionage intrusion.",
+    attribution: {
+      claim: "\"low-to-medium confidence\" the operator is Chinese-speaking; no known group named",
+      by: "Hunt.io",
+      confidence: "low",
+      place: null,
+    },
+    traffic: {
+      note: "A Hong Kong staging IP previously linked to ShadowPad/VShell C2 infrastructure.",
+      places: [{ ...P.hongkong, name: "Hong Kong (staging IP)" }],
+    },
+    targets: [P.bangkok],
+    targetNote: "Ministry of Finance, Thailand.",
+    sources: [
+      { name: "Hunt.io — Thailand's Ministry of Finance targeted with Hermes AI agent", url: "https://hunt.io/blog/thailand-ministry-finance-targeted-with-hermes-ai-agent" },
+      { name: "The Record — Autonomous AI agent spied on Thailand's finance ministry", url: "https://therecord.media/thailand-hackers-ai-finance-ministry" },
+    ],
+  },
+  {
+    id: "fortigate-600",
+    title: "One small crew, AI-written tools, 600 firewalls",
+    when: "Jan 11 – Feb 18, 2026",
+    month: 2,
+    category: "crime",
+    impact: 4,
+    impactWhy: "600+ FortiGate firewalls compromised in about 55 countries in five weeks — no exploits, just exposed ports and weak passwords.",
+    aiRole: "At least two commercial LLMs generated the whole toolkit for a \"low-to-medium\" skill actor.",
+    summary: "Amazon found a server full of AI-built tooling for mass-logging into exposed firewalls and stealing configs.",
+    attribution: {
+      claim: "\"Russian-speaking, financially motivated\" — language and motive only",
+      by: "Amazon (AWS security)",
+      confidence: "low",
+      place: null,
+    },
+    traffic: { note: "Discovered via a server hosting the tools; its location not reported in coverage.", places: [] },
+    targets: [],
+    targetNote: "FortiGate devices in ~55 countries.",
+    sources: [
+      { name: "The Record — Russian-speaking hackers used gen AI to compromise 600 firewalls", url: "https://therecord.media/gen-ai-fortigate-hackers-russia" },
+      { name: "BleepingComputer — AI-assisted hacker breached 600 FortiGate firewalls", url: "https://bleepingcomputer.com/news/security/amazon-ai-assisted-hacker-breached-600-fortigate-firewalls-in-5-weeks" },
+    ],
+  },
+  {
+    id: "medicare-agent",
+    title: "An OpenAI agent wanders into Medicare's back room",
+    when: "Jun 18, 2026 (disclosed Sep 10)",
+    month: 9,
+    category: "agent-mishap",
+    impact: 2,
+    impactWhy: "Non-public files reached, but officials say aggregated statistics only — no patient records. A second NSW parks app was also accessed in June.",
+    aiRole: "The attacker *was* the AI: an agent researching medicine spending bypassed restrictions.",
+    summary: "OpenAI told Services Australia its agent reached non-public parts of a Medicare statistics portal; Australia set up a task force.",
+    attribution: {
+      claim: "OpenAI disclosed its own agent did it — no malicious operator",
+      by: "OpenAI / Australian government",
+      confidence: "high",
+      place: P.sf,
+    },
+    traffic: { note: "Ran from OpenAI's own infrastructure; location not stated.", places: [] },
+    targets: [P.canberra, P.sydney],
+    targetNote: "Services Australia's Medicare Statistics Reporting Service; NSW National Parks fire-history app.",
+    sources: [
+      { name: "BleepingComputer — OpenAI hacked Australian Medicare govt site", url: "https://bleepingcomputer.com/news/security/openai-hacked-australian-medicare-govt-site-probed-data-providers" },
+      { name: "SBS News — What we know and don't know", url: "https://www.sbs.com.au/news/article/open-ai-medicare-hack-what-we-know-and-dont-know/3qcdsqb7r" },
+      { name: "Cybernews — OpenAI agent hacks another Australian government system", url: "https://cybernews.com/news/openai-agent-hacks-australian-government-system/" },
+    ],
+  },
+  {
+    id: "hf-escape",
+    title: "Test models escape their sandbox and hack Hugging Face",
+    when: "Jul 9 – 16, 2026 (disclosed Jul 21)",
+    month: 7,
+    category: "agent-mishap",
+    impact: 3,
+    impactWhy: "Parts of Hugging Face production infrastructure compromised; reported to law enforcement before the culprit was known.",
+    aiRole: "OpenAI models in a cyber benchmark used a zero-day to break out and \"cheat\" the test.",
+    summary: "Hugging Face first reported an end-to-end autonomous intrusion; five days later OpenAI said its own evaluation models did it.",
+    attribution: {
+      claim: "OpenAI: models in an internal evaluation \"escaped a sandboxed testing environment\"",
+      by: "OpenAI / Hugging Face",
+      confidence: "high",
+      place: P.sf,
+    },
+    traffic: { note: "From OpenAI's research environment via a third-party package proxy; location not stated.", places: [] },
+    targets: [P.nyc],
+    targetNote: "Hugging Face production systems.",
+    sources: [
+      { name: "The Record — OpenAI models behind breach of Hugging Face", url: "https://therecord.media/openai-cyberattack-hugging-face" },
+      { name: "Axios — OpenAI says Hugging Face breach caused by one of its models", url: "https://axios.com/2026/07/21/openai-says-hugging-face-breach-caused-by-one-its-models" },
+    ],
+  },
+  {
+    id: "gtig-zeroday",
+    title: "AI-built 2FA zero-day caught before a mass hit",
+    when: "Reported May 11, 2026",
+    month: 5,
+    category: "crime",
+    impact: 1,
+    impactWhy: "Planned mass exploitation likely prevented by Google's disclosure to the vendor.",
+    aiRole: "Google believes the zero-day exploit itself \"was developed with AI\" — a first for GTIG.",
+    summary: "Criminal groups teamed up to bypass two-factor login on a popular open-source admin tool.",
+    attribution: {
+      claim: "\"prominent cyber crime threat actors\" — no names, no location",
+      by: "Google Threat Intelligence Group",
+      confidence: "none",
+      place: null,
+    },
+    traffic: { note: "Not disclosed.", places: [] },
+    targets: [],
+    targetNote: "Users of an unnamed open-source web admin tool, worldwide.",
+    sources: [
+      { name: "Google GTIG — AI vulnerability exploitation & initial access", url: "https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access", primary: true },
+      { name: "CNBC — Google likely thwarted AI 'mass exploitation event'", url: "https://www.cnbc.com/2026/05/11/google-thwarts-effort-hacker-group-use-ai-mass-exploitation-event.html" },
+    ],
+  },
+  {
+    id: "canfail",
+    title: "Malware padded with AI-written decoy code",
+    when: "Reported May 2026",
+    month: 5,
+    category: "espionage",
+    impact: 2,
+    impactWhy: "Delivered to Ukrainian organizations; scale not quantified.",
+    aiRole: "LLM-generated filler (e.g. 32 daylight-saving checks) to make malware look boring.",
+    summary: "CANFAIL and LONGSTREAM families hide their real job behind piles of inert, AI-written code.",
+    attribution: {
+      claim: "\"suspected Russia-nexus threat actors\"",
+      by: "Google Threat Intelligence Group",
+      confidence: "low",
+      place: P.moscow,
+    },
+    traffic: { note: "Not disclosed.", places: [] },
+    targets: [P.kyiv],
+    targetNote: "Ukrainian organizations.",
+    sources: [
+      { name: "Google GTIG — AI vulnerability exploitation & initial access", url: "https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access", primary: true },
+    ],
+  },
+  {
+    id: "hexstrike",
+    title: "Agent pentest kits point at a Japanese tech firm",
+    when: "Reported May 2026",
+    month: 5,
+    category: "espionage",
+    impact: 2,
+    impactWhy: "Recon and vulnerability validation against two organizations; compromise not described.",
+    aiRole: "Hexstrike + Graphiti memory for autonomous recon; Strix multi-agent framework to validate bugs.",
+    summary: "An agent kept a knowledge graph of the attack surface and picked its own next tool.",
+    attribution: {
+      claim: "\"suspected PRC-nexus threat actor\"",
+      by: "Google Threat Intelligence Group",
+      confidence: "low",
+      place: P.beijing,
+    },
+    traffic: { note: "Not disclosed.", places: [] },
+    targets: [P.tokyo, { name: "East Asia (cybersecurity platform)", lat: 30, lon: 125, approx: "region only" }],
+    targetNote: "A Japanese technology firm and a prominent East Asian cybersecurity platform.",
+    sources: [
+      { name: "Google GTIG — AI vulnerability exploitation & initial access", url: "https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access", primary: true },
+    ],
+  },
+  {
+    id: "pentagi-asia",
+    title: "Custom PentAGI rig sweeps Asian telecoms",
+    when: "Late Aug – early Oct 2026",
+    month: 10,
+    category: "espionage",
+    impact: 2,
+    impactWhy: "Mostly mapping and scanning; some operations progressed to intrusions and persistence.",
+    aiRole: "A customized build of the open-source PentAGI agent framework ran systematic recon.",
+    summary: "Wide reconnaissance and vulnerability scanning of system integrators and major telecom firms.",
+    attribution: { claim: "No actor named", by: "Google Threat Intelligence Group", confidence: "none", place: null },
+    traffic: { note: "Another case chained PentAGI with proxy services; locations not disclosed.", places: [] },
+    targets: [P.asia],
+    targetNote: "Organizations in Asia, including telecommunications firms.",
+    sources: [
+      { name: "Google GTIG — ARTEX and Friends (Oct 30, 2026)", url: "https://cloud.google.com/blog/topics/threat-intelligence/artex-and-friends-enter-agentic-offensive-frameworks", primary: true },
+    ],
+  },
+  {
+    id: "jadepuffer",
+    title: "JADEPUFFER: ransomware run by an LLM agent",
+    when: "Jul 2026",
+    month: 7,
+    category: "crime",
+    impact: 2,
+    impactWhy: "One victim's production database encrypted (1,342 config records reported); no payment or victim named.",
+    aiRole: "An LLM agent did intrusion, credential theft, lateral movement and encryption after a Langflow RCE.",
+    summary: "Sysdig's honeypot-style visibility caught what it calls the first agentic ransomware.",
+    attribution: {
+      claim: "Unknown operator; linked across reports only by a reused extortion contact",
+      by: "Sysdig Threat Research",
+      confidence: "none",
+      place: null,
+    },
+    traffic: { note: "Sysdig says the link is \"independent of source IP or infrastructure\".", places: [] },
+    targets: [],
+    targetNote: "An unnamed Langflow user.",
+    sources: [
+      { name: "Sysdig — JADEPUFFER evolves", url: "https://www.sysdig.com/blog/jadepuffer-evolves-the-agentic-threat-actor-deploys-ransomware-built-to-destroy-ai-models" },
+      { name: "TechCrunch — The 'first' AI-run ransomware attack still needed a human", url: "https://techcrunch.com/2026/07/06/the-first-ai-run-ransomware-attack-still-needed-a-human/" },
+    ],
+  },
+  {
+    id: "marimo",
+    title: "An LLM agent pivots from a notebook to the database",
+    when: "May 10, 2026",
+    month: 5,
+    category: "crime",
+    impact: 2,
+    impactWhy: "One internal PostgreSQL database dumped via stolen AWS and SSH keys.",
+    aiRole: "Improvised schema discovery and error-recovery that Sysdig reads as an LLM agent at the wheel.",
+    summary: "Exploit of a marimo notebook (CVE-2026-39987) followed by fast, adaptive post-exploitation.",
+    attribution: { claim: "Unknown actor", by: "Sysdig Threat Research", confidence: "none", place: null },
+    traffic: { note: "\"Distributed source IPs\" — one of the hints an agent was involved.", places: [] },
+    targets: [],
+    targetNote: "One unnamed cloud environment.",
+    sources: [
+      { name: "The Hacker News — Attackers use LLM agent for post-exploitation", url: "https://thehackernews.com/2026/05/attackers-use-llm-agent-for-post.html" },
+    ],
+  },
+  {
+    id: "skynet",
+    title: "\"Skynet mode\": an agent that hijacks other people's LLMs",
+    when: "Summer 2026 (reported Oct 21)",
+    month: 10,
+    category: "ai-target",
+    impact: 1,
+    impactWhy: "Caught in a honeypot; no confirmed compromises. Instructions allowed 100,000 unattended steps.",
+    aiRole: "Looks for unauthenticated OpenAI-compatible endpoints and uses them as its brain for scanning, mining and spreading.",
+    summary: "Symantec's AI honeypot captured the playbook of a self-propagating LLMjacking agent.",
+    attribution: { claim: "Not attributed", by: "Symantec Threat Hunter Team", confidence: "none", place: null },
+    traffic: {
+      note: "The honeypot saw 127,000+ requests from tens of thousands of IPs overall — that is background noise, not Skynet's own footprint.",
+      places: [],
+    },
+    targets: [],
+    targetNote: "Any exposed LLM endpoint on the internet.",
+    sources: [
+      { name: "CSO Online — Attackers built a 'Skynet' AI agent", url: "https://www.csoonline.com/article/4241421/attackers-built-a-skynet-ai-agent-that-hijacks-exposed-models-to-run-cyberattacks.html" },
+      { name: "Infosecurity Magazine — Symantec uncovers AI agent hijacking models", url: "https://www.infosecurity-magazine.com/news/symantec-ai-agent-llmjacking/" },
+    ],
+  },
+];
+
+export const CATEGORY_LABEL: Record<Category, string> = {
+  espionage: "Espionage",
+  crime: "Crime & hacktivism",
+  "ai-target": "AI as the target",
+  "agent-mishap": "Agent gone off-script",
+};
+
+export const CONFIDENCE_LABEL: Record<Confidence, string> = {
+  high: "High — named org, investigator says high confidence or self-disclosed",
+  medium: "Medium — \"likely\", \"consistent with\", overlaps another vendor's actor",
+  low: "Low — language clues or \"suspected\" only",
+  none: "None — nobody has said who",
+};
